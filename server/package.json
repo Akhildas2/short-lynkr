@@ -1,0 +1,26 @@
+{
+  "name": "short-lynkr-backend",
+  "version": "1.0.0",
+  "description": "Backend for Short-Lynkr URL shortener",
+  "main": "server.js",
+  "scripts": {
+    "start": "npm run build && node dist/server.js",
+    "build": "tsc",
+    "serve": "node dist/server.js",
+    "dev": "nodemon --watch src --exec ts-node src/server.ts"
+  },
+  "author": "Akhil das p",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.13.2",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
