@@ -4,8 +4,23 @@ import { UrlEntry } from '../types/url.d';
 import * as admin from 'firebase-admin';
 
 export class UrlService {
+    // services/url.service.ts
     static async createShortUrl(originalUrl: string): Promise<UrlEntry> {
-        const shortId = generateShortId();
+        let shortId: string = '';
+        let docExists = true;
+        let attempts = 0;
+
+        while (docExists && attempts < 5) {
+            shortId = generateShortId();
+            const doc = await db.collection('urls').doc(shortId).get();
+            docExists = doc.exists;
+            attempts++;
+        }
+
+        if (docExists) {
+            throw new Error('Failed to generate a unique short ID');
+        }
+
         const urlEntry: UrlEntry = {
             shortId,
             originalUrl,
