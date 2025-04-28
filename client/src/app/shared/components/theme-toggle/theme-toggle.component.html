@@ -1,0 +1,5 @@
+<button mat-icon-button (click)="toggleTheme()" matTooltip="{{ isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}">
+  <mat-icon [ngStyle]="{ color: isDark ? 'white' : 'black' }" class="theme-icon">
+    {{ isDark ? 'dark_mode' : 'light_mode' }}
+  </mat-icon>
+</button>

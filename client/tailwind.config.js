@@ -1,19 +1,18 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./src/**/*.{html,ts}",
   ],
   theme: {
     extend: {
       colors: {
-        background: 'var(--background)',
-        onBackground: 'var(--onBackground)',
-        primary: '#7901E0',
-        secondary: '#F6236C',
+        primary: '#2161E0',
+        secondary: '#101044',
+        accent: '#FE4E3E',
+        highlight: '#FFA114',
+        success: '#0E8160',
       },
-      fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-      }
     },
   },
   plugins: [],
