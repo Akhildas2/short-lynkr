@@ -13,7 +13,12 @@ export default {
         highlight: '#FFA114',
         success: '#0E8160',
       },
+      fontFamily: {
+        heading: ['Montserrat', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [],
+  important: true,
 };

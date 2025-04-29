@@ -1,0 +1,27 @@
+@use '@angular/material' as mat;
+
+// Define custom font family variables
+$heading-font: 'Montserrat, sans-serif';
+$body-font: 'Inter, sans-serif';
+
+// Set the base typography
+body {
+  font-family: $body-font;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $heading-font !important;
+  margin: 0;
+}
+
+// Override Angular Material typography using mat-typography class
+.mat-typography {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $heading-font !important;
+  }
+  
+  p, span, div, li, a {
+    font-family: $body-font;
+  }
+}

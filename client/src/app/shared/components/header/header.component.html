@@ -4,50 +4,36 @@
       <!-- Logo -->
       <div class="flex items-center space-x-3">
         <!-- Logo Images with Dark Mode Support -->
-        <img src="/assets/logo-light.png" alt="ShortLynkr logo light" 
-             class="h-10 w-10 object-contain block dark:hidden">
-        <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark" 
-             class="h-10 w-10 object-contain hidden dark:block">
-        <span class="text-2xl font-serif font-bold text-gray-800 dark:text-white">Short Lynkr</span>
+        <img src="/assets/logo-light.png" alt="ShortLynkr logo light"
+          class="h-10 w-10 object-contain block dark:hidden">
+        <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark" class="h-10 w-10 object-contain hidden dark:block">
+        <span class="text-2xl font-extrabold">Short Lynkr</span>
       </div>
 
       <!-- Desktop Navigation Links (Hidden on Mobile) -->
-      <div class="hidden md:flex items-center space-x-8 font-inter font-medium">
-        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Home</a>
-        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Pricing</a>
-        <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-primary transition-colors">Features</a>
+      <div class="hidden md:flex items-center space-x-8 font-extrabold">
+        <a href="#" class="hover:text-primary transition-colors">Home</a>
+        <a href="#" class="hover:text-primary transition-colors">Pricing</a>
+        <a href="#" class="hover:text-primary transition-colors">Features</a>
       </div>
 
       <!-- Right Section -->
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
         <app-theme-toggle class="hidden md:block"></app-theme-toggle>
-        <button mat-button class="hidden md:inline-flex items-center text-gray-600 dark:text-gray-300 hover:text-primary">
+        <button mat-button class="hidden md:inline-flex items-center hover:text-primary">
           <mat-icon>login</mat-icon>
           <span class="ml-1">Login</span>
         </button>
 
         <!-- Mobile Menu Button -->
-        <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
+        <button id="mobile-menu-button"
+          class="md:hidden p-2 rounded-md text-gray-600  hover:bg-gray-100 dark:hover:bg-gray-800">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Menu (Hidden by Default) -->
-  <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white dark:bg-gray-900 shadow-lg z-50">
-    <div class="px-4 pt-2 pb-3 space-y-1 sm:px-6">
-      <app-theme-toggle class="md:hidden block mb-2"></app-theme-toggle>
-      
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">Home</a>
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">Pricing</a>
-      <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">Features</a>
-      <button mat-button class="w-full justify-start px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800">
-        <mat-icon>login</mat-icon>
-        <span class="ml-2">Login</span>
-      </button>
-    </div>
-  </div>
 </nav>
