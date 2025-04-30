@@ -1,17 +1,28 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import urlRoutes from "./routes/url.routes";
-import { errorHandler } from "./middlewares/errorHandler";
+import connectDB from "./config/mongodb";
+import urlRoutes from './routes/url.routes';
+import { errorHandler } from "./middleware/errorHandler";
+
 
 const app = express();
-const PORT: number = parseInt(process.env.PORT || "5000", 10);
+
+// Middleware for handling CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", urlRoutes);
+// Route handling
+app.use('/api/url', urlRoutes);
+
+// Error handling middleware should be the last middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+const PORT: number = parseInt(process.env.PORT || "3000", 10);
+
+// Connect to the database and start the server
+connectDB().then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });

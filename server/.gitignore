@@ -15,7 +15,6 @@ pids/
 
 # Environment variables
 .env
-*.json
 
 # Output directories
 dist/
