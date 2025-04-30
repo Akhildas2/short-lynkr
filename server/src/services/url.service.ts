@@ -1,42 +1,16 @@
-import { db } from '../config/firebase';
+import UrlModel from '../models/url.model';
 import { generateShortId } from '../utils/shortIdGenerator';
-import { UrlEntry } from '../types/url.d';
-import * as admin from 'firebase-admin';
+import { generateQRCode } from '../utils/qrCodeGenerator';
 
-export class UrlService {
-    // services/url.service.ts
-    static async createShortUrl(originalUrl: string): Promise<UrlEntry> {
-        let shortId: string = '';
-        let docExists = true;
-        let attempts = 0;
+export const createShortUrl = async (longUrl: string) => {
+    const shortId = generateShortId();
+    const shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
+    const qrCodeUrl = await generateQRCode(shortUrl);
 
-        while (docExists && attempts < 5) {
-            shortId = generateShortId();
-            const doc = await db.collection('urls').doc(shortId).get();
-            docExists = doc.exists;
-            attempts++;
-        }
+    const newUrl = await UrlModel.create({ longUrl, shortId, shortUrl, qrCodeUrl });
+    return newUrl;
+};
 
-        if (docExists) {
-            throw new Error('Failed to generate a unique short ID');
-        }
-
-        const urlEntry: UrlEntry = {
-            shortId,
-            originalUrl,
-            createdAt: new Date(),
-            clicks: 0
-        };
-
-        await db.collection('urls').doc(shortId).set(urlEntry);
-        return urlEntry;
-    }
-
-    static async getOriginalUrl(shortId: string): Promise<string> {
-        const doc = await db.collection('urls').doc(shortId).get();
-        if (!doc.exists) throw new Error('URL not found');
-
-        await doc.ref.update({ clicks: admin.firestore.FieldValue.increment(1) });
-        return doc.data()?.originalUrl;
-    }
-}
+export const getOriginalUrl = async (shortId: string) => {
+    return await UrlModel.findOne({ shortId });
+};

@@ -1,13 +1,10 @@
-import express from 'express';
-import { UrlController } from '../controllers/url.controller';
-import { validateUrl } from '../middlewares/validateUrl';
-import { errorHandler } from '../middlewares/errorHandler';
+import { Router } from 'express';
+import { createUrl, redirectToOriginal } from '../controllers/url.controller';
+import { validateUrl } from '../middleware/validateUrl';
 
-const router = express.Router();
+const router = Router();
 
-router.post('/shorten', validateUrl, UrlController.shortenUrl);
-router.get('/:shortId', UrlController.redirectUrl);
-
-router.use(errorHandler);
+router.post('/shorten',validateUrl,createUrl);
+router.get('/r/:shortId', redirectToOriginal);
 
 export default router;

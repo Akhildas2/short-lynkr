@@ -1,6 +1,5 @@
-import { customAlphabet } from "nanoid";
+import { init } from '@paralleldrive/cuid2';
 
-const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const generateShortId = customAlphabet(alphabet, 8);
+const generateShortId = init({ length: 8 });
 
 export { generateShortId };
