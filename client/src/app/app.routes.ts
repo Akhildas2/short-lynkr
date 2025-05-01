@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/common/home/home.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', loadChildren: () => import('./features/public/public.module').then((m) => m.PublicModule) },
     { path: 'admin', loadChildren: () => import('./features/admin/admin.module').then((m) => m.AdminModule) },
     { path: 'user', loadChildren: () => import('./features/user/user.module').then((m) => m.UserModule) },
-    { path: 'common', loadChildren: () => import('./features/common/common.module').then((m) => m.MyCommonModule) },
+    { path: '**', redirectTo: 'not-found' }
 ];
