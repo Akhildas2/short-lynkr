@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/mongodb";
 import urlRoutes from './routes/url.routes';
+import userRoutes from './routes/user.routes';
 import { errorHandler } from "./middleware/errorHandler";
 
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Route handling
 app.use('/api/url', urlRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling middleware should be the last middleware
 app.use(errorHandler);
