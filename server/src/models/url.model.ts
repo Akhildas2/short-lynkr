@@ -5,7 +5,7 @@ const urlSchema = new mongoose.Schema({
     shortId: { type: String, required: true, unique: true },
     shortUrl: { type: String, required: true },
     qrCodeUrl: { type: String },
-    date: { type: Date, default: Date.now },
-});
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+}, { timestamps: true });
 
 export default mongoose.model('Url', urlSchema);
