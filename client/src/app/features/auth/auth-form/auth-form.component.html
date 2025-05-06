@@ -4,9 +4,9 @@
         [class.active]="isActive">
 
         <!-- Sign Up -->
-        <div class="absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center p-10 transition-transform duration-700 ease-in-out"
-            [ngClass]="{ 'translate-x-full opacity-100 z-50': isActive, 'opacity-0 z-0': !isActive }">
-            <h1 class="text-3xl font-bold mb-6">Create Account</h1>
+        <div class="absolute top-0 left-0 w-full md:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out"
+            [ngClass]="{ 'translate-x-full md:translate-x-full opacity-100 z-50': isActive, 'opacity-0 md:opacity-0 z-0': !isActive }">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6">Create Account</h1>
             <div class="w-full max-w-md space-y-4">
                 <input type="text" placeholder="Name" class="input" />
                 <input type="email" placeholder="Email" class="input" />
@@ -40,13 +40,18 @@
                     </svg>
                     Sign up with Google
                 </button>
+                <div class="mt-4 text-center md:hidden">
+                    <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
+                        Already have an account? Sign In
+                    </a>
+                </div>
             </div>
         </div>
 
         <!-- Sign In -->
-        <div class="absolute top-0 left-0 w-1/2 h-full flex flex-col items-center justify-center p-10 transition-transform duration-700 ease-in-out z-10"
+        <div class="absolute top-0 left-0 w-full md:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out z-10"
             [ngClass]="{ 'translate-x-0 opacity-100': !isActive, 'translate-x-full opacity-0': isActive }">
-            <h1 class="text-3xl font-bold mb-6">Sign In</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6">Sign In</h1>
             <div class="w-full max-w-md space-y-4">
                 <input type="email" placeholder="Email" class="input" />
                 <input type="password" placeholder="Password" class="input" />
@@ -79,16 +84,21 @@
                     </svg>
                     Sign in with Google
                 </button>
+                <div class="mt-4 text-center md:hidden">
+                    <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
+                        Don't have an account? Sign Up
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Toggle Panel -->
-        <div class="absolute top-0 left-1/2 w-1/2 h-full flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
+        <!-- Toggle Panel (Hidden on mobile) -->
+        <div class="absolute top-0 left-0 md:left-1/2 w-full md:w-1/2 h-full hidden md:flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
             [ngClass]="{ '-translate-x-full': isActive }">
             <div class="max-w-md">
-                <h2 class="text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to Short Lynkr!' : 'Join Short Lynkr
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to Short Lynkr!' : 'Join Short Lynkr
                     Today!' }}</h2>
-                <p class="mb-8 text-lg font-light">
+                    <p class="mb-8 text-lg font-light">
                     {{
                     isActive
                     ? 'Manage your links and track QR code scans effortlessly.'
@@ -101,7 +111,6 @@
                     </mat-icon>
                     {{ isActive ? 'Sign In' : 'Sign Up' }}
                 </button>
-
             </div>
         </div>
     </div>
