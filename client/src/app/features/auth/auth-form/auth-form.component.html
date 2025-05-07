@@ -4,14 +4,48 @@
         [class.active]="isActive">
 
         <!-- Sign Up -->
-        <div class="absolute top-0 left-0 w-full md:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out"
-            [ngClass]="{ 'translate-x-full md:translate-x-full opacity-100 z-50': isActive, 'opacity-0 md:opacity-0 z-0': !isActive }">
+        <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out"
+            [ngClass]="{ 'translate-x-full opacity-100 z-50': isActive, 'opacity-0 sm:opacity-0 z-0': !isActive }">
+
             <h1 class="text-2xl sm:text-3xl font-bold mb-6">Create Account</h1>
             <div class="w-full max-w-md space-y-4">
-                <input type="text" placeholder="Name" class="input" />
-                <input type="email" placeholder="Email" class="input" />
-                <input type="password" placeholder="Password" class="input" />
-                <button class="btn-primary">Sign Up</button>
+                <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Name</mat-label>
+                        <mat-icon matPrefix>person</mat-icon>
+                        <input matInput type="text" placeholder="Enter your name" formControlName="username">
+                        <button mat-icon-button matSuffix aria-label="Clear">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <app-validation-error [control]="registerForm.get('username')"></app-validation-error>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Email</mat-label>
+                        <mat-icon matPrefix>email</mat-icon>
+                        <input matInput type="email" placeholder="Enter your email" formControlName="email">
+                        <button mat-icon-button matSuffix aria-label="Clear">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <app-validation-error [control]="registerForm.get('email')"></app-validation-error>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Password</mat-label>
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <input matInput [type]="showRegisterPassword() ? 'text' : 'password'"
+                            placeholder="Enter your password" formControlName="password">
+                        <button mat-icon-button matSuffix type="button" (click)="toggleRegisterPassword()"
+                            aria-label="Toggle password visibility">
+                            <mat-icon>{{ showRegisterPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <app-validation-error [control]="registerForm.get('password')"></app-validation-error>
+
+                    <button class="btn-primary">Sign Up</button>
+                </form>
+
                 <div class="relative my-6">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t" [style.border-color]="'var(--text-color)'"></div>
@@ -21,6 +55,7 @@
                             [style.color]="'var(--text-color)'">Or continue with</span>
                     </div>
                 </div>
+
                 <button class="btn-google hover:bg-gray-200 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
@@ -40,22 +75,49 @@
                     </svg>
                     Sign up with Google
                 </button>
-                <div class="mt-4 text-center md:hidden">
+
+                <div class="mt-4 text-center sm:hidden">
                     <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
                         Already have an account? Sign In
                     </a>
                 </div>
+
             </div>
         </div>
 
         <!-- Sign In -->
-        <div class="absolute top-0 left-0 w-full md:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out z-10"
+        <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out z-10"
             [ngClass]="{ 'translate-x-0 opacity-100': !isActive, 'translate-x-full opacity-0': isActive }">
+
             <h1 class="text-2xl sm:text-3xl font-bold mb-6">Sign In</h1>
             <div class="w-full max-w-md space-y-4">
-                <input type="email" placeholder="Email" class="input" />
-                <input type="password" placeholder="Password" class="input" />
-                <button class="btn-primary">Sign In</button>
+                <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Email</mat-label>
+                        <mat-icon matPrefix>email</mat-icon>
+                        <input matInput type="email" placeholder="Enter your email" formControlName="email">
+                        <button mat-icon-button matSuffix aria-label="Clear">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <app-validation-error [control]="loginForm.get('email')"></app-validation-error>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Password</mat-label>
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <input matInput [type]="showLoginPassword() ? 'text' : 'password'"
+                            placeholder="Enter your password" formControlName="password">
+                        <button mat-icon-button matSuffix type="button" (click)="toggleLoginPassword()"
+                            aria-label="Toggle password visibility">
+                            <mat-icon>{{ showLoginPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <app-validation-error [control]="loginForm.get('password')"></app-validation-error>
+
+                    <button class="btn-primary">Sign In</button>
+                </form>
+
                 <div class="relative my-6">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t" [style.border-color]="'var(--text-color)'"></div>
@@ -65,6 +127,7 @@
                             [style.color]="'var(--text-color)'">Or continue with</span>
                     </div>
                 </div>
+
                 <button class="btn-google hover:bg-gray-200 dark:hover:bg-gray-700">
                     <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
                         <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48">
@@ -84,26 +147,27 @@
                     </svg>
                     Sign in with Google
                 </button>
-                <div class="mt-4 text-center md:hidden">
+
+                <div class="mt-4 text-center sm:hidden">
                     <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
                         Don't have an account? Sign Up
                     </a>
                 </div>
+
             </div>
         </div>
 
         <!-- Toggle Panel (Hidden on mobile) -->
-        <div class="absolute top-0 left-0 md:left-1/2 w-full md:w-1/2 h-full hidden md:flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
+        <div class="absolute top-0 left-0 sm:left-1/2 w-full sm:w-1/2 h-full hidden sm:flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
             [ngClass]="{ '-translate-x-full': isActive }">
-            <div class="max-w-md">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to Short Lynkr!' : 'Join Short Lynkr
+
+            <div class="max-w-sm">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to Short Lynkr!' : 'Join
+                    Short Lynkr
                     Today!' }}</h2>
-                    <p class="mb-8 text-lg font-light">
-                    {{
-                    isActive
-                    ? 'Manage your links and track QR code scans effortlessly.'
-                    : 'Simplify your links and generate dynamic QR codes in seconds.'
-                    }}
+                <p class="mb-8 text-lg font-light">
+                    {{ isActive ? 'Manage your links and track QR code scans effortlessly.': 'Simplify your links and
+                    generate dynamic QR codes in seconds.'}}
                 </p>
                 <button mat-stroked-button (click)="toggleForm()" class="hover:bg-gray-200 dark:hover:bg-gray-700">
                     <mat-icon class="mr-2">
@@ -112,6 +176,7 @@
                     {{ isActive ? 'Sign In' : 'Sign Up' }}
                 </button>
             </div>
+
         </div>
     </div>
     <app-footer></app-footer>
