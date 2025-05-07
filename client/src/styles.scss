@@ -2,14 +2,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 @import "./styles/typography.scss";
-@import './styles/light-theme';
-@import './styles/dark-theme';
-@import './styles/material-theme';
+@import "./styles/light-theme";
+@import "./styles/dark-theme";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 html,
 body {
@@ -23,4 +21,122 @@ body {
 .mat-mdc-raised-button,
 .mat-mdc-outlined-button {
   color: var(--text-color) !important;
+}
+
+// Dark theme input
+.dark {
+  // MDC text field overrides
+  --mdc-outlined-text-field-label-text-color: var(--text-color);
+  --mdc-outlined-text-field-input-text-color: var(--text-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--text-color);
+  --mdc-outlined-text-field-outline-color: var(--text-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-supporting-text-color: var(--text-color);
+  --mdc-outlined-text-field-error-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--error-color);
+
+  // Apply it globally to inputs and labels
+  .mat-mdc-form-field {
+    color: var(--text-color) !important;
+  }
+
+  // Explicitly set label colors
+  .mat-mdc-form-field .mat-mdc-floating-label,
+  .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+    color: var(--text-color) !important;
+  }
+
+  // Ensure icons use the correct color
+  .mat-icon,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
+    color: var(--text-color);
+  }
+
+  // Buttons and icon buttons
+  .mat-mdc-icon-button,
+  .mat-mdc-button {
+    color: var(--text-color);
+  }
+
+  // Placeholder color
+  input::placeholder {
+    color: var(--text-color) !important;
+  }
+}
+
+
+// Light theme input
+:root {
+  // MDC text field overrides
+  --mdc-outlined-text-field-label-text-color: var(--text-color);
+  --mdc-outlined-text-field-input-text-color: var(--text-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--text-color);
+  --mdc-outlined-text-field-outline-color: var(--text-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-supporting-text-color: var(--text-color);
+  --mdc-outlined-text-field-error-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--error-color);
+
+  // Apply it globally to inputs and labels
+  .mat-mdc-form-field {
+    color: var(--text-color) !important;
+  }
+
+  // Explicitly set label colors
+  .mat-mdc-form-field .mat-mdc-floating-label,
+  .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+    color: var(--text-color) !important;
+  }
+
+  // Ensure icons use the correct color
+  .mat-icon,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
+    color: var(--text-color);
+  }
+
+  // Buttons and icon buttons
+  .mat-mdc-icon-button,
+  .mat-mdc-button {
+    color: var(--text-color);
+  }
+
+  // Placeholder color
+  input::placeholder {
+    color: var(--text-color) !important;
+  }
+}
+
+
+// Messages
+.snackbar-success {
+  background-color: var(--success-color);
+  color: var(--text-color);
+}
+
+.snackbar-error {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+}
+
+.snackbar-warning {
+  background-color: var(--highlight-color);
+  color: var(--text-color);
+}
+
+.snackbar-info {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+}
+
+
+.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  margin-top: 0 !important; // reduces extra spacing under input
 }
