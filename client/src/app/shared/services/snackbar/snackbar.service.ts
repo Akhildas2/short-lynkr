@@ -5,32 +5,33 @@ import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class SnackbarService {
+
   constructor(private snackBar: MatSnackBar) { }
 
-  private show(message: string, panelClass: string, duration: number = 3000) {
+  private show(message: string, panelClass: string, duration: number) {
     const config: MatSnackBarConfig = {
       duration,
       panelClass: [panelClass],
-      horizontalPosition: 'center',
+      horizontalPosition: 'right',
       verticalPosition: 'top',
     };
     this.snackBar.open(message, 'Dismiss', config);
   }
 
   showSuccess(message: string) {
-    this.show(message, 'snackbar-success');
+    this.show(message, 'success-snackbar', 3000);
   }
 
   showError(message: string) {
-    this.show(message, 'snackbar-error');
+    this.show(message, 'error-snackbar', 5000);
   }
 
   showWarning(message: string) {
-    this.show(message, 'snackbar-warning');
+    this.show(message, 'warning-snackbar', 4000);
   }
 
   showInfo(message: string) {
-    this.show(message, 'snackbar-info');
+    this.show(message, 'info-snackbar', 3500);
   }
 
 }

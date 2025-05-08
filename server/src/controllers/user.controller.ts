@@ -19,8 +19,8 @@ export const register = async (req: Request, res: Response, next: NextFunction):
             password: hashedPassword
         });
 
-        const token = jwt.sign({ id: user._id, email: email }, process.env.JWT_SECRET!, { expiresIn: '1d' });
-        res.status(201).json({ user: { id: user._id, email: user.email }, token });
+        const token = jwt.sign({ id: user._id, email: email, role: user.role }, process.env.JWT_SECRET!, { expiresIn: '1d' });
+        res.status(201).json({ user, token });
 
     } catch (error) {
         next(error);
@@ -45,11 +45,11 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
         }
 
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET!,
             { expiresIn: '1d' }
         );
-        res.status(200).json({ user: { id: user._id, email: user.email }, token });
+        res.status(200).json({ user, token });
 
     } catch (error) {
         next(error);
