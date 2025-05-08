@@ -10,7 +10,7 @@ import { ValidationErrorComponent } from '../../../shared/components/validation-
 @Component({
   selector: 'app-auth-form',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule,ValidationErrorComponent],
+  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss'
 })
@@ -21,23 +21,21 @@ export class AuthFormComponent {
   showLoginPassword = signal(false);
   showRegisterPassword = signal(false);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private effects: authEffects) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16)]]
+      password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
     });
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), Validators.pattern('^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$')]]
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`])[A-Za-z\\d!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`]{8,}$')]]
     });
   }
-
 
   toggleForm() {
     this.isActive = !this.isActive;
   }
-
 
   toggleLoginPassword() {
     this.showLoginPassword.set(!this.showLoginPassword());
@@ -47,19 +45,22 @@ export class AuthFormComponent {
     this.showRegisterPassword.set(!this.showRegisterPassword());
   }
 
-  onRegister() {
+  async onRegister() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
-    // Submit logic
+    const { username, email, password } = this.registerForm.value;
+    await this.effects.register(username, email, password);
   }
 
-  onLogin() {
+  async onLogin() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
-    // Submit logic
+    const { email, password } = this.loginForm.value;
+    await this.effects.login(email, password);
   }
+
 }

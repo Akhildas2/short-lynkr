@@ -8,6 +8,6 @@
     Maximum length is {{ control.errors?.['maxlength'].requiredLength }} characters.
   </mat-error>
   <mat-error *ngIf="control.errors?.['pattern']">
-    Must contain at least 1 uppercase letter and 1 number.
+    Must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character.
   </mat-error>
 </ng-container>

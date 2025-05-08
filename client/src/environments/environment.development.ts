@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://your-production-backend-url.com/api',
-  authApiUrl: 'https://your-production-backend-url.com/api/users',
+  apiUrl: 'http://localhost:3333/api/url',
+  authApiUrl: 'http://localhost:3333/api/users',
 };
