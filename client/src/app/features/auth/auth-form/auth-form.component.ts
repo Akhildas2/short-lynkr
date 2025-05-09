@@ -8,11 +8,10 @@ import { authEffects } from '../../../state/auth/auth.effects';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error/validation-error.component';
 
 @Component({
-  selector: 'app-auth-form',
-  standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent],
-  templateUrl: './auth-form.component.html',
-  styleUrl: './auth-form.component.scss'
+    selector: 'app-auth-form',
+    imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent],
+    templateUrl: './auth-form.component.html',
+    styleUrl: './auth-form.component.scss'
 })
 export class AuthFormComponent {
   loginForm: FormGroup;

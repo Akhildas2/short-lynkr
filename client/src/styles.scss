@@ -1,9 +1,9 @@
 @use "@angular/material" as mat;
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+@use "./styles/typography" as *;
+@use "./styles/light-theme" as *;
+@use "./styles/dark-theme" as *;
 
-@import "./styles/typography.scss";
-@import "./styles/light-theme";
-@import "./styles/dark-theme";
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
