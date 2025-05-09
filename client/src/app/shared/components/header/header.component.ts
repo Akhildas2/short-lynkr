@@ -7,11 +7,10 @@ import { authEffects } from '../../../state/auth/auth.effects';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [MaterialModule,ThemeToggleComponent,CommonModule,RouterLink],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    imports: [MaterialModule, ThemeToggleComponent, CommonModule, RouterLink],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
 

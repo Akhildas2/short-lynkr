@@ -25,7 +25,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired) {
-      authStore.clearUser();
+      authStore.clearAuth();
       localStorage.removeItem('token');
       router.navigate(['/auth/login']);
       return false;

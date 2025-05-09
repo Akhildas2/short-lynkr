@@ -6,3 +6,8 @@ export interface AuthUser {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface AuthResponse {
+    user: AuthUser;
+    token: string;
+}
