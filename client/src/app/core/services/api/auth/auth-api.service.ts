@@ -18,8 +18,13 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
   }
 
-  getProfile():Observable<AuthResponse>{
-    return  this.http.get<AuthResponse>(`${this.apiUrl}/me`);
-  }
+getProfile(): Observable<AuthResponse> {
+  const token = localStorage.getItem('token');
+  return this.http.get<AuthResponse>(`${this.apiUrl}/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+}
 
 }

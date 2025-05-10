@@ -5,7 +5,7 @@ import { AuthRequest } from '../types/auth';
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { longUrl } = req.body;
-        const userId = req.user?._id;
+        const userId = req.user?.id;
 
         if (!longUrl) {
             res.status(400).json({ message: 'Long URL is required' });
@@ -38,7 +38,7 @@ export const redirectToOriginal = async (req: AuthRequest, res: Response, next: 
 
 export const getUserUrls = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const userId = req.user?._id;
+        const userId = req.user?.id;
         if (!userId) {
             res.status(401).json({ message: 'Invalid or expired authentication token.' });
             return;

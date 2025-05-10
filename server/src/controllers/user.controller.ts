@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import User from '../models/user.model';
 import { comparePassword, hashPassword } from '../utils/password';
 import jwt from 'jsonwebtoken';
+import { AuthRequest } from '../types/auth';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -50,6 +51,21 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             { expiresIn: '1d' }
         );
         res.status(200).json({ user, token });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const user = await User.findById(req.user?.id);
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return
+        }
+        res.status(200).json({ user });
 
     } catch (error) {
         next(error);

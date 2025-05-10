@@ -21,9 +21,9 @@
         <app-theme-toggle class="hidden sm:block"></app-theme-toggle>
 
         <!-- Authenticated User -->
-        <ng-container *ngIf="user else guest">
+        <ng-container *ngIf="isAuthenticated;  else guest">
           <div class="relative group">
-            <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + user.username" class="h-12 w-12 rounded-full cursor-pointer
+            <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + username" class="h-14 w-14 object-cover rounded-full cursor-pointer
             border-2 border-gray-300 dark:border-gray-700
             hover:border-blue-500 dark:hover:border-blue-500
             hover:scale-125 transition-all duration-300 ease-in-out" />
@@ -44,26 +44,26 @@
         <!-- Guest -->
         <ng-template #guest>
           <button mat-button routerLink="/auth/login"
-            class="hidden sm:inline-flex items-center hover:bg-gray-200 dark:hover:bg-gray-700">
+            class="hidden sm:inline-flex items-center hover:text-primary transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
             <mat-icon>login</mat-icon>
             <span class="ml-1">Sign In</span>
           </button>
         </ng-template>
 
         <!-- Mobile Menu Button -->
-        <button (click)="toggleMobileMenu()" class="sm:hidden p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
-          <svg class="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+        <button (click)="toggleMobileMenu()" mat-icon-button class="sm:hidden">
+          <mat-icon>menu</mat-icon>
         </button>
+
       </div>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="mobileMenuOpen" class="sm:hidden absolute top-20 left-0 right-0 bg-white dark:bg-gray-800 z-50">
+  <div *ngIf="mobileMenuOpen" class="sm:hidden absolute top-20 left-0 right-0 bg-gray-200 dark:bg-gray-800 z-50">
     <a routerLink="/" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
     <a routerLink="/pricing" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
     <a routerLink="/features" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Features</a>
+    <app-theme-toggle></app-theme-toggle>
   </div>
 </nav>

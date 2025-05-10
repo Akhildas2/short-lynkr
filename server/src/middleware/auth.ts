@@ -10,8 +10,9 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
             res.status(401).json({ message: 'Access denied. No token provided.' });
             return
         }
+        
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
-        if (!decoded || !decoded._id) {
+        if (!decoded || !decoded.id) {
             res.status(401).json({ message: 'Invalid token payload.' });
             return;
           }
