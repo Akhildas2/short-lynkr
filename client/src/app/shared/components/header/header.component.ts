@@ -13,15 +13,15 @@ import { AuthStore } from '../../../state/auth/auth.store';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  private authEffects = inject(authEffects);
+  private authStore = inject(AuthStore);
   mobileMenuOpen: boolean = false;
 
-  private authStore = inject(AuthStore);
-
-  constructor(private authEffects: authEffects) {
+  constructor() {
     this.authEffects.checkAuthStatus();
   }
 
-  get isAuthenticated(): boolean {
+  get user(): boolean {
     return this.authStore.isAuthenticated();
   }
 

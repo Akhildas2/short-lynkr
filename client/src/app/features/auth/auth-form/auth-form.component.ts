@@ -6,21 +6,24 @@ import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { authEffects } from '../../../state/auth/auth.effects';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error/validation-error.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoaderComponent } from '../../../shared/components/loader/loader.component';
 
 @Component({
-    selector: 'app-auth-form',
-    imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent],
-    templateUrl: './auth-form.component.html',
-    styleUrl: './auth-form.component.scss'
+  selector: 'app-auth-form',
+  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent, LoaderComponent],
+  templateUrl: './auth-form.component.html',
+  styleUrl: './auth-form.component.scss'
 })
 export class AuthFormComponent {
   loginForm: FormGroup;
   registerForm: FormGroup;
   isActive = false;
+  isLoading = false;
   showLoginPassword = signal(false);
   showRegisterPassword = signal(false);
 
-  constructor(private fb: FormBuilder, private effects: authEffects) {
+  constructor(private fb: FormBuilder, private effects: authEffects, private route: ActivatedRoute, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
@@ -30,10 +33,16 @@ export class AuthFormComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`])[A-Za-z\\d!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`]{8,}$')]]
     });
+
+    this.route.params.subscribe(params => {
+      const mode = params['mode'];
+      this.isActive = mode === 'sign-up';
+    })
   }
 
   toggleForm() {
-    this.isActive = !this.isActive;
+    const newMode = this.isActive ? 'sign-in' : 'sign-up';
+    this.router.navigate(['/auth', newMode]);
   }
 
   toggleLoginPassword() {
@@ -49,8 +58,14 @@ export class AuthFormComponent {
       this.registerForm.markAllAsTouched();
       return;
     }
+
+    this.isLoading = true;
     const { username, email, password } = this.registerForm.value;
-    await this.effects.register(username, email, password);
+
+    setTimeout(async () => {
+      await this.effects.register(username, email, password);
+      this.isLoading = false;
+    }, 9000);
   }
 
   async onLogin() {
@@ -58,8 +73,14 @@ export class AuthFormComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
+
+    this.isLoading = true;
     const { email, password } = this.loginForm.value;
-    await this.effects.login(email, password);
+
+    setTimeout(async () => {
+      await this.effects.login(email, password);
+      this.isLoading = false;
+    }, 9000);
   }
 
 }

@@ -21,7 +21,7 @@
         <app-theme-toggle class="hidden sm:block"></app-theme-toggle>
 
         <!-- Authenticated User -->
-        <ng-container *ngIf="isAuthenticated;  else guest">
+        <ng-container *ngIf="user;  else guest">
           <div class="relative group">
             <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + username" class="h-14 w-14 object-cover rounded-full cursor-pointer
             border-2 border-gray-300 dark:border-gray-700
@@ -31,10 +31,14 @@
             <!-- Dropdown -->
             <div
               class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-              <a routerLink="/dashboard" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">My URLs</a>
-              <a routerLink="/qr" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">QR Generator</a>
+              <a routerLink="/dashboard"
+                class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">My
+                URLs</a>
+              <a routerLink="/qr"
+                class="block px-4 py-2  hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">QR
+                Generator</a>
               <button (click)="logout()"
-                class="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">
+                class="block w-full text-left px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
                 Logout
               </button>
             </div>
@@ -43,7 +47,7 @@
 
         <!-- Guest -->
         <ng-template #guest>
-          <button mat-button routerLink="/auth/login"
+          <button mat-button routerLink="/auth/sign-in"
             class="hidden sm:inline-flex items-center hover:text-primary transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
             <mat-icon>login</mat-icon>
             <span class="ml-1">Sign In</span>
@@ -60,10 +64,13 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="mobileMenuOpen" class="sm:hidden absolute top-20 left-0 right-0 bg-gray-200 dark:bg-gray-800 z-50">
-    <a routerLink="/" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
-    <a routerLink="/pricing" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
-    <a routerLink="/features" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Features</a>
+  <div *ngIf="mobileMenuOpen" class="sm:hidden absolute top-20 left-0 right-0 bg-gray-200 dark:bg-gray-800 z-50 ">
+    <a routerLink="/"
+      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
+    <a routerLink="/pricing"
+      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
+    <a routerLink="/features"
+      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Features</a>
     <app-theme-toggle></app-theme-toggle>
   </div>
 </nav>

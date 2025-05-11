@@ -67,6 +67,6 @@ export class authEffects {
     logout() {
         this.authStore.clearAuth();
         this.snackbar.showInfo('You have been logged out.');
-        this.router.navigate(['/auth/login'])
+        this.router.navigate(['/auth/sign-in'])
     }
 }
