@@ -1,20 +1,6 @@
 import { computed } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { AuthUser } from '../../models/auth.model';
-
-export interface AuthState {
-    user: AuthUser | null;
-    token: string | null;
-    status: 'idle' | 'loading' | 'success' | 'error';
-    error: string | null;
-}
-
-const initialState: AuthState = {
-    user: null,
-    token: localStorage.getItem('token'),
-    status: 'idle',
-    error: null
-};
+import { AuthUser, initialState } from '../../models/auth.model';
 
 export const AuthStore = signalStore(
     { providedIn: 'root' },
@@ -43,12 +29,7 @@ export const AuthStore = signalStore(
             patchState(store, { status: 'error', error: errorMessage });
         },
         clearAuth() {
-            patchState(store, {
-                user: null,
-                token: null,
-                status: 'idle',
-                error: null
-            });
+            patchState(store, { user: null, token: null, status: 'idle', error: null });
             localStorage.removeItem('token');
         }
     }))

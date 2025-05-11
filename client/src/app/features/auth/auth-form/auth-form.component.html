@@ -15,7 +15,8 @@
                         <mat-label>Name</mat-label>
                         <mat-icon matPrefix>person</mat-icon>
                         <input matInput type="text" placeholder="Enter your name" formControlName="username">
-                        <button mat-icon-button matSuffix aria-label="Clear" *ngIf="registerForm.get('username')?.value" (click)="registerForm.get('username')?.reset()">
+                        <button mat-icon-button matSuffix aria-label="Clear" *ngIf="registerForm.get('username')?.value"
+                            (click)="registerForm.get('username')?.reset()">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -25,7 +26,8 @@
                         <mat-label>Email</mat-label>
                         <mat-icon matPrefix>email</mat-icon>
                         <input matInput type="email" placeholder="Enter your email" formControlName="email">
-                        <button mat-icon-button matSuffix aria-label="Clear" *ngIf="registerForm.get('email')?.value" (click)="registerForm.get('email')?.reset()">
+                        <button mat-icon-button matSuffix aria-label="Clear" *ngIf="registerForm.get('email')?.value"
+                            (click)="registerForm.get('email')?.reset()">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -43,7 +45,7 @@
                     </mat-form-field>
                     <app-validation-error [control]="registerForm.get('password')"></app-validation-error>
 
-                    <button class="btn-primary">Sign Up</button>
+                    <button class="btn-primary" [disabled]="registerForm.invalid||isLoading">Sign Up</button>
                 </form>
 
                 <div class="relative my-6">
@@ -98,7 +100,7 @@
                         <mat-icon matPrefix>email</mat-icon>
                         <input matInput type="email" placeholder="Enter your email" formControlName="email">
                         <button mat-icon-button matSuffix aria-label="Clear" *ngIf="loginForm.get('email')?.value"
-                        (click)="loginForm.get('email')?.reset()">
+                            (click)="loginForm.get('email')?.reset()">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -116,7 +118,7 @@
                     </mat-form-field>
                     <app-validation-error [control]="loginForm.get('password')"></app-validation-error>
 
-                    <button class="btn-primary">Sign In</button>
+                    <button class="btn-primary" [disabled]="loginForm.invalid||isLoading">Sign In</button>
                 </form>
 
                 <div class="relative my-6">
@@ -180,5 +182,12 @@
 
         </div>
     </div>
+
+    <!-- Loading Overlay -->
+    <div *ngIf="isLoading"
+        class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-50 z-50">
+        <app-loader></app-loader>
+    </div>
+
     <app-footer></app-footer>
 </div>

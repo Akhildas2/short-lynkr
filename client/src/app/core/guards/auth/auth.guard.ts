@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const token = localStorage.getItem('token');
   if (!token) {
-    router.navigate(['/auth/login']);
+    router.navigate(['/auth/sign-in']);
     return false;
   }
 
@@ -27,7 +27,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     if (isExpired) {
       authStore.clearAuth();
       localStorage.removeItem('token');
-      router.navigate(['/auth/login']);
+      router.navigate(['/auth/sign-in']);
       return false;
     }
 
@@ -38,7 +38,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   } catch (error) {
     localStorage.removeItem('token');
-    router.navigate(['/auth/login']);
+    router.navigate(['/auth/sign-in']);
     return false;
   }
 

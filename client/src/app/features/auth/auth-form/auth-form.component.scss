@@ -16,10 +16,19 @@ app-validation-error {
   transition: all 0.3s ease;
   background-color: var(--primary-color);
   color: #ffffff;
+  cursor: pointer;
 
   &:hover {
     filter: brightness(90%);
     transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background-color: color-mix(in srgb, var(--primary-color) 60%, var(--background-color));
+    color: color-mix(in srgb, var(--text-color) 60%, var(--background-color));
+    cursor: not-allowed;
+    transform: none;
+    filter: none;
   }
 }
 
