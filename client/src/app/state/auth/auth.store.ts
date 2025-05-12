@@ -1,6 +1,7 @@
 import { computed } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
-import { AuthUser, initialState } from '../../models/auth.model';
+import { AuthUser } from '../../models/auth/auth.model';
+import { initialState } from '../../models/auth/auth-state.model';
 
 export const AuthStore = signalStore(
     { providedIn: 'root' },

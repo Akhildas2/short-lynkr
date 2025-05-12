@@ -65,7 +65,7 @@ export class AuthFormComponent {
     setTimeout(async () => {
       await this.effects.register(username, email, password);
       this.isLoading = false;
-    }, 9000);
+    }, 3000);
   }
 
   async onLogin() {
@@ -80,7 +80,7 @@ export class AuthFormComponent {
     setTimeout(async () => {
       await this.effects.login(email, password);
       this.isLoading = false;
-    }, 9000);
+    }, 3000);
   }
 
 }
