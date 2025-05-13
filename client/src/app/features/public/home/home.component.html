@@ -16,39 +16,38 @@
       </div>
 
       <div class="p-4 sm:p-8 max-w-4xl mx-auto w-full">
-        <div class="relative group">
-          <div
-            class="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] rounded-full blur opacity-20 group-hover:opacity-30 transition duration-300">
-          </div>
+        <form [formGroup]="urlForm" (ngSubmit)="onSubmit()">
+          <div class="relative group">
+            <div
+              class="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] rounded-full blur opacity-20 group-hover:opacity-30 transition duration-300">
+            </div>
 
-          <div class="relative flex flex-col sm:block">
-            <div class="relative w-full">
-              <input type="url" id="urlInput" placeholder=" " 
-                     class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full border-0 
+            <div class="relative flex flex-col sm:block">
+              <div class="relative w-full">
+                <input type="url" id="urlInput" placeholder=" " formControlName="originalUrl" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full border-0 
                      bg-[var(--background-color)] text-[var(--text-color)]
                      focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]/30 
                      placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
 
-              <label for="urlInput" 
-                     class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-[var(--text-color)] opacity-75 
+                <label for="urlInput" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-[var(--text-color)] opacity-75 
                      transition-all duration-200 pointer-events-none px-2 bg-[var(--background-color)]
                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base 
                      peer-focus:top-0 peer-focus:text-xs sm:peer-focus:text-sm peer-focus:opacity-100">
-                Enter your URL here
-              </label>
+                  Enter your URL here
+                </label>
 
-              <button type="submit" 
-                      class="absolute top-1/2 right-2 -translate-y-1/2 px-3 py-2 sm:px-5 sm:py-4 rounded-full 
+                <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 px-3 py-2 sm:px-5 sm:py-4 rounded-full 
                      bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] 
                      text-white font-bold transition-all duration-200 hover:shadow-lg 
                      text-sm sm:text-base
                      hover:translate-x-1 hover:scale-105 active:scale-95
                      w-24 sm:w-auto">
-                <span class="hidden sm:inline">✨ </span>Shorten
-              </button>
+                  <span class="hidden sm:inline">✨ </span>Shorten
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </section>
   </main>

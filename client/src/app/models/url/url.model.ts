@@ -11,26 +11,3 @@ export interface UrlEntry {
     createdAt: Date;
     updatedAt: Date;
 }
-
-export interface UrlCreateRequest {
-    originalUrl: string;
-    customCode?: string;
-    customDomain?: string;
-    expiryDays?: number;
-}
-
-export interface UrlStatsResponse {
-    totalClicks: number;
-    dailyClicks: { date: string; count: number }[];
-    browserStats: { name: string; count: number }[];
-    deviceStats: { type: string; count: number }[];
-    locationStats: { country: string; count: number }[];
-}
-
-export interface QrCodeOptions {
-    backgroundColor?: string;
-    foregroundColor?: string;
-    cornerColor?: string;
-    logo?: string;
-    size?: number;
-}

@@ -1,14 +1,11 @@
-import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { initialState } from "../../models/auth/auth-state.model";
-import { computed } from "@angular/core";
+import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
+import { initialState } from "../../models/url/url-state.model";
+import { UrlEntry } from "../../models/url/url.model";
 
 
 export const UrlStore = signalStore(
     { providedIn: 'root' },
     withState(initialState),
-    withComputed((state) => ({
-      
-    })),
     withMethods((store) => ({
         setLoading() {
             patchState(store, { status: 'loading', error: null });
@@ -16,16 +13,27 @@ export const UrlStore = signalStore(
         setError(error: string) {
             patchState(store, { status: 'error', error });
         },
-        setUrl(){
-
+        setUrl(urls: UrlEntry[]) {
+            patchState(store, { urls, status: 'success', error: null });
         },
-        clearError(){
-            patchState(store,{error:null});
+        addUrl(url: UrlEntry) {
+            patchState(store, {
+                urls: [url, ...store.urls()],
+                status: 'success',
+                error: null
+            });
         },
-        clearSelection(){
-            patchState(store,{});
+        removeUrl(id: string) {
+            const currentUrls = store.urls();
+            patchState(store, {
+                urls: currentUrls.filter((url: UrlEntry) => url._id !== id),
+                status: 'success',
+                error: null
+            });
+        },
+        clearUrls() {
+            patchState(store, { urls: [], status: 'idle', error: null });
         }
-       
     }))
 
-)
+);
