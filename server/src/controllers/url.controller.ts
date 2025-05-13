@@ -4,15 +4,16 @@ import { AuthRequest } from '../types/auth';
 
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { longUrl } = req.body;
+        console.log("entered")
+        const { originalUrl, expiryDays } = req.body;
         const userId = req.user?.id;
 
-        if (!longUrl) {
-            res.status(400).json({ message: 'Long URL is required' });
+        if (!originalUrl) {
+            res.status(400).json({ message: 'Original URL is required' });
             return;
         }
 
-        const urlData = await urlService.createShortUrl(longUrl, userId);
+        const urlData = await urlService.createShortUrl(originalUrl, userId, expiryDays);
         res.status(201).json(urlData);
 
     } catch (error) {
@@ -20,21 +21,21 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
     }
 };
 
-export const redirectToOriginal = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+export const redirectToOriginal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { shortId } = req.params;
-        const urlData = await urlService.getOriginalUrl(shortId);
+        const urlData = await urlService.getAndUpdateOriginalUrl(shortId);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
             return;
         }
-        res.redirect(urlData.longUrl);
+
+        res.redirect(urlData.originalUrl);
 
     } catch (error) {
         next(error);
     }
 };
-
 
 export const getUserUrls = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -46,6 +47,25 @@ export const getUserUrls = async (req: AuthRequest, res: Response, next: NextFun
 
         const urls = await urlService.getUserUrls(userId)
         res.status(200).json({ urls });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+
+        const userId = req.user?.id;
+        const { id } = req.params;
+
+        const deletedUrl = await urlService.deleteUserUrl(id, userId);
+        if (!deletedUrl) {
+            res.status(404).json({ message: 'URL not found or unauthorized' });
+            return;
+        }
+
+        res.status(200).json({ message: 'URL deleted successfully' });
 
     } catch (error) {
         next(error);

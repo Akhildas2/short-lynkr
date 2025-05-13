@@ -6,14 +6,14 @@ export const validateUrl = (
     res: Response,
     next: NextFunction
 ): void => {
-    const { longUrl } = req.body;
-
-    if (!longUrl) {
+    const { originalUrl } = req.body;
+    console.log("req",req.body)
+    if (!originalUrl) {
         res.status(400).json({ error: 'URL is required' });
         return
     }
 
-    if (!validator.isURL(longUrl, {
+    if (!validator.isURL(originalUrl, {
         protocols: ['http', 'https'],
         require_protocol: true,
         require_host: true
