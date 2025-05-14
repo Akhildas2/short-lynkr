@@ -7,7 +7,6 @@ export const validateUrl = (
     next: NextFunction
 ): void => {
     const { originalUrl } = req.body;
-    console.log("req",req.body)
     if (!originalUrl) {
         res.status(400).json({ error: 'URL is required' });
         return

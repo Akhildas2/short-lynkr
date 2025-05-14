@@ -22,7 +22,6 @@ export class UrlEffects {
             this.snackbar.showSuccess('Short URL created successfully.');
 
         } catch (error: any) {
-            console.log("error:",error)
             const errorMessage = error?.error?.message || 'Failed to create URL.';
             this.store.setError(errorMessage);
             this.snackbar.showError(errorMessage);
