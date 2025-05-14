@@ -29,10 +29,11 @@
                      focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]/30 
                      placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
 
-                <label for="urlInput" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-[var(--text-color)] opacity-75 
+                <label for="urlInput"
+                  class="absolute left-4 sm:left-6 -translate-y-1/2 text-[var(--text-color)] opacity-75 
                      transition-all duration-200 pointer-events-none px-2 bg-[var(--background-color)]
                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base 
-                     peer-focus:top-0 peer-focus:text-xs sm:peer-focus:text-sm peer-focus:opacity-100">
+                     peer-focus:top-0 peer-focus:text-xs sm:peer-focus:text-sm  peer-focus:opacity-100 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-xs sm:peer-[:not(:placeholder-shown)]:text-sm">
                   Enter your URL here
                 </label>
 
@@ -47,6 +48,21 @@
               </div>
             </div>
           </div>
+
+          <div *ngIf="submitted" class="mt-2 text-sm text-red-500">
+            <span *ngIf="urlForm.get('originalUrl')?.errors?.['required']">
+              URL is required.
+            </span>
+
+            <span *ngIf="urlForm.get('originalUrl')?.errors?.['pattern'] && urlForm.get('originalUrl')?.value">
+              Please enter a valid URL starting with http:// or https:// (e.g., https://www.example.com).
+            </span>
+          </div>
+
+          <div *ngIf="submitted && urlForm.errors?.['alreadyShort']" class="mt-2 text-sm text-red-500">
+            This URL is already short and does not need to be shortened again.
+          </div>
+
         </form>
       </div>
     </section>

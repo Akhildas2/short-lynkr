@@ -22,12 +22,10 @@ export class authEffects {
 
             this.authStore.setAuthData(response.user, response.token);
             this.snackbar.showSuccess(`Welcome back,${response.user.username || 'User'}!`);
-
             this.router.navigate(['']);
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Login failed. Please check your credentials.';
-
             this.authStore.setError(errorMessage)
             this.snackbar.showError(errorMessage);
         }
@@ -41,6 +39,7 @@ export class authEffects {
             this.authStore.setAuthData(response.user, response.token);
             this.snackbar.showSuccess(`Account created successfully! Welcome, ${response.user.username || 'User'}.`);
             this.router.navigate([''])
+
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Registration failed. Please try again.';
             this.authStore.setError(errorMessage);

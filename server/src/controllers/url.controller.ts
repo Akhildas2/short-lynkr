@@ -4,7 +4,6 @@ import { AuthRequest } from '../types/auth';
 
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        console.log("entered")
         const { originalUrl, expiryDays } = req.body;
         const userId = req.user?.id;
 
@@ -24,6 +23,7 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const redirectToOriginal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { shortId } = req.params;
+        console.log("req",req.params)
         const urlData = await urlService.getAndUpdateOriginalUrl(shortId);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
