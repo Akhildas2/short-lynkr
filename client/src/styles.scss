@@ -138,3 +138,22 @@ body {
   .mdc-notched-outline__notch {
   border-right-style: hidden;
 }
+
+// Add this to both dark and light theme sections
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: var(--background-color);
+  --mdc-dialog-subhead-color: var(--text-color);
+  --mdc-dialog-supporting-text-color: var(--text-color);
+
+  .mat-mdc-dialog-title {
+    color: var(--text-color);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+  }
+
+  .mat-mdc-dialog-content {
+    color: var(--text-color);
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,12 @@
+<h2 mat-dialog-title class="text-3xl font-bold text-center">{{ data.title }}</h2>
+
+<mat-dialog-content class="py-4 text-lg font-medium">
+    {{ data.content }}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-4 pb-4">
+    <button mat-button  (click)="close()">Close</button>
+    <button *ngIf="data.actionText && data.actionRoute" mat-button  (click)="performAction()" cdkFocusInitial>
+        {{ data.actionText }}
+    </button>
+</mat-dialog-actions>
