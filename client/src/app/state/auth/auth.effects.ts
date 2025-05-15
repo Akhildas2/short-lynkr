@@ -47,19 +47,21 @@ export class authEffects {
         }
     }
 
-    async checkAuthStatus(): Promise<void> {
+    async checkAuthStatus(): Promise<boolean> {
         const token = localStorage.getItem('token');
         if (!token) {
             this.authStore.clearAuth();
-            return;
+            return false;
         }
 
         try {
             const response = await firstValueFrom(this.authApiService.getProfile());
             this.authStore.setUser(response.user);
+            return true;
 
         } catch (error) {
             this.logout();
+            return false;
         }
     }
 

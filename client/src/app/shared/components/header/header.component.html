@@ -21,34 +21,39 @@
         <app-theme-toggle class="hidden sm:block"></app-theme-toggle>
 
         <!-- Authenticated User -->
-        <ng-container *ngIf="user;  else guest">
-          <div class="relative group">
+        <ng-container *ngIf="user; else guest">
+          <div class="relative" [ngClass]="{ 'group': !isMobile }" (click)="toggleMobileDropdown()"
+            (appClickOutside)="mobileDropdownOpen = false">
             <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + username" class="h-14 w-14 object-cover rounded-full cursor-pointer
-            border-2 border-gray-300 dark:border-gray-700
-            hover:border-blue-500 dark:hover:border-blue-500
-            hover:scale-125 transition-all duration-300 ease-in-out" />
+             border-2 border-gray-900 dark:border-white
+             hover:border-blue-500 dark:hover:border-blue-500
+             transition-all duration-300 ease-in-out" [ngClass]="{ 'hover:scale-125': !isMobile }" />
 
             <!-- Dropdown -->
-            <div
-              class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-              <a routerLink="/dashboard"
-                class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">My
-                URLs</a>
-              <a routerLink="/qr"
-                class="block px-4 py-2  hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">QR
-                Generator</a>
-              <button (click)="logout()"
-                class="block w-full text-left px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">
+            <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl py-2 z-50
+              transition-all duration-300 ease-in-out" [ngClass]="{
+            'opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto': !isMobile,
+            'block': isMobile && mobileDropdownOpen,
+            'hidden': isMobile && !mobileDropdownOpen
+             }">
+              <a routerLink="/" class="block px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">My URLs</a>
+              <a routerLink="/qr" class="block px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">QR Generator</a>
+              <button (click)="logout(); mobileDropdownOpen = false"
+                class="block w-full text-left px-4 py-2 hover:text-primary transition-colors">
                 Logout
               </button>
             </div>
+
           </div>
         </ng-container>
 
+
         <!-- Guest -->
         <ng-template #guest>
-          <button mat-button routerLink="/auth/sign-in"
-            class="hidden sm:inline-flex items-center hover:text-primary transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
+          <button mat-stroked-button routerLink="/auth/sign-in"
+            class="hidden sm:inline-flex items-center  hover:bg-gray-200 dark:hover:bg-gray-700">
             <mat-icon>login</mat-icon>
             <span class="ml-1">Sign In</span>
           </button>
@@ -64,13 +69,20 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="mobileMenuOpen" class="sm:hidden absolute top-20 left-0 right-0 bg-gray-200 dark:bg-gray-800 z-50 ">
-    <a routerLink="/"
-      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Home</a>
-    <a routerLink="/pricing"
-      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Pricing</a>
-    <a routerLink="/features"
-      class="block px-4 py-2 hover:text-primary transition-colors hover:bg-gray-100 dark:hover:bg-gray-700">Features</a>
-    <app-theme-toggle></app-theme-toggle>
+  <div *ngIf="mobileMenuOpen" (appClickOutside)="mobileMenuOpen = false"
+    class="sm:hidden absolute p-5 left-5 right-5 rounded-2xl shadow-2xl  bg-white dark:bg-gray-800 z-50">
+    <div class="flex items-center justify-between px-4">
+      <a routerLink="/" (click)="mobileMenuOpen = false" class="block hover:text-primary transition-colors ">Home</a>
+      <app-theme-toggle></app-theme-toggle>
+    </div>
+    <a routerLink="/pricing" (click)="mobileMenuOpen = false"
+      class="block px-4 py-2 hover:text-primary transition-colors ">Pricing</a>
+    <a routerLink="/features" (click)="mobileMenuOpen = false"
+      class="block px-4 py-2 hover:text-primary transition-colors ">Features</a>
+    <a routerLink="/auth/sign-in" *ngIf="!user" (click)="mobileMenuOpen = false"
+      class="block px-4 py-2 hover:text-primary transition-colors ">Sign In</a>
+    <a routerLink="/auth/sign-up" *ngIf="!user" (click)="mobileMenuOpen = false"
+      class="block px-4 py-2 hover:text-primary transition-colors">Sign Up</a>
   </div>
+
 </nav>
