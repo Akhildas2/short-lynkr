@@ -68,6 +68,11 @@
     </section>
   </main>
 
+  <div *ngIf=" isLoading "
+    class="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 dark:bg-gray-900 dark:bg-opacity-50 z-50">
+    <app-loader></app-loader>
+  </div>
+
   <!-- Footer -->
   <app-footer></app-footer>
 </div>

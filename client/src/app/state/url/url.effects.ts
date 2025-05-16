@@ -3,6 +3,7 @@ import { UrlStore } from "./url.store";
 import { UrlService } from "../../core/services/api/url/url.service";
 import { SnackbarService } from "../../shared/services/snackbar/snackbar.service";
 import { firstValueFrom } from "rxjs";
+import { UrlEntry } from "../../models/url/url.model";
 
 
 
@@ -13,18 +14,19 @@ export class UrlEffects {
     private api = inject(UrlService);
     private snackbar = inject(SnackbarService);
 
-    async createUrl(originalUrl: string,expiryDays?:number): Promise<void> {
+    async createUrl(originalUrl: string, expiryDays?: number): Promise<UrlEntry | null> {
         this.store.setLoading();
         try {
-            const url = await firstValueFrom(this.api.createUrl(originalUrl,expiryDays));
+            const url = await firstValueFrom(this.api.createUrl(originalUrl, expiryDays));
             this.store.addUrl(url);
 
             this.snackbar.showSuccess('Short URL created successfully.');
-
+            return url;
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Failed to create URL.';
             this.store.setError(errorMessage);
             this.snackbar.showError(errorMessage);
+            return null;
         }
     }
 
@@ -36,6 +38,19 @@ export class UrlEffects {
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Failed to load URLs.';
+            this.store.setError(errorMessage);
+            this.snackbar.showError(errorMessage);
+        }
+    }
+
+    async fetchUrlById(id: string): Promise<void> {
+        this.store.setLoading();
+        try {
+            const response = await firstValueFrom(this.api.getUrlById(id));
+            this.store.setSelectedUrl(response.url);
+
+        } catch (error: any) {
+            const errorMessage = error?.error?.message || 'Failed to fetch URL.';
             this.store.setError(errorMessage);
             this.snackbar.showError(errorMessage);
         }

@@ -33,6 +33,17 @@ export const UrlStore = signalStore(
         },
         clearUrls() {
             patchState(store, { urls: [], status: 'idle', error: null });
+        },
+        setSelectedUrl(url: UrlEntry) {
+            patchState(store, {
+                selectedUrl: url,
+                status: 'success',
+                error: null
+            });
+        },
+
+        clearSelectedUrl() {
+            patchState(store, { selectedUrl: null });
         }
     }))
 

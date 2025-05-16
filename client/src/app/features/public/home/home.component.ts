@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HeaderComponent } from "../../../shared/components/header/header.component";
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
@@ -9,22 +9,27 @@ import { isShortUrl } from '../../../shared/utils/url.utils';
 import { authEffects } from '../../../state/auth/auth.effects';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/alert-dialog/alert-dialog.component';
+import { Router } from '@angular/router';
+import { LoaderComponent } from '../../../shared/components/loader/loader.component';
+import { UrlStore } from '../../../state/url/url.store';
 
 @Component({
     selector: 'app-home',
-    imports: [HeaderComponent, FooterComponent, MaterialModule, ReactiveFormsModule, CommonModule],
+    imports: [HeaderComponent, FooterComponent, MaterialModule, ReactiveFormsModule, CommonModule, LoaderComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })
 export class HomeComponent {
     urlForm: FormGroup;
     submitted = false;
+    isLoading = false;
 
     constructor(
         private fb: FormBuilder,
         private urlEffects: UrlEffects,
         private authEffects: authEffects,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private router: Router
     ) {
         this.urlForm = this.fb.group({
             originalUrl: ['', [Validators.required, Validators.pattern(
@@ -66,8 +71,17 @@ export class HomeComponent {
             return;
         }
 
-        await this.urlEffects.createUrl(originalUrl);
-        this.urlForm.reset();
-        this.submitted = false;
+        this.isLoading = true;
+
+        setTimeout(async () => {
+            const url = await this.urlEffects.createUrl(originalUrl);
+            this.urlForm.reset();
+            this.submitted = false;
+            this.isLoading = true;
+            if (url && url._id) {
+                this.router.navigate(['/shortened', url._id]);
+            }
+        }, 3000);
+
     }
 }

@@ -23,7 +23,7 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const redirectToOriginal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { shortId } = req.params;
-        console.log("req",req.params)
+        console.log("req", req.params)
         const urlData = await urlService.getAndUpdateOriginalUrl(shortId);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
@@ -45,13 +45,29 @@ export const getUserUrls = async (req: AuthRequest, res: Response, next: NextFun
             return;
         }
 
-        const urls = await urlService.getUserUrls(userId)
+        const urls = await urlService.getUserUrls(userId);
         res.status(200).json({ urls });
 
     } catch (error) {
         next(error);
     }
 }
+
+export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const url = await urlService.getUrlById(id);
+        if (!url) {
+             res.status(404).json({ message: 'URL not found' });
+             return;
+        }
+        res.status(200).json({ url });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 export const deleteUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
