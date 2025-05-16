@@ -41,3 +41,7 @@ export const getUserUrls = async (userId?: string) => {
 export const deleteUserUrl = async (id: string, userId?: string) => {
     return await UrlModel.findOneAndDelete({ _id: id, userId });
 };
+
+export const getUrlById = async (id: string) => {
+    return await UrlModel.findById(id)
+}
