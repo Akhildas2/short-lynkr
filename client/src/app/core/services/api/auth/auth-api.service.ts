@@ -10,7 +10,7 @@ export class AuthApiService {
 
   constructor(private http: HttpClient) { }
 
-  register(user: { username: string; email: string; password: string }):Observable<AuthResponse> {
+  register(user: { username: string; email: string; password: string }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user);
   }
 
@@ -18,13 +18,13 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
   }
 
-getProfile(): Observable<AuthResponse> {
-  const token = localStorage.getItem('token');
-  return this.http.get<AuthResponse>(`${this.apiUrl}/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-}
+  getProfile(): Observable<AuthResponse> {
+    const token = localStorage.getItem('token');
+    return this.http.get<AuthResponse>(`${this.apiUrl}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
 
 }

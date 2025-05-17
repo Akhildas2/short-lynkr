@@ -4,10 +4,10 @@ import { MaterialModule } from '../../../../Material.Module';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-theme-toggle',
-    imports: [MaterialModule, CommonModule],
-    templateUrl: './theme-toggle.component.html',
-    styleUrl: './theme-toggle.component.scss'
+  selector: 'app-theme-toggle',
+  imports: [MaterialModule, CommonModule],
+  templateUrl: './theme-toggle.component.html',
+  styleUrl: './theme-toggle.component.scss'
 })
 export class ThemeToggleComponent {
   isDark = false;

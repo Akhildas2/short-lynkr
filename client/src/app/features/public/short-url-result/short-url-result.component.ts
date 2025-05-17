@@ -9,7 +9,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 
 @Component({
   selector: 'app-short-url-result',
-  imports: [CommonModule,HeaderComponent,FooterComponent],
+  imports: [CommonModule, HeaderComponent, FooterComponent],
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })
@@ -28,7 +28,7 @@ export class ShortUrlResultComponent implements OnInit {
     if (id) {
       await this.effects.fetchUrlById(id);
     }
-      console.log('Selected URL:', this.selected); 
+    console.log('Selected URL:', this.selected);
   }
   copyToClipboard(text: string) {
 

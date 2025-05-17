@@ -5,8 +5,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="px-4 pb-4">
-    <button mat-button  (click)="close()">Close</button>
-    <button *ngIf="data.actionText && data.actionRoute" mat-button  (click)="performAction()" cdkFocusInitial>
+    <button mat-button (click)="close()">Close</button>
+    <button *ngIf="data.actionText && data.actionRoute" mat-button (click)="performAction()" cdkFocusInitial>
         {{ data.actionText }}
     </button>
 </mat-dialog-actions>
