@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-alert-dialog',
-  imports: [MaterialModule,CommonModule],
+  imports: [MaterialModule, CommonModule],
   templateUrl: './alert-dialog.component.html',
   styleUrl: './alert-dialog.component.scss'
 })
@@ -26,7 +26,7 @@ export class AlertDialogComponent {
     this.dialogRef.close();
   }
 
-   performAction(): void {
+  performAction(): void {
     this.close();
     if (this.data.actionRoute) {
       this.router.navigate([this.data.actionRoute]);

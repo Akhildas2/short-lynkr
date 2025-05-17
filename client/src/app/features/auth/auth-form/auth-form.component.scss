@@ -24,7 +24,11 @@ app-validation-error {
   }
 
   &:disabled {
-    background-color: color-mix(in srgb, var(--primary-color) 60%, var(--background-color));
+    background-color: color-mix(
+      in srgb,
+      var(--primary-color) 60%,
+      var(--background-color)
+    );
     color: color-mix(in srgb, var(--text-color) 60%, var(--background-color));
     cursor: not-allowed;
     transform: none;
