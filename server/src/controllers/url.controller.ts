@@ -58,8 +58,8 @@ export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunc
         const { id } = req.params;
         const url = await urlService.getUrlById(id);
         if (!url) {
-             res.status(404).json({ message: 'URL not found' });
-             return;
+            res.status(404).json({ message: 'URL not found' });
+            return;
         }
         res.status(200).json({ url });
 
