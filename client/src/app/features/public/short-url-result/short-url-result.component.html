@@ -1,21 +1,94 @@
-<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)]">
+<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] transition-colors duration-300">
   <app-header></app-header>
 
   <!-- Main Card Container -->
-  <main *ngIf="selected as url" class="container m-5 mx-auto px-4 py-4 max-w-4xl">
+  <main *ngIf="selected as url"
+    class="container mx-auto p-3 max-w-6xl shadow-lg rounded-2xl mb-5 transition-all duration-500">
 
     <!-- QR Code Section -->
-    <div class="mb-12 text-center">
-      <div class="inline-block">
-        <img [src]="url.qrCodeUrl" alt="QR Code"
-          class="w-60 h-60 rounded-2xl shadow-2xl object-contain hover:scale-105 transition-transform">
-      </div>
-      <h2
-        class="mt-3 text-3xl font-bold bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
-        Scan to Visit
-      </h2>
-    </div>
+    <div class="rounded-3xl p-5">
+      <div class="flex flex-col sm:flex-row items-center gap-5">
+        <!-- QR Display -->
+        <div
+          class="flex-1 text-center p-6 rounded-2xl hover:shadow-xl transition-transform transform hover:scale-105 duration-300">
+          <div class="p-4 rounded-xl inline-block bg-white dark:bg-gray-800 shadow-md transition-shadow">
+            <img [src]="url.qrCodeUrl" alt="QR Code" class="w-48 h-48 object-contain animate-fade-in">
+          </div>
+          <h2 class="mt-4 text-xl font-bold">Scan this QR Code</h2>
+          <p>Point your camera at the code</p>
+          <button mat-stroked-button matTooltip="Download QR Code"
+            class="mt-3 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] text-white px-4 py-2 rounded-lg hover:scale-105 hover:shadow-lg transition-all">
+            <mat-icon>download</mat-icon> Download QR
+          </button>
+        </div>
 
+        <!-- QR Details -->
+        <div class="flex-1 space-y-6">
+
+          <!-- Stats Grid -->
+          <div class="grid grid-cols-2 gap-4">
+            <div
+              class="p-4 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300">
+              <p class="text-sm flex items-center gap-2"><mat-icon>calendar_today</mat-icon>Created Date</p>
+              <p class="text-2xl font-bold">{{url.createdAt}}</p>
+            </div>
+            <div class="p-4 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300"
+              *ngIf="url.createdAt">
+              <p class="text-sm flex items-center gap-2"><mat-icon>event</mat-icon>Expiry Date</p>
+              <p class="text-2xl font-bold">{{url.expiresAt}}</p>
+            </div>
+          </div>
+
+          <!-- Click Count -->
+          <div class="grid grid-cols-1 gap-4">
+            <div
+              class="p-4 rounded-xl shadow-2xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300">
+              <p class="text-sm flex items-center gap-2"><mat-icon>bar_chart</mat-icon>Total Clicks</p>
+              <p class="text-2xl font-bold">{{url.click}}</p>
+            </div>
+          </div>
+
+          <!-- Original Link -->
+          <mat-card
+            class="bg-[var(--background-color)] text-[var(--text-color)] !rounded-xl hover:shadow-xl transition-all duration-300">
+            <mat-card-header class="pb-4">
+              <mat-card-title>
+                <mat-icon matPrefix class="me-3 font-bold">link</mat-icon> Original Link
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <a [href]="url.originalUrl" target="_blank"
+                class="text-[var(--primary-color)] hover:text-[var(--success-color)] hover:underline break-words font-medium transition-colors duration-300 flex items-center gap-1">
+                {{ url.originalUrl }} <mat-icon>open_in_new</mat-icon>
+              </a>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Short Link -->
+          <mat-card
+            class="bg-[var(--background-color)] text-[var(--text-color)] !rounded-xl hover:shadow-xl transition-all duration-300">
+            <mat-card-header class="pb-4">
+              <mat-card-title>
+                <mat-icon matPrefix class="me-3 font-bold">content_copy</mat-icon> Short Link
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <a [href]="url.shortUrl" target="_blank"
+                class="text-[var(--primary-color)] hover:text-[var(--success-color)] truncate font-mono transition-colors duration-300 flex items-center gap-1">
+                {{ url.shortUrl }} <mat-icon>open_in_new</mat-icon>
+              </a>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-stroked-button (click)="copyToClipboard(url.shortUrl)" matTooltip="Copy to clipboard"
+                class="bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] text-white hover:scale-105 hover:shadow-lg transition-all duration-300">
+                <mat-icon>content_copy</mat-icon> Copy
+              </button>
+            </mat-card-actions>
+          </mat-card>
+
+        </div>
+      </div>
+    </div>
   </main>
 
 
