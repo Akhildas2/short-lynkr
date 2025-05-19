@@ -5,6 +5,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
     exports: [
@@ -13,7 +14,8 @@ import { MatDialogModule } from '@angular/material/dialog';
         MatTooltipModule,
         MatInputModule,
         MatFormFieldModule,
-        MatDialogModule
+        MatDialogModule,
+        MatCardModule
     ]
 
 })

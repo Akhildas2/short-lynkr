@@ -6,10 +6,11 @@ import { UrlStore } from '../../../state/url/url.store';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { MaterialModule } from '../../../../Material.Module';
 
 @Component({
   selector: 'app-short-url-result',
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, HeaderComponent, FooterComponent,MaterialModule],
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })
