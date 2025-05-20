@@ -5,7 +5,7 @@ export interface UrlEntry {
     shortUrl: string;
     qrCodeUrl: string;
     userId: string;
-    click: number;
+    clicks: number;
     customDomain?: string;
     expiresAt?: Date;
     createdAt: Date;
