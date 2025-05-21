@@ -13,5 +13,3 @@ export const initialState: UrlState = {
     error: null,
     selectedUrl: null,
 };
-
-

@@ -1,13 +1,13 @@
 import UrlModel from '../models/url.model';
 import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
+import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 
-export const createShortUrl = async (originalUrl: string, userId?: string, expiryDays?: number) => {
+export const createShortUrl = async (originalUrl: string, userId?: string) => {
     const shortId = generateShortId();
     const shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
     const qrCodeUrl = await generateQRCode(shortUrl);
 
-    const expiresAt = expiryDays ? new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000) : undefined;
 
     const newUrl = await UrlModel.create({
         originalUrl,
@@ -15,11 +15,43 @@ export const createShortUrl = async (originalUrl: string, userId?: string, expir
         shortUrl,
         qrCodeUrl,
         userId,
-        expiresAt
     });
 
     return newUrl;
 };
+
+export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: string): Promise<UrlDocument> => {
+    const url = await UrlModel.findOne({ _id: id, userId });
+
+    if (!url) {
+        throw new Error('URL not found or access denied');
+    }
+
+    const { customDomain, shortId, expiryDays } = updateData;
+
+    if (customDomain !== undefined) {
+        url.customDomain = customDomain;
+    }
+
+    if (shortId !== undefined && shortId !== url.shortId) {
+        const existing = await UrlModel.findOne({ shortId });
+
+        if (existing && existing._id !== id) {
+            throw new Error('Custom short code already in use');
+        }
+
+        url.shortId = shortId;
+        url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
+    }
+
+    if (expiryDays !== undefined && expiryDays > 0) {
+        url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
+    }
+
+    await url.save();
+    return url;
+};
+
 
 export const getAndUpdateOriginalUrl = async (shortId: string) => {
     const url = await UrlModel.findOne({ shortId });
