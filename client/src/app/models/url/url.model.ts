@@ -7,6 +7,7 @@ export interface UrlEntry {
     userId: string;
     clicks: number;
     customDomain?: string;
+    expiryDays: number;
     expiresAt?: Date;
     createdAt: Date;
     updatedAt: Date;

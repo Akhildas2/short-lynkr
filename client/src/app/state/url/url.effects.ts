@@ -14,10 +14,10 @@ export class UrlEffects {
     private api = inject(UrlService);
     private snackbar = inject(SnackbarService);
 
-    async createUrl(originalUrl: string, expiryDays?: number): Promise<UrlEntry | null> {
+    async createUrl(originalUrl: string): Promise<UrlEntry | null> {
         this.store.setLoading();
         try {
-            const url = await firstValueFrom(this.api.createUrl(originalUrl, expiryDays));
+            const url = await firstValueFrom(this.api.createUrl(originalUrl));
             this.store.addUrl(url);
 
             this.snackbar.showSuccess('Short URL created successfully.');
@@ -27,6 +27,20 @@ export class UrlEffects {
             this.store.setError(errorMessage);
             this.snackbar.showError(errorMessage);
             return null;
+        }
+    }
+
+    async updateUrl(id: string, expiryDays: number, customDomain: string, customCode: string): Promise<void> {
+        this.store.setLoading();
+        try {
+            const response = await firstValueFrom(this.api.updateUrl(id, { expiryDays, customDomain, customCode }));
+            this.store.updateUrl(response.url);
+            this.snackbar.showSuccess('URL updated successfully.');
+
+        } catch (error: any) {
+            const errorMessage = error?.error?.message || 'Failed to update URL.';
+            this.store.setError(errorMessage);
+            this.snackbar.showError(errorMessage);
         }
     }
 

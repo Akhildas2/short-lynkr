@@ -11,8 +11,12 @@ export class UrlService {
 
   constructor(private http: HttpClient) { }
 
-  createUrl(originalUrl: string, expiryDays?: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create`, { originalUrl, expiryDays });
+  createUrl(originalUrl: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, { originalUrl });
+  }
+
+  updateUrl(id: string, data: { expiryDays?: number; customDomain?: string; customCode?: string }): Observable<{ url: UrlEntry }> {
+    return this.http.patch<{ url: UrlEntry }>(`${this.apiUrl}/update/${id}`, data)
   }
 
   getUserUrls(): Observable<any> {

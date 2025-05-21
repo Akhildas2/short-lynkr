@@ -20,7 +20,7 @@
                 </div>
                 <div class="space-y-4">
                   <button mat-stroked-button
-                    class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border-2 dark:border-gray-600">
+                    class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                     <span
                       class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
                       Download QR
@@ -30,7 +30,7 @@
                   <div class="text-center text-sm">
                     <span>Scan QR code to visit</span>
                     <a class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-xl line-clamp-1 mt-2"
-                      [href]="url.originalUrl">{{url.shortUrl }}</a>
+                      [href]="url.shortUrl">{{url.shortUrl }}</a>
                   </div>
                 </div>
               </div>
@@ -120,9 +120,9 @@
                         class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg line-clamp-1">
                         {{ url.shortUrl }}
                       </a>
-                      <div *ngIf="copySuccess" class="absolute items-center bottom-1 left-0 transform translate-y-full pt-1">
-                        <div
-                          class="flex items-center gap-1 text-sm text-success transition-opacity duration-300">
+                      <div *ngIf="copySuccess"
+                        class="absolute items-center bottom-1 left-0 transform translate-y-full pt-1">
+                        <div class="flex items-center gap-1 text-sm text-success transition-opacity duration-300">
                           <mat-icon class="text-success">check_circle_outline</mat-icon>
                           <span>Copied to clipboard!</span>
                         </div>
@@ -145,8 +145,8 @@
 
             <!-- Action Buttons -->
             <div class="grid md:grid-cols-2 gap-4">
-              <button mat-stroked-button
-                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border-2 dark:border-gray-600">
+              <button mat-stroked-button  (click)="customizeUrl(url)"
+                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
                 <span
                   class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
                   Customize URL
@@ -154,7 +154,7 @@
                 <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
               </button>
               <button mat-stroked-button
-                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border-2 dark:border-gray-600">
+                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                 <span
                   class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
                   View Dashboard

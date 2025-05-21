@@ -23,6 +23,15 @@ export const UrlStore = signalStore(
                 error: null
             });
         },
+        updateUrl(updateUrl: UrlEntry) {
+            const currentUrls = store.urls();
+            patchState(store, {
+                urls: currentUrls.map(url => url._id === updateUrl._id ? updateUrl : url),
+                selectedUrl: updateUrl,
+                status: 'success',
+                error: null
+            });
+        },
         removeUrl(id: string) {
             const currentUrls = store.urls();
             patchState(store, {
