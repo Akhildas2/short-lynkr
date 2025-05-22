@@ -41,8 +41,9 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         }
 
         url.shortId = shortId;
-        url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
     }
+    const domain=url.customDomain?.trim();
+    url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
 
     if (expiryDays !== undefined && expiryDays > 0) {
         url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
