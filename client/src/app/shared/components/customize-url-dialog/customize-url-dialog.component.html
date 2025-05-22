@@ -19,11 +19,11 @@
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Expiry in Days</mat-label>
         <mat-icon matPrefix>schedule</mat-icon>
-        <input matInput type="number" [(ngModel)]="expiryDays" min="1" />
+        <input matInput type="number" [(ngModel)]="expiryDays" />
     </mat-form-field>
 
     <!-- Expiry Date (read-only) -->
-    <mat-form-field appearance="outline" class="w-full">
+    <mat-form-field appearance="outline" class="w-full" *ngIf="expiryDays > 0 || updatedUrl.expiresAt">
         <mat-label>Expiry Date</mat-label>
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [value]="todayPlusDays(expiryDays) | date:'dd-MM-yyyy'" readonly />
