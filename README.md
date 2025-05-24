@@ -1,7 +1,9 @@
 # Lynkr
+
 # 🔗 URL Shortener with QR Code & Analytics
 
 A modern, full-featured URL shortener application that allows users to:
+
 - Shorten long URLs
 - Customize short URLs
 - Generate QR codes for sharing
@@ -44,24 +46,28 @@ cp .env.example .env
 # Run the app
 npm run dev
 ```
+
 🌐 API Endpoints
-Method	Endpoint	Description
-- POST	/api/shorten	Create short URL
-- GET	/api/:shortId	Redirect to long URL
-- GET	/api/stats/:id	Get usage statistics
+Method Endpoint Description
+
+- POST /api/shorten Create short URL
+- GET /api/:shortId Redirect to long URL
+- GET /api/stats/:id Get usage statistics
 
 ✨ Customization
+
 - Customize QR code styling (color, size)
 - Modify URL patterns via configuration
 - Switch chart libraries easily via component settings
 
 📈 Statistics Preview
+
 - Unique visitors
 - Total clicks
 - Click trends over time
 
-📄 License
+## 📄 License
 
-MIT License
+Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
 
 Built with ❤️ by Akhil das p
