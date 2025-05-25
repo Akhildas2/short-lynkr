@@ -17,10 +17,6 @@ A modern, full-featured URL shortener application that allows users to:
 - 📊 View visit statistics with dynamic charts (daily, weekly, monthly)
 - 🛡️ Built with performance and security in mind
 
-## 📸 Demo
-
-![Demo Screenshot](./screenshot.png)
-
 ## 🛠️ Tech Stack
 
 - **Frontend**: Angular + Tailwind CSS
