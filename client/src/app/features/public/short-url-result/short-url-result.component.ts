@@ -20,9 +20,10 @@ export class ShortUrlResultComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
-
-  urlCopied: boolean = false;
+  copySuccess = false;
+  showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
+
   constructor(private dialog: MatDialog) { }
 
   get selected(): UrlEntry | null {
@@ -34,10 +35,8 @@ export class ShortUrlResultComponent implements OnInit {
     if (id) {
       await this.urlEffects.fetchUrlById(id);
     }
-    console.log('Selected URL:', this.selected);
   }
 
-  copySuccess = false;
 
   copyToClipboard(text: string) {
     try {
@@ -69,6 +68,38 @@ export class ShortUrlResultComponent implements OnInit {
     }
   }
 
+  toggleQrSizeOptions(): void {
+    this.showQrSizes = !this.showQrSizes;
+  }
+
+  downloadQrImage(imageUrl: string, size: number): void {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, size, size);
+
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `qr-code-${size}x${size}.png`;
+        link.click();
+        
+        this.showQrSizes = false;
+      }
+    }
+
+    img.onerror = () => {
+      console.error('Failed to load QR image.');
+    };
+  }
+
   customizeUrl(url: UrlEntry) {
     const dialogRef = this.dialog.open(CustomizeUrlDialogComponent, {
       width: '400px',
@@ -77,7 +108,7 @@ export class ShortUrlResultComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result: Partial<UrlEntry>) => {
       if (result) {
-        const { customDomain, shortId, expiresAt } = result;
+        const { shortId, expiresAt, clickLimit, tags } = result;
         let expiryDays: number | undefined;
         if (expiresAt) {
           const today = new Date();
@@ -85,7 +116,7 @@ export class ShortUrlResultComponent implements OnInit {
           expiryDays = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
         }
 
-        this.urlEffects.updateUrl(url._id, expiryDays || 0, customDomain || '', shortId || '')
+        this.urlEffects.updateUrl(url._id, expiryDays || 0, shortId || '', clickLimit || 0, tags || '');
       }
     });
   }

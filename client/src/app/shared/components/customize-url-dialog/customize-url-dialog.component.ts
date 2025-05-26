@@ -2,16 +2,18 @@ import { Component, Inject } from '@angular/core';
 import { UrlEntry } from '../../../models/url/url.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '../../shared.module';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-customize-url-dialog',
-  imports: [SharedModule],
+  imports: [SharedModule,CommonModule],
   templateUrl: './customize-url-dialog.component.html',
   styleUrl: './customize-url-dialog.component.scss'
 })
 export class CustomizeUrlDialogComponent {
   updatedUrl: Partial<UrlEntry>;
   expiryDays: number = 0;
+  tags: string[] = ['work', 'project', 'important', 'personal', 'temporary'];
 
   constructor(
     private dialogRef: MatDialogRef<CustomizeUrlDialogComponent>,

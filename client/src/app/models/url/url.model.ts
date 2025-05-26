@@ -6,9 +6,11 @@ export interface UrlEntry {
     qrCodeUrl: string;
     userId: string;
     clicks: number;
-    customDomain?: string;
     expiryDays: number;
-    expiresAt?: Date;
+    clickLimit: number;
+    password: string;
+    tags: string;
+    expiresAt: Date;
     createdAt: Date;
     updatedAt: Date;
 }

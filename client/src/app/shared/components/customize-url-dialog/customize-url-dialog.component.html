@@ -1,25 +1,19 @@
 <h2 mat-dialog-title class="text-2xl font-bold">Customize URL</h2>
 
 <mat-dialog-content class="space-y-4 py-4">
-    <!-- Custom Domain -->
-    <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Custom Domain</mat-label>
-        <mat-icon matPrefix>language</mat-icon>
-        <input matInput [(ngModel)]="updatedUrl.customDomain" />
-    </mat-form-field>
 
     <!-- Custom Short Code -->
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Custom Short Code</mat-label>
         <mat-icon matPrefix>link</mat-icon>
-        <input matInput [(ngModel)]="updatedUrl.shortId" />
+        <input matInput [(ngModel)]="updatedUrl.shortId" placeholder="e.g. my-custom-link" />
     </mat-form-field>
 
     <!-- Expiry in Days -->
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Expiry in Days</mat-label>
         <mat-icon matPrefix>schedule</mat-icon>
-        <input matInput type="number" [(ngModel)]="expiryDays" />
+        <input matInput type="number" [(ngModel)]="expiryDays" placeholder="Enter a number from 0 to 100" />
     </mat-form-field>
 
     <!-- Expiry Date (read-only) -->
@@ -28,22 +22,37 @@
         <mat-icon matPrefix>event</mat-icon>
         <input matInput [value]="todayPlusDays(expiryDays) | date:'dd-MM-yyyy'" readonly />
     </mat-form-field>
-</mat-dialog-content>
 
+    <!-- Click Limit -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Click Limit</mat-label>
+        <mat-icon matPrefix>mouse</mat-icon>
+        <input matInput type="number" [(ngModel)]="updatedUrl.clickLimit" placeholder="Enter a number from 0 to 1000" />
+    </mat-form-field>
+
+    <!-- Tags -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Tag</mat-label>
+        <mat-icon matPrefix>label</mat-icon>
+        <mat-select [(ngModel)]="updatedUrl.tags" multiple placeholder="Select tags">
+            <mat-option *ngFor="let tag of tags" [value]="tag">
+                {{ tag }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+</mat-dialog-content>
 
 <mat-dialog-actions align="end" class="space-x-2">
     <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
         (click)="close()">
-        <span class="text-lg font-medium text-[var(--secondary-color)]">
-            Cancel
-        </span>
+        <span class="text-lg font-medium text-[var(--secondary-color)]">Cancel</span>
         <mat-icon class="ml-2 text-[var(--secondary-color)]">cancel</mat-icon>
     </button>
     <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
         (click)="save()">
-        <span class="text-lg font-medium text-[var(--primary-color)]">
-            Save
-        </span>
+        <span class="text-lg font-medium text-[var(--primary-color)]">Save</span>
         <mat-icon class="ml-2 text-[var(--primary-color)]">save</mat-icon>
     </button>
 </mat-dialog-actions>
