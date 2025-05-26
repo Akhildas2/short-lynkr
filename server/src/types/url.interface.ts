@@ -1,20 +1,22 @@
 import { Document, Types } from 'mongoose';
 
 export interface UrlDocument extends Document {
-    originalUrl: string;
-    shortId: string;
-    shortUrl: string;
-    qrCodeUrl?: string;
-    customDomain?: string;
-    userId?: Types.ObjectId;
-    clicks: number;
-    expiresAt?: Date;
-    createdAt: Date;
-    updatedAt: Date;
+  originalUrl: string;
+  shortId: string;
+  shortUrl: string;
+  qrCodeUrl?: string;
+  userId?: Types.ObjectId;
+  clicks: number;
+  clickLimit?: number;
+  tags?: string[];
+  expiresAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UpdateUrlData {
-  customDomain?: string;
-  shortId?: string;    
+  shortId?: string;
   expiryDays?: number;
+  clickLimit?: number;
+  tags?: string;
 }

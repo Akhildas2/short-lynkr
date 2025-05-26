@@ -8,7 +8,6 @@
 
         <!-- Main Card Grid -->
         <div class="grid lg:grid-cols-3 gap-8">
-
           <!-- QR Code Card  -->
           <div class="lg:col-span-1 flex justify-center items-center">
             <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl  p-6 w-full sm:max-w-md">
@@ -19,7 +18,8 @@
                     class="w-full h-full object-contain animate-fade-in rounded-2xl">
                 </div>
                 <div class="space-y-4">
-                  <button mat-stroked-button
+
+                  <button mat-stroked-button (click)="toggleQrSizeOptions()"
                     class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                     <span
                       class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
@@ -27,6 +27,18 @@
                     </span>
                     <mat-icon class="ml-2 text-[var(--primary-color)]">download</mat-icon>
                   </button>
+
+                  <div *ngIf="showQrSizes" class="flex justify-center gap-4 mt-2">
+                    <button mat-flat-button class="px-4 py-2"
+                      (click)="downloadQrImage(url.qrCodeUrl,300)">300x300</button>
+                    <button mat-flat-button class="px-4 py-2"
+                      (click)="downloadQrImage(url.qrCodeUrl,500)">500x500</button>
+                    <button mat-flat-button class="px-4 py-2"
+                      (click)="downloadQrImage(url.qrCodeUrl,750)">750x750</button>
+                    <button mat-flat-button class="px-4 py-2"
+                      (click)="downloadQrImage(url.qrCodeUrl,1024)">1024x1024</button>
+                  </div>
+
                   <div class="text-center text-sm">
                     <span>Scan QR code to visit</span>
                     <a class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-xl line-clamp-1 mt-2"
@@ -39,9 +51,16 @@
 
           <!-- Analytics Section -->
           <div class="lg:col-span-2 space-y-8 flex flex-col justify-center">
+            <div class="flex flex-wrap items-center gap-2">
+              <mat-icon>label</mat-icon>
+              <mat-chip-listbox>
+                <mat-chip *ngFor="let tag of url.tags" class="text-[var(--text-color)] font-medium" selected>{{ tag
+                  }}</mat-chip>
+              </mat-chip-listbox>
+            </div>
 
             <!-- Key Metrics Grid -->
-            <div class="flex gap-6" *ngIf="url.createdAt">
+            <div class="flex flex-wrap gap-4 sm:gap-6" *ngIf="url.createdAt">
               <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]"
                 *ngIf="url.createdAt">
                 <div class="flex items-center gap-4">
@@ -55,6 +74,18 @@
                 </div>
               </div>
 
+              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.clicks">
+                <div class="flex items-center gap-4">
+                  <div class="p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                    <mat-icon class="text-green-600 dark:text-green-400">trending_up</mat-icon>
+                  </div>
+                  <div>
+                    <p class="text-sm ">Total Clicks</p>
+                    <p class="text-xl font-semibold dark:text-gray-300">{{url.clicks}}</p>
+                  </div>
+                </div>
+              </div>
+
               <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]"
                 *ngIf="url.expiresAt">
                 <div class="flex items-center gap-4">
@@ -64,18 +95,6 @@
                   <div>
                     <p class="text-sm ">Expires</p>
                     <p class="text-xl font-semibold dark:text-gray-300">{{url.expiresAt | date:'mediumDate'}}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.clicks">
-                <div class="flex items-center gap-4">
-                  <div class="p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
-                    <mat-icon class="text-green-600 dark:text-green-400">trending_up</mat-icon>
-                  </div>
-                  <div>
-                    <p class="text-sm ">Total Clicks</p>
-                    <p class="text-xl font-semibold dark:text-gray-300">{{url.clicks}}</p>
                   </div>
                 </div>
               </div>
@@ -145,7 +164,7 @@
 
             <!-- Action Buttons -->
             <div class="grid md:grid-cols-2 gap-4">
-              <button mat-stroked-button  (click)="customizeUrl(url)"
+              <button mat-stroked-button (click)="customizeUrl(url)"
                 class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
                 <span
                   class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">

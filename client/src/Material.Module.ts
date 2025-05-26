@@ -7,6 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
     exports: [
@@ -17,7 +20,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
         MatFormFieldModule,
         MatDialogModule,
         MatCardModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        MatSelectModule,
+        MatOptionModule,
+        MatChipsModule
     ]
 
 })

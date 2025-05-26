@@ -6,9 +6,10 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     shortId: { type: String, required: true, unique: true },
     shortUrl: { type: String, required: true },
     qrCodeUrl: { type: String },
-    customDomain: { type: String },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     clicks: { type: Number, default: 0 },
+    clickLimit: { type: Number },
+    tags: { type: [String], default: [] },
     expiresAt: { type: Date },
 }, { timestamps: true });
 

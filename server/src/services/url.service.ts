@@ -27,11 +27,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         throw new Error('URL not found or access denied');
     }
 
-    const { customDomain, shortId, expiryDays } = updateData;
-
-    if (customDomain !== undefined) {
-        url.customDomain = customDomain;
-    }
+    const { shortId, expiryDays, clickLimit, tags } = updateData;
 
     if (shortId !== undefined && shortId !== url.shortId) {
         const existing = await UrlModel.findOne({ shortId });
@@ -42,12 +38,24 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 
         url.shortId = shortId;
     }
-    const domain=url.customDomain?.trim();
-    url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
 
     if (expiryDays !== undefined && expiryDays > 0) {
         url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
     }
+
+    if (clickLimit !== undefined) {
+        url.clickLimit = clickLimit;
+    }
+
+    if (tags !== undefined) {
+        const cleanTags = Array.isArray(tags)
+            ? tags.map(tag => tag.trim())
+            : tags.split(',').map((tag: string) => tag.trim());
+
+        // Remove empty and duplicate tags
+        url.tags = [...new Set(cleanTags.filter(tag => tag))];
+    }
+
 
     await url.save();
     return url;
@@ -57,8 +65,11 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 export const getAndUpdateOriginalUrl = async (shortId: string) => {
     const url = await UrlModel.findOne({ shortId });
 
-    if (!url || (url.expiresAt && url.expiresAt < new Date())) {
-        return null;
+    if (!url) {
+        throw new Error('URL not found or access denied');
+    }
+    if (url.expiresAt && url.expiresAt < new Date()) {
+        throw new Error('This link has expired');
     }
 
     url.clicks += 1;

@@ -6,4 +6,43 @@
   --highlight-color: #ffa114;
   --success-color: #0e8160;
   --error-color: #ff0000;
+
+  --mdc-outlined-text-field-label-text-color: var(--text-color);
+  --mdc-outlined-text-field-input-text-color: var(--text-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--text-color);
+  --mdc-outlined-text-field-outline-color: var(--text-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-supporting-text-color: var(--text-color);
+  --mdc-outlined-text-field-error-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--error-color);
+
+  // Apply it globally to inputs and labels
+  .mat-mdc-form-field {
+    color: var(--text-color) !important;
+  }
+
+  // Explicitly set label colors
+  .mat-mdc-form-field .mat-mdc-floating-label,
+  .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+    color: var(--text-color) !important;
+  }
+
+  // Ensure icons use the correct color
+  .mat-icon,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
+    color: var(--text-color);
+  }
+
+  // Buttons and icon buttons
+  .mat-mdc-icon-button,
+  .mat-mdc-button {
+    color: var(--text-color);
+  }
+
+  // Placeholder color
+  input::placeholder {
+    color: var(--text-color) !important;
+  }
 }

@@ -1,0 +1,85 @@
+// Define breakpoints if not defined yet
+$sm: 640px;
+
+// Container padding adjustment on small devices
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  @media (max-width: $sm) {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+// Main grid for cards
+.grid {
+  @media (max-width: $sm) {
+    display: block; // Stack items vertically on small screens
+  }
+}
+
+// QR Code Card and Analytics Section
+.lg\:col-span-1 {
+  @media (max-width: $sm) {
+    grid-column: auto !important;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.lg\:col-span-2 {
+  @media (max-width: $sm) {
+    grid-column: auto !important;
+  }
+}
+
+// Buttons full width adjustment
+button.mat-stroked-button {
+  @media (max-width: $sm) {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+// Text sizes adjustments
+h2 {
+  @media (max-width: $sm) {
+    font-size: 1.25rem; // smaller heading on small devices
+  }
+}
+
+.text-xl {
+  @media (max-width: $sm) {
+    font-size: 1rem;
+  }
+}
+
+// Adjust margins and paddings inside cards for small screens
+.bg-white,
+.dark\:bg-gray-800 {
+  @media (max-width: $sm) {
+    padding: 1rem !important;
+  }
+}
+
+// Make links wrap nicely
+a {
+  word-break: break-word;
+}
+
+// For small devices, reduce gaps and spacing
+.flex-gap-6 {
+  @media (max-width: $sm) {
+    gap: 1rem;
+  }
+}
+
+// Make icon buttons bigger tap targets on small screens
+button.mat-icon-button {
+  @media (max-width: $sm) {
+    padding: 0.5rem;
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+}

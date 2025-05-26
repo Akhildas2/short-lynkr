@@ -23,9 +23,9 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
-        const { customDomain, customCode, expiryDays } = req.body;
+        const { customCode, expiryDays, clickLimit, tags } = req.body;
+        console.log("req.body",req.body)
         const userId = req.user?.id;
-        console.log('req.body',req.body);
 
         // Input validation
         if (!customCode) {
@@ -44,12 +44,12 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
         }
 
         const updatedUrl = await urlService.updateUrl(id, {
-            customDomain,
             shortId: customCode,
-            expiryDays
+            expiryDays,
+            clickLimit,
+            tags
         }, userId);
-        console.log('updatedUrl',updatedUrl.expiresAt);
-        
+        console.log("updated",updatedUrl)
         res.status(200).json({ url: updatedUrl });
 
     } catch (error) {

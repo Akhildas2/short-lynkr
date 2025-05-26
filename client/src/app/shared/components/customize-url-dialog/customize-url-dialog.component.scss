@@ -1,0 +1,15 @@
+@media (max-width: 320px) {
+  mat-dialog-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important; 
+    gap: 0.5rem;  
+
+    &.space-x-2 {
+      margin-left: 0;
+      > button {
+        margin-left: 0 !important;
+      }
+    }
+  }
+}
