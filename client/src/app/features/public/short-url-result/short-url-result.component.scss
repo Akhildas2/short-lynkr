@@ -83,3 +83,7 @@ button.mat-icon-button {
     }
   }
 }
+
+::ng-deep .mat-mdc-chip .mdc-evolution-chip__text-label {
+  color: var(--text-color) !important;
+}

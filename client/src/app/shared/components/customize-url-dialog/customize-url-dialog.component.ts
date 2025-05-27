@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-customize-url-dialog',
-  imports: [SharedModule,CommonModule],
+  imports: [SharedModule, CommonModule],
   templateUrl: './customize-url-dialog.component.html',
   styleUrl: './customize-url-dialog.component.scss'
 })
@@ -39,9 +39,15 @@ export class CustomizeUrlDialogComponent {
 
   save(): void {
     const result = { ...this.updatedUrl };
-
+    console.log("reult", result)
     if (this.expiryDays > 0) {
       result.expiresAt = this.todayPlusDays(this.expiryDays);
+    } else {
+      result.expiresAt = undefined;
+    }
+
+    if (!result.clickLimit && result.clickLimit !== 0) {
+      result.clickLimit = undefined;
     }
 
     this.dialogRef.close(result);

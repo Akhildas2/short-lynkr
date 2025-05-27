@@ -8,7 +8,6 @@ export interface UrlEntry {
     clicks: number;
     expiryDays: number;
     clickLimit: number;
-    password: string;
     tags: string;
     expiresAt: Date;
     createdAt: Date;
