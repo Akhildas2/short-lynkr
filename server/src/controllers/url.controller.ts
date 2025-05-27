@@ -24,7 +24,7 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
     try {
         const { id } = req.params;
         const { customCode, expiryDays, clickLimit, tags } = req.body;
-        console.log("req.body",req.body)
+        console.log("req.body", req.body)
         const userId = req.user?.id;
 
         // Input validation
@@ -38,18 +38,13 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
             return;
         }
 
-        if (expiryDays !== undefined && expiryDays < 0) {
-            res.status(400).json({ message: 'Expiry days must be 0 or a positive number.' });
-            return;
-        }
-
         const updatedUrl = await urlService.updateUrl(id, {
             shortId: customCode,
             expiryDays,
             clickLimit,
             tags
         }, userId);
-        console.log("updated",updatedUrl)
+        console.log("updatedUrl", updatedUrl)
         res.status(200).json({ url: updatedUrl });
 
     } catch (error) {

@@ -90,7 +90,7 @@ export class ShortUrlResultComponent implements OnInit {
         link.href = canvas.toDataURL('image/png');
         link.download = `qr-code-${size}x${size}.png`;
         link.click();
-        
+
         this.showQrSizes = false;
       }
     }
@@ -98,6 +98,13 @@ export class ShortUrlResultComponent implements OnInit {
     img.onerror = () => {
       console.error('Failed to load QR image.');
     };
+  }
+
+  calculateDaysRemaining(expiryDate: string | Date): number {
+    const expiry = new Date(expiryDate);
+    const now = new Date();
+    const diff = expiry.getTime() - now.getTime();
+    return Math.ceil(diff / (1000 * 3600 * 24));
   }
 
   customizeUrl(url: UrlEntry) {

@@ -37,14 +37,19 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         }
 
         url.shortId = shortId;
+        url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
     }
 
     if (expiryDays !== undefined && expiryDays > 0) {
         url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
+    } else {
+        url.expiresAt = undefined;
     }
 
     if (clickLimit !== undefined) {
         url.clickLimit = clickLimit;
+    } else {
+        url.clickLimit = undefined;
     }
 
     if (tags !== undefined) {

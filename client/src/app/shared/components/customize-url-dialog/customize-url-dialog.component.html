@@ -6,14 +6,22 @@
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Custom Short Code</mat-label>
         <mat-icon matPrefix>link</mat-icon>
-        <input matInput [(ngModel)]="updatedUrl.shortId" placeholder="e.g. my-custom-link" />
+        <input matInput [(ngModel)]="updatedUrl.shortId" #shortId="ngModel" required minlength="4" maxlength="8"
+            placeholder="e.g. my-custom-link" />
+        <mat-error *ngIf="shortId.errors?.['required']">Short code is required.</mat-error>
+        <mat-error *ngIf="shortId.errors?.['minlength']">Minimum 4 characters required.</mat-error>
+        <mat-error *ngIf="shortId.errors?.['maxlength']">Maximum 8 characters allowed.</mat-error>
     </mat-form-field>
 
     <!-- Expiry in Days -->
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Expiry in Days</mat-label>
         <mat-icon matPrefix>schedule</mat-icon>
-        <input matInput type="number" [(ngModel)]="expiryDays" placeholder="Enter a number from 0 to 100" />
+        <input matInput type="number" [(ngModel)]="expiryDays" #expiryDaysModel="ngModel" min="0" max="100"
+            placeholder="Enter a number from 0 to 100" />
+             <mat-hint>Enter 0 for no expiration</mat-hint>
+        <mat-error *ngIf="expiryDaysModel.errors?.['min']">Minimum value is 0.</mat-error>
+        <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is 100.</mat-error>
     </mat-form-field>
 
     <!-- Expiry Date (read-only) -->
@@ -27,7 +35,11 @@
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Click Limit</mat-label>
         <mat-icon matPrefix>mouse</mat-icon>
-        <input matInput type="number" [(ngModel)]="updatedUrl.clickLimit" placeholder="Enter a number from 0 to 1000" />
+        <input matInput type="number" [(ngModel)]="updatedUrl.clickLimit" #clickLimit="ngModel" min="0" max="1000"
+            placeholder="Enter a number from 0 to 1000" />
+             <mat-hint>Enter 0 for unlimited clicks</mat-hint>
+        <mat-error *ngIf="clickLimit.errors?.['min']">Minimum value is 0.</mat-error>
+        <mat-error *ngIf="clickLimit.errors?.['max']">Maximum value is 1000.</mat-error>
     </mat-form-field>
 
     <!-- Tags -->
@@ -51,7 +63,7 @@
         <mat-icon class="ml-2 text-[var(--secondary-color)]">cancel</mat-icon>
     </button>
     <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
-        (click)="save()">
+        (click)="save()" [disabled]="!shortId.valid||!clickLimit.valid||!expiryDaysModel.valid">
         <span class="text-lg font-medium text-[var(--primary-color)]">Save</span>
         <mat-icon class="ml-2 text-[var(--primary-color)]">save</mat-icon>
     </button>
