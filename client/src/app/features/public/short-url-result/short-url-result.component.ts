@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UrlEntry } from '../../../models/url/url.model';
 import { ActivatedRoute } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
@@ -9,6 +9,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { MaterialModule } from '../../../../Material.Module';
 import { CustomizeUrlDialogComponent } from '../../../shared/components/customize-url-dialog/customize-url-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { interval, Subscriber, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-short-url-result',
@@ -16,13 +17,14 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })
-export class ShortUrlResultComponent implements OnInit {
+export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
   copySuccess = false;
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
+  pollingSubscription!: Subscription;
 
   constructor(private dialog: MatDialog) { }
 
@@ -30,13 +32,23 @@ export class ShortUrlResultComponent implements OnInit {
     return this.selectedUrl();
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      await this.urlEffects.fetchUrlById(id);
+      this.urlEffects.fetchUrlById(id);
+
+      // Start polling every 10 seconds
+      this.pollingSubscription = interval(10000).subscribe(() => {
+        this.urlEffects.fetchUrlById(id);
+      });
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
+  }
 
   copyToClipboard(text: string) {
     try {
@@ -110,7 +122,7 @@ export class ShortUrlResultComponent implements OnInit {
   customizeUrl(url: UrlEntry) {
     const dialogRef = this.dialog.open(CustomizeUrlDialogComponent, {
       width: '400px',
-      data: url
+      data: { ...url, clicks: url.clicks }
     });
 
     dialogRef.afterClosed().subscribe((result: Partial<UrlEntry>) => {
