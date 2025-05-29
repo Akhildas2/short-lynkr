@@ -36,8 +36,8 @@ cd url-shortener
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Then edit .env with your DB URI and other secrets
+ .env
+
 
 # Run the app
 npm run dev
