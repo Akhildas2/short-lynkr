@@ -6,6 +6,7 @@ import connectDB from "./config/mongodb";
 import urlRoutes, { redirectRouter } from './routes/url.routes';
 import userRoutes from './routes/user.routes';
 import { errorHandler } from "./middleware/errorHandler";
+import './cron-jobs/cleanup';
 
 
 const app = express();

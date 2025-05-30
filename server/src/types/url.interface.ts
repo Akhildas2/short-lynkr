@@ -12,6 +12,7 @@ export interface UrlDocument extends Document {
   expiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
+  isActive: Boolean;
 }
 
 export interface UpdateUrlData {

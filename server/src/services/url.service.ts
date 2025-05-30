@@ -2,6 +2,8 @@ import UrlModel from '../models/url.model';
 import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import { UpdateUrlData, UrlDocument } from '../types/url.interface';
+import { ApiError } from '../utils/ApiError';
+
 
 export const createShortUrl = async (originalUrl: string, userId?: string) => {
     const shortId = generateShortId();
@@ -24,7 +26,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     const url = await UrlModel.findOne({ _id: id, userId });
 
     if (!url) {
-        throw new Error('URL not found or access denied');
+        throw new ApiError('URL not found or access denied', 404);
     }
 
     const { shortId, expiryDays, clickLimit, tags } = updateData;
@@ -33,7 +35,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         const existing = await UrlModel.findOne({ shortId });
 
         if (existing && existing._id !== id) {
-            throw new Error('Custom short code already in use');
+            throw new ApiError('Custom short code already in use', 409);
         }
 
         url.shortId = shortId;
@@ -71,10 +73,10 @@ export const getAndUpdateOriginalUrl = async (shortId: string) => {
     const url = await UrlModel.findOne({ shortId });
 
     if (!url) {
-        throw new Error('URL not found or access denied');
+        throw new ApiError('URL not found or access denied', 404);
     }
     if (url.expiresAt && url.expiresAt < new Date()) {
-        throw new Error('This link has expired');
+        throw new ApiError('This link has expired', 410);
     }
 
     url.clicks += 1;

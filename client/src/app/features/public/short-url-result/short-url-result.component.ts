@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { UrlEntry } from '../../../models/url/url.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { CommonModule } from '@angular/common';
@@ -9,18 +9,22 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { MaterialModule } from '../../../../Material.Module';
 import { CustomizeUrlDialogComponent } from '../../../shared/components/customize-url-dialog/customize-url-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
-import { interval, Subscriber, Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
+import { UrlService } from '../../../core/services/api/url/url.service';
+import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-short-url-result',
-  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule],
+  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, RouterLink],
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })
 export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
+  private urlService = inject(UrlService);
   private urlStore = inject(UrlStore);
+   private snackbar=inject(SnackbarService);
   copySuccess = false;
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
@@ -121,8 +125,8 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
 
   customizeUrl(url: UrlEntry) {
     const dialogRef = this.dialog.open(CustomizeUrlDialogComponent, {
-      width: '400px',
-      data: { ...url, clicks: url.clicks }
+      width: '500px',
+      data: url
     });
 
     dialogRef.afterClosed().subscribe((result: Partial<UrlEntry>) => {

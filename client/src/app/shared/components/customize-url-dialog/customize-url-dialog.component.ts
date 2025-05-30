@@ -15,6 +15,7 @@ export class CustomizeUrlDialogComponent {
   expiryDays: number = 0;
   tags: string[] = ['work', 'project', 'important', 'personal', 'temporary'];
 
+
   constructor(
     private dialogRef: MatDialogRef<CustomizeUrlDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UrlEntry
@@ -37,9 +38,19 @@ export class CustomizeUrlDialogComponent {
     return result;
   }
 
+  validateClickLimit(control: any): void {
+    const value = this.updatedUrl.clickLimit;
+    const currentClicks = this.data.clicks ?? 0;
+
+    if (value == null || value === 0 || value > currentClicks) {
+      control.control.setErrors(null);
+    } else {
+      control.control.setErrors({ clickLimitInvalid: true });
+    }
+  }
+
   save(): void {
     const result = { ...this.updatedUrl };
-    console.log("reult", result)
     if (this.expiryDays > 0) {
       result.expiresAt = this.todayPlusDays(this.expiryDays);
     } else {

@@ -12,4 +12,5 @@ export interface UrlEntry {
     expiresAt: Date;
     createdAt: Date;
     updatedAt: Date;
+    isActive:boolean;
 }
