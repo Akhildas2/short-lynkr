@@ -24,7 +24,6 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
     try {
         const { id } = req.params;
         const { customCode, expiryDays, clickLimit, tags } = req.body;
-        console.log("req.body", req.body)
         const userId = req.user?.id;
 
         // Input validation
@@ -44,7 +43,6 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
             clickLimit,
             tags
         }, userId);
-        console.log("updatedUrl", updatedUrl)
         res.status(200).json({ url: updatedUrl });
 
     } catch (error) {

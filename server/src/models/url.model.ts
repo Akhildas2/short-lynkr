@@ -11,9 +11,8 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     clickLimit: { type: Number },
     tags: { type: [String], default: [] },
     expiresAt: { type: Date },
+    isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
-// TTL index to auto-remove expired docs
-urlSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model<UrlDocument>('Url', urlSchema);
