@@ -75,10 +75,15 @@ export const getAndUpdateOriginalUrl = async (shortId: string) => {
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
     }
+    // Check expiration
     if (url.expiresAt && url.expiresAt < new Date()) {
         throw new ApiError('This link has expired', 410);
     }
-
+    // Check click limit
+    if (url.clickLimit && url.clicks >= url.clickLimit) {
+        throw new ApiError('This link has reached its click limit', 429); // 429 Too Many Requests
+    }
+    
     url.clicks += 1;
     await url.save();
 

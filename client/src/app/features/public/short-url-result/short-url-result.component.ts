@@ -24,7 +24,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private urlEffects = inject(UrlEffects);
   private urlService = inject(UrlService);
   private urlStore = inject(UrlStore);
-   private snackbar=inject(SnackbarService);
+  private snackbar = inject(SnackbarService);
   copySuccess = false;
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
@@ -41,8 +41,8 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     if (id) {
       this.urlEffects.fetchUrlById(id);
 
-      // Start polling every 10 seconds
-      this.pollingSubscription = interval(10000).subscribe(() => {
+      // Start polling every 1 seconds
+      this.pollingSubscription = interval(1000).subscribe(() => {
         this.urlEffects.fetchUrlById(id);
       });
     }
@@ -78,9 +78,26 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  openLink(url: string): void {
-    if (url) {
-      window.open(url, '_blank')
+  async openLink(shortUrl: string): Promise<void> {
+    const shortId = this.extractShortId(shortUrl);
+    if (!shortId) {
+      this.snackbar.showError('Invalid short URL.');
+      return;
+    }
+
+    const originalUrl = await this.urlEffects.redirectToOriginalUrl(shortId);
+    if (originalUrl) {
+      window.open(originalUrl, '_blank');
+    }
+  }
+
+  private extractShortId(url: string): string | null {
+    try {
+      const parsed = new URL(url);
+      const parts = parsed.pathname.split('/');
+      return parts[parts.length - 1];
+    } catch {
+      return null;
     }
   }
 
@@ -112,7 +129,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     }
 
     img.onerror = () => {
-      console.error('Failed to load QR image.');
+      this.snackbar.showError('Failed to load QR image.');
     };
   }
 

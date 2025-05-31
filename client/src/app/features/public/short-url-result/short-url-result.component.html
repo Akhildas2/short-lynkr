@@ -41,8 +41,10 @@
 
                   <div class="text-center text-sm">
                     <span>Scan QR code to visit</span>
-                    <a class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-xl line-clamp-1 mt-2"
-                      [href]="url.shortUrl">{{url.shortUrl }}</a>
+                    <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+                      (click)="openLink(url.shortUrl)">
+                      {{ url.shortUrl }}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -143,10 +145,10 @@
                     </div>
                     <div class="relative">
                       <p class="text-sm font-medium">Short URL</p>
-                      <a [href]="url.shortUrl" target="_blank"
-                        class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg line-clamp-1">
+                      <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+                        (click)="openLink(url.shortUrl)">
                         {{ url.shortUrl }}
-                      </a>
+                      </span>
                       <div *ngIf="copySuccess"
                         class="absolute items-center bottom-1 left-0 transform translate-y-full pt-1">
                         <div class="flex items-center gap-1 text-sm text-success transition-opacity duration-300">
@@ -168,7 +170,7 @@
                   </div>
                 </div>
               </div>
-              
+
             </div>
 
             <!-- Action Buttons -->
@@ -185,7 +187,7 @@
                 class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                 <span
                   class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                   Statistics
+                  Statistics
                 </span>
                 <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
               </button>
