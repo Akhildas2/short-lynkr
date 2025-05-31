@@ -28,7 +28,7 @@ export class UrlService {
   }
 
   redirectToOriginal(shortId: string): Observable<any> {
-    return this.http.get(`${this.baseApi}/r/${shortId}`)
+    return this.http.get(`${this.baseApi}/r/${shortId}`, { observe: 'response' })
   }
 
   deleteUrl(id: string): Observable<void> {

@@ -10,6 +10,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
     exports: [
@@ -23,7 +27,11 @@ import { MatChipsModule } from '@angular/material/chips';
         MatDatepickerModule,
         MatSelectModule,
         MatOptionModule,
-        MatChipsModule
+        MatChipsModule,
+        MatTableModule,
+        MatProgressBarModule,
+        MatMenuModule,
+        MatProgressSpinnerModule
     ]
 
 })

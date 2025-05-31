@@ -60,7 +60,7 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
             return;
         }
 
-        res.redirect(urlData.originalUrl);
+        res.status(200).json({originalUrl:urlData.originalUrl});
 
     } catch (error) {
         next(error);
