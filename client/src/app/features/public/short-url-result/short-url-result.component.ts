@@ -41,8 +41,8 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     if (id) {
       this.urlEffects.fetchUrlById(id);
 
-      // Start polling every 1 seconds
-      this.pollingSubscription = interval(1000).subscribe(() => {
+      // Start polling every 10 seconds
+      this.pollingSubscription = interval(10000).subscribe(() => {
         this.urlEffects.fetchUrlById(id);
       });
     }
