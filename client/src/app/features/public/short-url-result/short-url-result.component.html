@@ -200,5 +200,13 @@
     </div>
   </main>
 
+  <div *ngIf="!selected" class="flex flex-col items-center justify-center flex-grow h-full text-center">
+    No shortened links yet.
+    <a routerLink="/" class="text-[var(--primary-color)] hover:text-[var(--accent-color)] font-semibold underline ml-1">
+      Start by creating your first URL!
+    </a>
+  </div>
+
+
   <app-footer class="mt-auto"></app-footer>
 </div>

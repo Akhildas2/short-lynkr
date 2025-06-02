@@ -10,7 +10,6 @@ import { MaterialModule } from '../../../../Material.Module';
 import { CustomizeUrlDialogComponent } from '../../../shared/components/customize-url-dialog/customize-url-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { interval, Subscription } from 'rxjs';
-import { UrlService } from '../../../core/services/api/url/url.service';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 
 @Component({
@@ -22,7 +21,6 @@ import { SnackbarService } from '../../../shared/services/snackbar/snackbar.serv
 export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
-  private urlService = inject(UrlService);
   private urlStore = inject(UrlStore);
   private snackbar = inject(SnackbarService);
   copySuccess = false;

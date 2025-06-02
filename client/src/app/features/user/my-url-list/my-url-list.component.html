@@ -1,0 +1,46 @@
+<div class="min-h-screen flex flex-col bg-[var(--background-color)] text-[var(--text-color)]">
+  <app-header></app-header>
+
+  <!-- Main Content -->
+  <div class="flex-1 p-6 bg-gradient-to-br from-gray-50/60 to-white dark:from-gray-800 dark:to-gray-900">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <mat-card *ngFor="let url of urlList()" class="group relative shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+
+        <!-- URL Info -->
+        <mat-card-header>
+          <mat-card-title class="truncate text-base font-semibold text-indigo-600 dark:text-indigo-400">
+            {{ url.shortUrl }}
+          </mat-card-title>
+          <mat-card-subtitle class="truncate text-sm text-gray-500 dark:text-gray-400">
+            {{ url.originalUrl }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <!-- Stats -->
+        <mat-card-content class="mt-2 space-y-1">
+          <p class="text-sm">📈 Clicks: <span class="font-medium">{{ url.clicks }}</span></p>
+          <p class="text-sm">⏰ Expires: <span class="font-medium">{{ url.expiresAt | date:'short' }}</span></p>
+          <p class="text-sm">🏷️ Tags: <span class="font-medium">{{ url.tags || '-' }}</span></p>
+          <p class="text-sm font-semibold" [ngClass]="url.isActive ? 'text-green-600' : 'text-red-500'">
+            {{ url.isActive ? '✔ Active' : '✖ Inactive' }}
+          </p>
+        </mat-card-content>
+
+        <!-- Actions -->
+        <mat-card-actions class="flex justify-end gap-2 mt-4 px-4 pb-4">
+          <button mat-icon-button (click)="copyToClipboard(url.shortUrl)" matTooltip="Copy URL">
+            <mat-icon class="text-gray-500 group-hover:text-indigo-600">content_copy</mat-icon>
+          </button>
+          <button mat-icon-button (click)="editUrl(url)" matTooltip="Edit">
+            <mat-icon class="text-gray-500 group-hover:text-yellow-500">edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteUrl(url._id)" matTooltip="Delete">
+            <mat-icon class="text-gray-500 group-hover:text-red-500">delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <app-footer class="mt-auto"></app-footer>
+</div>

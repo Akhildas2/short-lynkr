@@ -6,8 +6,8 @@ import { authenticate } from '../middleware/auth';
 const router = express.Router();
 
 router.post('/create', authenticate, validateUrl, createUrl);
-router.get('/:id', authenticate, getUrlById);
 router.get('/my-urls', authenticate, getUserUrls);
+router.get('/:id', authenticate, getUrlById);
 router.patch('/update/:id', authenticate, updateUrl);
 router.delete('/:id', authenticate, deleteUrl);
 
