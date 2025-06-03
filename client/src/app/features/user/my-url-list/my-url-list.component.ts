@@ -14,6 +14,9 @@ import { UrlStore } from '../../../state/url/url.store';
   styleUrl: './my-url-list.component.scss'
 })
 export class MyUrlListComponent implements OnInit {
+view(_t7: UrlEntry) {
+throw new Error('Method not implemented.');
+}
   private urlEffects = inject(UrlEffects)
   private urlStore = inject(UrlStore)
 
@@ -22,14 +25,15 @@ export class MyUrlListComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.urlEffects.fetchUserUrls();
   }
-  deleteUrl(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-  editUrl(_t7: any) {
-    throw new Error('Method not implemented.');
-  }
-  copyToClipboard(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
+activeDropdown: string | null = null;
+
+toggleDropdown(id: string) {
+  this.activeDropdown = this.activeDropdown === id ? null : id;
+}
+
+editUrl(url: UrlEntry) { /* your logic */ }
+deleteUrl(url: UrlEntry) { /* your logic */ }
+exportUrl(url: UrlEntry) { /* your logic */ }
+fallbackQr = 'https://via.placeholder.com/96x96.png?text=QR';
 
 }
