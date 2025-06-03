@@ -2,17 +2,19 @@
   <app-header></app-header>
 
   <!-- Main Content -->
-  <main *ngIf="selected as url" class="flex-grow py-8">
-    <div class="container mx-auto px-4 lg:px-8 max-w-7xl">
+  <main *ngIf="selected as url" class="flex-grow py-4">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
       <div class="space-y-6">
 
         <!-- Main Card Grid -->
-        <div class="grid lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           <!-- QR Code Card  -->
           <div class="lg:col-span-1 flex justify-center items-center">
-            <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl  p-6 w-full sm:max-w-md">
-              <div class="space-y-4">
-                <h2 class="text-xl font-semibold text-center">QR Code</h2>
+            <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-4 w-full sm:max-w-md">
+              <div class="space-y-3">
+                <h2
+                  class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
+                  Your Shortened URL is Ready!</h2>
                 <div class="p-4 transition-transform hover:scale-105">
                   <img [src]="url.qrCodeUrl" alt="QR Code"
                     class="w-full h-full object-contain animate-fade-in rounded-2xl">
@@ -115,42 +117,43 @@
             <div class="space-y-6">
 
               <!-- Original URL Card -->
-              <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-6">
-                <div class="flex items-center justify-between gap-4">
-                  <div class="flex items-center gap-3">
-                    <div class="p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+              <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-4 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3 w-full">
+                    <div class="p-3 sm:p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg shrink-0">
                       <mat-icon class="text-purple-600 dark:text-purple-400">link</mat-icon>
                     </div>
-                    <div>
+                    <div class="w-full">
                       <p class="text-sm font-medium">Original URL</p>
                       <a [href]="url.originalUrl" target="_blank"
-                        class="text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg break-words line-clamp-1">
+                        class="block text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all">
                         {{ url.originalUrl }}
                       </a>
                     </div>
                   </div>
-                  <button mat-icon-button (click)="openLink(url.originalUrl)"
-                    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
+                  <button mat-icon-button (click)="openInNewTab(url.originalUrl)"
+                    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full self-end sm:self-center shrink-0"
+                    matTooltip="Open in new tab">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
                 </div>
               </div>
 
               <!-- Short URL Card -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6">
-                <div class="flex items-center justify-between gap-4">
-                  <div class="flex items-center gap-3">
-                    <div class="p-4 bg-teal-100 dark:bg-teal-900/20 rounded-lg">
+              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 sm:p-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div class="flex items-start gap-3 w-full">
+                    <div class="p-3 sm:p-4 bg-teal-100 dark:bg-teal-900/20 rounded-lg shrink-0">
                       <mat-icon class="text-teal-600 dark:text-teal-400">content_copy</mat-icon>
                     </div>
-                    <div class="relative">
+                    <div class="relative w-full">
                       <p class="text-sm font-medium">Short URL</p>
-                      <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+                      <span
+                        class="block cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all"
                         (click)="openLink(url.shortUrl)">
                         {{ url.shortUrl }}
                       </span>
-                      <div *ngIf="copySuccess"
-                        class="absolute items-center bottom-1 left-0 transform translate-y-full pt-1">
+                      <div *ngIf="copySuccess" class="absolute bottom-0 left-0 transform translate-y-full pt-1">
                         <div class="flex items-center gap-1 text-sm text-success transition-opacity duration-300">
                           <mat-icon class="text-success">check_circle_outline</mat-icon>
                           <span>Copied to clipboard!</span>
@@ -158,13 +161,13 @@
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2">
+                  <div class="flex gap-2 self-end sm:self-center">
                     <button mat-icon-button (click)="copyToClipboard(url.shortUrl)"
-                      class=" hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
+                      class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
                       <mat-icon>content_copy</mat-icon>
                     </button>
                     <button mat-icon-button (click)="openLink(url.shortUrl)"
-                      class=" hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
+                      class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
                       <mat-icon>open_in_new</mat-icon>
                     </button>
                   </div>
@@ -172,6 +175,7 @@
               </div>
 
             </div>
+
 
             <!-- Action Buttons -->
             <div class="grid md:grid-cols-2 gap-4">

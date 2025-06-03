@@ -15,6 +15,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
     exports: [
@@ -33,7 +34,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
         MatProgressBarModule,
         MatMenuModule,
         MatProgressSpinnerModule,
-        MatGridListModule
+        MatGridListModule,
+        MatPaginatorModule
     ]
 
 })

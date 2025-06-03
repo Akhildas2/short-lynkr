@@ -1,16 +1,16 @@
 <nav class="bg-[var(--background-color)] text-[var(--text-color)]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-20 items-center">
       <!-- Logo -->
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center gap-4 ml-2">
         <img src="/assets/logo-light.png" alt="ShortLynkr logo light"
-          class="h-10 w-10 object-contain block dark:hidden">
+          class="h-10 w-10 object-contain dark:hidden">
         <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark" class="h-10 w-10 object-contain hidden dark:block">
         <span class="text-2xl font-extrabold">Short Lynkr</span>
       </div>
 
       <!-- Desktop Links -->
-      <div class="hidden sm:flex items-center space-x-8 font-extrabold">
+      <div class="hidden sm:flex items-center space-x-8 text-lg sm:text-xl font-semibold">
         <a routerLink="/" class="hover:text-primary transition-colors">Home</a>
         <a routerLink="/pricing" class="hover:text-primary transition-colors">Pricing</a>
         <a routerLink="/features" class="hover:text-primary transition-colors">Features</a>

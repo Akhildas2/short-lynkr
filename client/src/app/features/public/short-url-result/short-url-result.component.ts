@@ -89,6 +89,10 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     }
   }
 
+  openInNewTab(url: string): void {
+    window.open(url, '_blank');
+  }
+
   private extractShortId(url: string): string | null {
     try {
       const parsed = new URL(url);
