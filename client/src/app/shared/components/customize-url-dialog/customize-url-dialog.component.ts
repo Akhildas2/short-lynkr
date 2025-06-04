@@ -2,11 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { UrlEntry } from '../../../models/url/url.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '../../shared.module';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-customize-url-dialog',
-  imports: [SharedModule, CommonModule],
+  imports: [SharedModule],
   templateUrl: './customize-url-dialog.component.html',
   styleUrl: './customize-url-dialog.component.scss'
 })
@@ -14,7 +13,6 @@ export class CustomizeUrlDialogComponent {
   updatedUrl: Partial<UrlEntry>;
   expiryDays: number = 0;
   tags: string[] = ['work', 'project', 'important', 'personal', 'temporary'];
-
 
   constructor(
     private dialogRef: MatDialogRef<CustomizeUrlDialogComponent>,
@@ -38,16 +36,6 @@ export class CustomizeUrlDialogComponent {
     return result;
   }
 
-  validateClickLimit(control: any): void {
-    const value = this.updatedUrl.clickLimit;
-    const currentClicks = this.data.clicks ?? 0;
-
-    if (value == null || value === 0 || value > currentClicks) {
-      control.control.setErrors(null);
-    } else {
-      control.control.setErrors({ clickLimitInvalid: true });
-    }
-  }
 
   save(): void {
     const result = { ...this.updatedUrl };

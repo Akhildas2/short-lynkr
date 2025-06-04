@@ -5,7 +5,7 @@ import { StatisticsComponent } from './statistics/statistics.component';
 import { MyUrlListComponent } from './my-url-list/my-url-list.component';
 
 const routes: Routes = [
-  { path: 'statistics', component: StatisticsComponent },
+  { path: 'analytics', component: StatisticsComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'my-urls', component: MyUrlListComponent }
 ];
