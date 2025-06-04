@@ -11,6 +11,9 @@ import { CustomizeUrlDialogComponent } from '../../../shared/components/customiz
 import { MatDialog } from '@angular/material/dialog';
 import { interval, Subscription } from 'rxjs';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
+import { openInNewTab } from '../../../shared/utils/url.utils';
+import { UrlService } from '../../../shared/services/url/url.service';
+import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 
 @Component({
   selector: 'app-short-url-result',
@@ -23,12 +26,11 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
   private snackbar = inject(SnackbarService);
-  copySuccess = false;
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
   pollingSubscription!: Subscription;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, private urlService: UrlService, private clipboardService: ClipboardService) { }
 
   get selected(): UrlEntry | null {
     return this.selectedUrl();
@@ -52,55 +54,16 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     }
   }
 
-  copyToClipboard(text: string) {
-    try {
-      navigator.clipboard.writeText(text).then(() => {
-        this.showSuccessMessage();
-      });
-    } catch (err) {
-      // Fallback for browsers that don't support clipboard API
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      this.showSuccessMessage();
-    }
+  openLink(url: string) {
+    this.urlService.openShortUrl(url);
   }
 
-  private showSuccessMessage() {
-    this.copySuccess = true;
-    setTimeout(() => {
-      this.copySuccess = false;
-    }, 2000);
+  openExternalPage(url: string): void {
+    openInNewTab(url);
   }
 
-  async openLink(shortUrl: string): Promise<void> {
-    const shortId = this.extractShortId(shortUrl);
-    if (!shortId) {
-      this.snackbar.showError('Invalid short URL.');
-      return;
-    }
-
-    const originalUrl = await this.urlEffects.redirectToOriginalUrl(shortId);
-    if (originalUrl) {
-      window.open(originalUrl, '_blank');
-    }
-  }
-
-  openInNewTab(url: string): void {
-    window.open(url, '_blank');
-  }
-
-  private extractShortId(url: string): string | null {
-    try {
-      const parsed = new URL(url);
-      const parts = parsed.pathname.split('/');
-      return parts[parts.length - 1];
-    } catch {
-      return null;
-    }
+  copyUrl(url: string): void {
+    this.clipboardService.copyToClipboard(url);
   }
 
   toggleQrSizeOptions(): void {

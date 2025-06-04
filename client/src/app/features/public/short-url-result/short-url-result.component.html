@@ -131,7 +131,7 @@
                       </a>
                     </div>
                   </div>
-                  <button mat-icon-button (click)="openInNewTab(url.originalUrl)"
+                  <button mat-icon-button (click)="openExternalPage(url.originalUrl)"
                     class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full self-end sm:self-center shrink-0"
                     matTooltip="Open in new tab">
                     <mat-icon>open_in_new</mat-icon>
@@ -153,16 +153,11 @@
                         (click)="openLink(url.shortUrl)">
                         {{ url.shortUrl }}
                       </span>
-                      <div *ngIf="copySuccess" class="absolute bottom-0 left-0 transform translate-y-full pt-1">
-                        <div class="flex items-center gap-1 text-sm text-success transition-opacity duration-300">
-                          <mat-icon class="text-success">check_circle_outline</mat-icon>
-                          <span>Copied to clipboard!</span>
-                        </div>
-                      </div>
                     </div>
                   </div>
+
                   <div class="flex gap-2 self-end sm:self-center">
-                    <button mat-icon-button (click)="copyToClipboard(url.shortUrl)"
+                    <button mat-icon-button (click)="copyUrl(url.shortUrl)"
                       class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
                       <mat-icon>content_copy</mat-icon>
                     </button>
@@ -179,6 +174,7 @@
 
             <!-- Action Buttons -->
             <div class="grid md:grid-cols-2 gap-4">
+
               <button mat-stroked-button (click)="customizeUrl(url)"
                 class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
                 <span
@@ -187,16 +183,17 @@
                 </span>
                 <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
               </button>
-              <button mat-stroked-button routerLink="/user/statistics"
+
+              <button mat-stroked-button routerLink="/user/analytics"
                 class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                 <span
                   class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                  Statistics
+                  Analytics
                 </span>
                 <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
               </button>
-            </div>
 
+            </div>
           </div>
         </div>
 

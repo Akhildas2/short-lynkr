@@ -34,7 +34,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     if (shortId !== undefined && shortId !== url.shortId) {
         const existing = await UrlModel.findOne({ shortId });
 
-        if (existing && existing._id !== id) {
+        if (existing?.id && existing._id !== id) {
             throw new ApiError('Custom short code already in use', 409);
         }
 
@@ -42,24 +42,41 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         url.shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
     }
 
-    if (expiryDays !== undefined && expiryDays > 0) {
-        url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
-    } else {
-        url.expiresAt = undefined;
+    // Validate expiryDays
+    if (expiryDays !== undefined) {
+        if (Number.isInteger(expiryDays) && expiryDays > 0 && expiryDays < 100) {
+            url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
+        } else {
+            url.expiresAt = undefined;
+        }
     }
 
+    // Validate clickLimit
     if (clickLimit !== undefined) {
-        url.clickLimit = clickLimit;
-    } else {
-        url.clickLimit = undefined;
+        const currentClicks = url.clicks ?? 0;
+
+        if (clickLimit === 0) {
+            url.clickLimit = undefined;
+        } else if (
+            Number.isInteger(clickLimit) &&
+            clickLimit > currentClicks &&
+            clickLimit <= 1000
+        ) {
+            url.clickLimit = clickLimit;
+        } else {
+            throw new ApiError(
+                `Click limit must be 0 (unlimited) or greater than current clicks (${currentClicks}) and less than or equal to 1000.`,
+                400
+            );
+        }
     }
 
+    // Validate  tags
     if (tags !== undefined) {
         const cleanTags = Array.isArray(tags)
             ? tags.map(tag => tag.trim())
             : tags.split(',').map((tag: string) => tag.trim());
 
-        // Remove empty and duplicate tags
         url.tags = [...new Set(cleanTags.filter(tag => tag))];
     }
 
@@ -83,7 +100,7 @@ export const getAndUpdateOriginalUrl = async (shortId: string) => {
     if (url.clickLimit && url.clicks >= url.clickLimit) {
         throw new ApiError('This link has reached its click limit', 429); // 429 Too Many Requests
     }
-    
+
     url.clicks += 1;
     await url.save();
 

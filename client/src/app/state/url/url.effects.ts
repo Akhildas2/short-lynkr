@@ -49,7 +49,6 @@ export class UrlEffects {
         try {
             const result = await firstValueFrom(this.api.getUserUrls());
             this.store.setUrl(result.urls);
-            console.log("respo",result)
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Failed to load URLs.';
