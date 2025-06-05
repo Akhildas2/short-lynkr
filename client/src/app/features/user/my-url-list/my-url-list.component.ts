@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
@@ -10,6 +10,8 @@ import { RouterLink } from '@angular/router';
 import { openInNewTab } from '../../../shared/utils/url.utils';
 import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
+import { PageEvent } from '@angular/material/paginator';
+import { filterUrls } from '../../../shared/utils/url-filter.util';
 
 @Component({
   selector: 'app-my-url-list',
@@ -20,15 +22,44 @@ import { ClipboardService } from '../../../shared/services/clipboard/clipboard.s
 export class MyUrlListComponent implements OnInit {
   private urlEffects = inject(UrlEffects)
   private urlStore = inject(UrlStore)
-  activeDropdown: string | null = null;
 
+  activeDropdown: string | null = null;
+  showFirstLastButtons = true;
   urlList = this.urlStore.urls;
 
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService) { }
+  // Search & filter
+  searchTerm = signal('');
+  filterStatus = signal<'active' | 'inactive' | ''>('');
+  filteredUrls = computed(() =>
+    filterUrls(this.urlList(), this.searchTerm(), this.filterStatus())
+  )
 
+  // Pagination
+  paginatedUrls: UrlEntry[] = [];
+  pageSize = 6;
+  pageIndex = 0;
+
+  constructor(private urlService: UrlService, private clipboardService: ClipboardService) {
+    effect(() => {
+      this.pageIndex = 0;
+      this.updatePaginateUrls(this.filteredUrls())
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     await this.urlEffects.fetchUserUrls();
+  }
+
+  updatePaginateUrls(urls: UrlEntry[]): void {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedUrls = urls.slice(start, end);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginateUrls(this.filteredUrls());
   }
 
   toggleDropdown(id: string) {
@@ -36,7 +67,6 @@ export class MyUrlListComponent implements OnInit {
   }
 
   openLink(url: string) {
-     console.log('Opening URL:', url);
     this.urlService.openShortUrl(url);
   }
 
@@ -50,6 +80,5 @@ export class MyUrlListComponent implements OnInit {
 
   editUrl(url: UrlEntry) { /* your logic */ }
   deleteUrl(url: UrlEntry) { /* your logic */ }
-  exportUrl(url: UrlEntry) { /* your logic */ }
 
 }

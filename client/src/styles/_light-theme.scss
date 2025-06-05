@@ -7,7 +7,7 @@
   --success-color: #0e8160;
   --error-color: #ff0000;
 
-  // MDC text field overrides
+  // MDC overrides
   --mdc-outlined-text-field-label-text-color: var(--text-color);
   --mdc-outlined-text-field-input-text-color: var(--text-color);
   --mdc-outlined-text-field-hover-outline-color: var(--text-color);
@@ -18,71 +18,62 @@
   --mdc-outlined-text-field-error-hover-outline-color: var(--error-color);
   --mdc-outlined-text-field-error-focus-outline-color: var(--error-color);
 
-  // Apply it globally to inputs and labels
   .mat-mdc-form-field {
     color: var(--text-color) !important;
   }
 
-  // Explicitly set label colors
-  .mat-mdc-form-field .mat-mdc-floating-label,
+  .mat-mdc-floating-label,
   .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
     color: var(--text-color) !important;
   }
 
-  // Ensure icons use the correct color
   .mat-icon,
-  .mat-mdc-form-field .mat-mdc-form-field-icon-prefix,
-  .mat-mdc-form-field .mat-mdc-form-field-icon-suffix {
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-icon-suffix {
     color: var(--text-color);
   }
 
-  // Buttons and icon buttons
   .mat-mdc-icon-button,
   .mat-mdc-button {
     color: var(--text-color);
   }
 
-  // Placeholder color
   input::placeholder {
     color: var(--text-color) !important;
   }
-}
 
-.success-snackbar {
-  --mdc-snackbar-container-color: var(--success-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
-}
+  .mat-mdc-paginator {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-family: "Inter", sans-serif;
 
-.error-snackbar {
-  --mdc-snackbar-container-color: var(--accent-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
-}
+    .mat-mdc-paginator-range-label,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: var(--text-color);
+    }
 
-.warning-snackbar {
-  --mdc-snackbar-container-color: var(--highlight-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
-}
+    button.mat-mdc-icon-button svg {
+      fill: var(--text-color);
+    }
 
-.info-snackbar {
-  --mdc-snackbar-container-color: var(--primary-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
-}
+    button.mat-mdc-icon-button[disabled] svg {
+      fill: var(--text-color);
+      opacity: 0.3 !important;
+    }
 
-// Input hide border
-.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field.mat-mdc-form-field
-  .mdc-notched-outline__notch {
-  border-right-style: hidden;
-}
+    .mat-mdc-select-arrow svg {
+      fill: var(--text-color) !important;
+    }
+  }
 
-// Add this to both dark and light theme sections
-.mat-mdc-dialog-container {
-  --mdc-dialog-container-color: var(--background-color);
-  --mdc-dialog-subhead-color: var(--text-color);
-  --mdc-dialog-supporting-text-color: var(--text-color);
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: var(--background-color);
+    --mdc-dialog-subhead-color: var(--text-color);
+    --mdc-dialog-supporting-text-color: var(--text-color);
+  }
 
   .mat-mdc-dialog-title {
     color: var(--text-color);
