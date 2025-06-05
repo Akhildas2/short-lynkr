@@ -17,13 +17,21 @@ body {
   color: var(--text-color);
 }
 
+// Global button override
 .mat-mdc-button,
 .mat-mdc-raised-button,
 .mat-mdc-outlined-button {
   color: var(--text-color) !important;
 }
 
-.dark .mat-mdc-select-value-text,
-.dark .mat-mdc-select-min-line {
-  color: var(--text-color) !important;
+// Fix for right notch border
+.mat-mdc-form-field .mdc-notched-outline__notch {
+  border-right-style: hidden;
+}
+
+// Optional Tailwind layer example
+@layer base {
+  body {
+    @apply bg-[var(--background-color)] text-[var(--text-color)];
+  }
 }
