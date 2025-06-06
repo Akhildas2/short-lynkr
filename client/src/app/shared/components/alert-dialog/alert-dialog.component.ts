@@ -18,16 +18,23 @@ export class AlertDialogComponent {
       content: string;
       actionText?: string;
       actionRoute?: string;
+      confirmOnly?: boolean;
     },
     private router: Router
   ) { }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
   }
 
   performAction(): void {
-    this.close();
+    this.dialogRef.close(true);
+
+    if (this.data.confirmOnly) {
+      this.dialogRef.close(true);
+      return;
+    }
+
     if (this.data.actionRoute) {
       this.router.navigate([this.data.actionRoute]);
     }

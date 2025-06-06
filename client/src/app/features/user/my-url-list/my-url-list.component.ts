@@ -12,10 +12,14 @@ import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { PageEvent } from '@angular/material/paginator';
 import { filterUrls } from '../../../shared/utils/url-filter.util';
+import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
+import { ClickOutsideDirective } from '../../../shared/directives/click-outside.directive';
+import { MatDialog } from '@angular/material/dialog';
+import { AlertDialogComponent } from '../../../shared/components/alert-dialog/alert-dialog.component';
 
 @Component({
   selector: 'app-my-url-list',
-  imports: [HeaderComponent, FooterComponent, MaterialModule, CommonModule, RouterLink],
+  imports: [HeaderComponent, FooterComponent, MaterialModule, CommonModule, RouterLink, ClickOutsideDirective],
   templateUrl: './my-url-list.component.html',
   styleUrl: './my-url-list.component.scss'
 })
@@ -23,7 +27,7 @@ export class MyUrlListComponent implements OnInit {
   private urlEffects = inject(UrlEffects)
   private urlStore = inject(UrlStore)
 
-  activeDropdown: string | null = null;
+  activeDropdownId: string | null = null;
   showFirstLastButtons = true;
   urlList = this.urlStore.urls;
 
@@ -39,7 +43,7 @@ export class MyUrlListComponent implements OnInit {
   pageSize = 6;
   pageIndex = 0;
 
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService) {
+  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog) {
     effect(() => {
       this.pageIndex = 0;
       this.updatePaginateUrls(this.filteredUrls())
@@ -62,8 +66,17 @@ export class MyUrlListComponent implements OnInit {
     this.updatePaginateUrls(this.filteredUrls());
   }
 
-  toggleDropdown(id: string) {
-    this.activeDropdown = this.activeDropdown === id ? null : id;
+  toggleDropdown(id: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.activeDropdownId = this.activeDropdownId === id ? null : id;
+  }
+
+  isDropdownActive(id: string): boolean {
+    return this.activeDropdownId === id;
+  }
+
+  closeDropdown() {
+    this.activeDropdownId = null;
   }
 
   openLink(url: string) {
@@ -78,7 +91,25 @@ export class MyUrlListComponent implements OnInit {
     this.clipboardService.copyToClipboard(url);
   }
 
-  editUrl(url: UrlEntry) { /* your logic */ }
-  deleteUrl(url: UrlEntry) { /* your logic */ }
+  editUrl(url: UrlEntry): void {
+    this.urlDialogService.customizeUrl(url);
+  }
+
+  deleteUrl(url: UrlEntry) {
+    const dialog = this.dialog.open(AlertDialogComponent, {
+      data: {
+        title: 'Delete URL?',
+        content: `Are you sure you want to delete this URL: "${url.shortUrl}"? This action cannot be undone.`,
+        actionText: 'Delete',
+        confirmOnly: true
+      },
+    });
+
+    dialog.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.urlEffects.deleteUrl(url._id);
+      }
+    });
+  }
 
 }

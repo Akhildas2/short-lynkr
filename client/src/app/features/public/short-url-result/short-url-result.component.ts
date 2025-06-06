@@ -7,13 +7,12 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
-import { CustomizeUrlDialogComponent } from '../../../shared/components/customize-url-dialog/customize-url-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
 import { interval, Subscription } from 'rxjs';
-import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 import { openInNewTab } from '../../../shared/utils/url.utils';
 import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
+import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
+import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-short-url-result',
@@ -25,12 +24,12 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
-  private snackbar = inject(SnackbarService);
+
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
   pollingSubscription!: Subscription;
 
-  constructor(private dialog: MatDialog, private urlService: UrlService, private clipboardService: ClipboardService) { }
+  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService) { }
 
   get selected(): UrlEntry | null {
     return this.selectedUrl();
@@ -106,24 +105,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   }
 
   customizeUrl(url: UrlEntry) {
-    const dialogRef = this.dialog.open(CustomizeUrlDialogComponent, {
-      width: '500px',
-      data: url
-    });
-
-    dialogRef.afterClosed().subscribe((result: Partial<UrlEntry>) => {
-      if (result) {
-        const { shortId, expiresAt, clickLimit, tags } = result;
-        let expiryDays: number | undefined;
-        if (expiresAt) {
-          const today = new Date();
-          const expiry = new Date(expiresAt);
-          expiryDays = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-        }
-
-        this.urlEffects.updateUrl(url._id, expiryDays || 0, shortId || '', clickLimit || 0, tags || '');
-      }
-    });
+    this.urlDialogService.customizeUrl(url);
   }
 
 }
