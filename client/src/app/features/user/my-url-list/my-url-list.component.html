@@ -1,41 +1,43 @@
 <div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
   <app-header></app-header>
 
-<div class="px-4">
-  <div class="max-w-7xl mt-2 mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-    <div class="flex items-center">
-      <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] whitespace-nowrap">
-        URL Manager
-      </h1>
-    </div>
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mb-4 mx-auto flex flex-col md:flex-row  items-center justify-between gap-4">
+      <div class="flex items-center">
+        <h1
+          class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] whitespace-nowrap">
+          URL Manager
+        </h1>
+      </div>
 
-    <div class="flex-1 mt-4 max-w-xl flex items-center px-4">
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Search Here</mat-label>
-        <input matInput placeholder="Enter short URL, original URL, or tag" [value]="searchTerm()"
-          (input)="searchTerm.set($any($event.target).value)" />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
-    </div>
+      <div class="flex-1 mt-4 max-w-xl md:max-w-md sm:max-w-sm flex items-center">
+        <mat-form-field appearance="outline" class="w-full rounded-search">
+          <mat-label>Search Here</mat-label>
+          <mat-icon matPrefix>public</mat-icon>
+          <input matInput placeholder="Enter short URL, original URL, or tag" [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
 
-    <div class="flex items-center space-x-2 whitespace-nowrap">
-      <label class="text-md font-medium">Status:</label>
-      <select class="px-4 py-3 rounded-lg border bg-white dark:bg-gray-800 text-sm"
-        (change)="filterStatus.set($any($event.target).value)">
-        <option value="">All</option>
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
-      </select>
+      <div class="flex lg:mb-2 md:mb-2 items-center space-x-2 whitespace-nowrap">
+        <label class="text-md font-medium">Status:</label>
+        <select class="px-4 py-3 rounded-xl  border border-black dark:border-white bg-white dark:bg-gray-800 text-md"
+          (change)="filterStatus.set($any($event.target).value)">
+          <option value="">All</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
     </div>
   </div>
-</div>
 
 
 
   <!-- URL Cards Grid -->
-  <div class="flex-1 px-4 pb-12">
+  <div class="flex-1 px-4 sm:px-6 lg:px-8 pb-12">
     <div class="max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <div *ngFor="let url of paginatedUrls" class="group h-full">
 
           <div
@@ -55,15 +57,16 @@
                 </span>
               </div>
 
-              <div class="relative">
-                <button (click)="toggleDropdown(url._id)"
+              <div class="relative" (appClickOutside)="closeDropdown()">
+                <button (click)="toggleDropdown(url._id, $event)"
                   class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 group">
-                  <mat-icon
-                    class="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">more_vert</mat-icon>
+                  <mat-icon class="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300">
+                    more_vert
+                  </mat-icon>
                 </button>
 
                 <!-- Dropdown Menu -->
-                <div *ngIf="activeDropdown === url._id"
+                <div *ngIf="isDropdownActive(url._id)"
                   class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-20 overflow-hidden">
                   <div class="py-2">
                     <a (click)="editUrl(url)"
@@ -79,6 +82,8 @@
                   </div>
                 </div>
               </div>
+
+
             </div>
 
             <!-- Card Content -->
@@ -184,18 +189,27 @@
         </div>
       </div>
 
-      <mat-paginator *ngIf="urlList().length > 0" class="mt-5" [length]="urlList().length" [pageSize]="pageSize"
-        [showFirstLastButtons]="showFirstLastButtons" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 25, 50, 100]"
-        (page)="onPageChange($event)">
+      <mat-paginator *ngIf="filteredUrls().length > 0" class="mt-5" [length]="paginatedUrls.length"
+        [pageSize]="pageSize" [showFirstLastButtons]="showFirstLastButtons" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)">
       </mat-paginator>
+
+      <!-- Search No Results State -->
+      <div *ngIf="filteredUrls().length === 0 && searchTerm()" class="text-center py-16">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full mb-4">
+          <mat-icon class="font-bold">search_off</mat-icon>
+        </div>
+        <h3 class="text-xl font-medium mb-2">No Results Found</h3>
+        <p class="mb-4">We couldn't find any URLs matching your search.</p>
+      </div>
 
 
       <!-- Empty State -->
       <div *ngIf="urlList().length === 0" class="text-center py-16">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
+        <div class="inline-flex items-center justify-center w-16 h-16  rounded-full mb-4">
           <mat-icon>link</mat-icon>
         </div>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">No URLs yet</h3>
+        <h3 class="text-xl font-medium mb-2">No URLs yet</h3>
         <p class="mb-6">Create your first shortened URL to get started</p>
         <button
           class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
@@ -203,6 +217,7 @@
           <span>Create URL</span>
         </button>
       </div>
+
     </div>
   </div>
 
