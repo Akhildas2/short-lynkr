@@ -6,10 +6,14 @@ import { ApiError } from '../utils/ApiError';
 
 
 export const createShortUrl = async (originalUrl: string, userId?: string) => {
+    const existingUrl = await UrlModel.findOne({ userId, originalUrl });
+    if (existingUrl) {
+        throw new ApiError('Short URL already exists for this original URL.', 409);
+    }
+
     const shortId = generateShortId();
     const shortUrl = `${process.env.BASE_URL}/r/${shortId}`;
     const qrCodeUrl = await generateQRCode(shortUrl);
-
 
     const newUrl = await UrlModel.create({
         originalUrl,
@@ -30,6 +34,8 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     }
 
     const { shortId, expiryDays, clickLimit, tags } = updateData;
+    let expiryUpdated = false;
+    let clickLimitUpdated = false;
 
     if (shortId !== undefined && shortId !== url.shortId) {
         const existing = await UrlModel.findOne({ shortId });
@@ -44,6 +50,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 
     // Validate expiryDays
     if (expiryDays !== undefined) {
+        expiryUpdated = true;
         if (Number.isInteger(expiryDays) && expiryDays > 0 && expiryDays < 100) {
             url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
         } else {
@@ -53,6 +60,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 
     // Validate clickLimit
     if (clickLimit !== undefined) {
+        clickLimitUpdated = true;
         const currentClicks = url.clicks ?? 0;
 
         if (clickLimit === 0) {
@@ -80,6 +88,17 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         url.tags = [...new Set(cleanTags.filter(tag => tag))];
     }
 
+    if (!url.isActive && (expiryUpdated || clickLimitUpdated)) {
+        const now = new Date();
+
+        const notExpired = !url.expiresAt || url.expiresAt > now;
+        const notOverLimit =
+            !url.clickLimit || (url.clicks ?? 0) < url.clickLimit;
+
+        if (notExpired && notOverLimit) {
+            url.isActive = true;
+        }
+    }
 
     await url.save();
     return url;
@@ -98,7 +117,7 @@ export const getAndUpdateOriginalUrl = async (shortId: string) => {
     }
     // Check click limit
     if (url.clickLimit && url.clicks >= url.clickLimit) {
-        throw new ApiError('This link has reached its click limit', 429); // 429 Too Many Requests
+        throw new ApiError('This link has reached its click limit', 429);
     }
 
     url.clicks += 1;

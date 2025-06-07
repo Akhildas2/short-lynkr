@@ -62,10 +62,11 @@ export class HomeComponent {
         if (!isAuthenticated) {
             this.dialog.open(AlertDialogComponent, {
                 data: {
-                    title: 'Login Required',
-                    content: 'You need to log in to access this feature.',
-                    actionText: 'Go to Login',
-                    actionRoute: '/auth/sign-in'
+                    title: 'Sign In Required',
+                    content: 'This feature is only available to logged-in users. Please sign in to continue.',
+                    actionText: 'Sign In',
+                    actionRoute: '/auth/sign-in',
+                    confirmOnly: false
                 }
             });
             return;
@@ -74,13 +75,19 @@ export class HomeComponent {
         this.isLoading = true;
 
         setTimeout(async () => {
-            const url = await this.urlEffects.createUrl(originalUrl);
-            this.urlForm.reset();
-            this.submitted = false;
-            this.isLoading = true;
-            if (url && url._id) {
-                this.router.navigate(['/shortened', url._id]);
+            try {
+                const url = await this.urlEffects.createUrl(originalUrl);
+                this.isLoading = false;
+
+                if (url && url._id) {
+                    this.urlForm.reset();
+                    this.submitted = false;
+                    this.router.navigate(['/shortened', url._id]);
+                }
+            } catch (e) {
+                this.isLoading = false;
             }
+
         }, 3000);
 
     }

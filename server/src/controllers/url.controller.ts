@@ -60,7 +60,13 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
             return;
         }
 
-        res.status(200).json({originalUrl:urlData.originalUrl});
+        const io = req['io'];
+        io?.emit("urlUpdated", {
+            id: urlData._id,
+            clicks: urlData.clicks
+        })
+
+        res.status(200).json({ originalUrl: urlData.originalUrl, urlData });
 
     } catch (error) {
         next(error);

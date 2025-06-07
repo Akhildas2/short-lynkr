@@ -5,6 +5,7 @@ import { ShortUrlResultComponent } from './short-url-result/short-url-result.com
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'shortened/:id', component: ShortUrlResultComponent },
 
 ];

@@ -16,6 +16,7 @@ import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog
 import { ClickOutsideDirective } from '../../../shared/directives/click-outside.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/alert-dialog/alert-dialog.component';
+import { SocketService } from '../../../core/services/socket/socket.service';
 
 @Component({
   selector: 'app-my-url-list',
@@ -43,7 +44,7 @@ export class MyUrlListComponent implements OnInit {
   pageSize = 6;
   pageIndex = 0;
 
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog) {
+  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
     effect(() => {
       this.pageIndex = 0;
       this.updatePaginateUrls(this.filteredUrls())
@@ -51,7 +52,9 @@ export class MyUrlListComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.socketService.connect();
     await this.urlEffects.fetchUserUrls();
+    this.updatePaginateUrls(this.filteredUrls());
   }
 
   updatePaginateUrls(urls: UrlEntry[]): void {
@@ -93,6 +96,11 @@ export class MyUrlListComponent implements OnInit {
 
   editUrl(url: UrlEntry): void {
     this.urlDialogService.customizeUrl(url);
+  }
+
+  clearSearchAndFilter() {
+    this.searchTerm.set('');
+    this.filterStatus.set('');
   }
 
   deleteUrl(url: UrlEntry) {
