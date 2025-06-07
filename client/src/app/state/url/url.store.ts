@@ -26,7 +26,7 @@ export const UrlStore = signalStore(
         updateUrl(updateUrl: UrlEntry) {
             const currentUrls = store.urls();
             patchState(store, {
-                urls: currentUrls.map(url => url._id === updateUrl._id ? updateUrl : url),
+                urls: currentUrls.map(url => url._id === updateUrl._id ? { ...url, ...updateUrl } : url),
                 selectedUrl: updateUrl,
                 status: 'success',
                 error: null

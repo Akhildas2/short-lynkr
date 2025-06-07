@@ -189,31 +189,64 @@
         </div>
       </div>
 
-      <mat-paginator *ngIf="filteredUrls().length > 0" class="mt-5" [length]="paginatedUrls.length"
+      <mat-paginator *ngIf="filteredUrls().length > 0" class="mt-5" [length]="filteredUrls().length"
         [pageSize]="pageSize" [showFirstLastButtons]="showFirstLastButtons" [pageIndex]="pageIndex"
         [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)">
       </mat-paginator>
 
       <!-- Search No Results State -->
-      <div *ngIf="filteredUrls().length === 0 && searchTerm()" class="text-center py-16">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full mb-4">
-          <mat-icon class="font-bold">search_off</mat-icon>
+      <div *ngIf="filteredUrls().length === 0 && (searchTerm() || filterStatus())"
+        class="flex flex-col items-center justify-center py-20 text-center px-4 sm:px-0">
+
+        <!-- Icon Container -->
+        <div class="w-20 h-20 mb-6 flex items-center justify-center rounded-full
+         bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800
+         shadow-2xl animate-zoom-in-out">
+          <mat-icon class="text-gray-600 dark:text-gray-300 scale-150">search_off</mat-icon>
         </div>
-        <h3 class="text-xl font-medium mb-2">No Results Found</h3>
-        <p class="mb-4">We couldn't find any URLs matching your search.</p>
+
+
+        <!-- Title -->
+        <h2 class="text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-3">
+          No Results Found
+        </h2>
+
+        <!-- Description -->
+        <p class="text-gray-600 dark:text-gray-400 max-w-md mb-8 leading-relaxed">
+          Sorry, we couldn’t find any URLs matching your current search or filters.
+          Try refining your search or clearing the filters below to see all URLs.
+        </p>
+        <!-- Clear Search & Filters Button -->
+        <button mat-stroked-button (click)="searchTerm.set(''); filterStatus.set('')"
+          class="group w-full sm:w-auto px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-300 ease-out">
+          <mat-icon class="mr-2 group-hover:scale-110 transition-transform">filter_alt_off</mat-icon>
+          Clear Search & Filters
+        </button>
+
       </div>
 
 
       <!-- Empty State -->
-      <div *ngIf="urlList().length === 0" class="text-center py-16">
-        <div class="inline-flex items-center justify-center w-16 h-16  rounded-full mb-4">
-          <mat-icon>link</mat-icon>
+      <div *ngIf="urlList().length === 0" class="text-center py-20">
+        <!-- Icon Container -->
+        <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full 
+         shadow-xl ring-4 animate-pulse
+         bg-gradient-to-br from-yellow-100 via-amber-200 to-orange-300 ring-yellow-400/30
+         dark:from-yellow-800 dark:via-amber-700 dark:to-orange-800 dark:ring-amber-500/30">
+          <mat-icon class="text-yellow-700 dark:text-yellow-200 scale-150 drop-shadow-md">warning</mat-icon>
         </div>
-        <h3 class="text-xl font-medium mb-2">No URLs yet</h3>
-        <p class="mb-6">Create your first shortened URL to get started</p>
-        <button
-          class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl">
-          <mat-icon>add</mat-icon>
+
+
+        <!-- Title -->
+        <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">No URLs Found</h3>
+
+        <!-- Description -->
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Start by creating your first shortened URL.</p>
+
+        <!-- Action Button -->
+        <button routerLink="/home"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] hover:from-blue-600 hover:to-purple-700  rounded-xl transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
+          <mat-icon>add_circle</mat-icon>
           <span>Create URL</span>
         </button>
       </div>
