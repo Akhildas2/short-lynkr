@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
@@ -24,7 +24,7 @@ import { SocketService } from '../../../core/services/socket/socket.service';
   templateUrl: './my-url-list.component.html',
   styleUrl: './my-url-list.component.scss'
 })
-export class MyUrlListComponent implements OnInit {
+export class MyUrlListComponent implements OnInit, OnDestroy {
   private urlEffects = inject(UrlEffects)
   private urlStore = inject(UrlStore)
 
@@ -118,6 +118,10 @@ export class MyUrlListComponent implements OnInit {
         this.urlEffects.deleteUrl(url._id);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.socketService.disconnect();
   }
 
 }
