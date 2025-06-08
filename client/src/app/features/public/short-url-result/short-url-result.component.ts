@@ -13,6 +13,7 @@ import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
+import { SocketService } from '../../../core/services/socket/socket.service';
 
 @Component({
   selector: 'app-short-url-result',
@@ -27,29 +28,18 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
 
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
-  pollingSubscription!: Subscription;
 
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService) { }
+  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService) { }
 
   get selected(): UrlEntry | null {
     return this.selectedUrl();
   }
 
   ngOnInit(): void {
+    this.socketService.connect();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.urlEffects.fetchUrlById(id);
-
-      // Start polling every 10 seconds
-      this.pollingSubscription = interval(10000).subscribe(() => {
-        this.urlEffects.fetchUrlById(id);
-      });
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.pollingSubscription) {
-      this.pollingSubscription.unsubscribe();
     }
   }
 
@@ -106,6 +96,10 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
 
   customizeUrl(url: UrlEntry) {
     this.urlDialogService.customizeUrl(url);
+  }
+
+  ngOnDestroy(): void {
+    this.socketService.disconnect();
   }
 
 }

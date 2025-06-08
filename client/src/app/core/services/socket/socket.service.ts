@@ -10,14 +10,21 @@ import { UrlEntry } from '../../../models/url/url.model';
 export class SocketService {
   private socket: Socket;
   private urlStore = inject(UrlStore);
+  private listenersRegistered = false;
 
-  constructor() {
-    this.socket = io(environment.baseApi);
+  private registerListeners() {
+    if (this.listenersRegistered) return;
 
     this.socket.on('urlUpdated', (updated: { id: string; clicks: number }) => {
       this.urlStore.updateUrl({ _id: updated.id, clicks: updated.clicks } as UrlEntry);
     });
 
+    this.listenersRegistered = true;
+  }
+
+  constructor() {
+    this.socket = io(environment.baseApi);
+    this.registerListeners();
   }
 
   connect(): void {

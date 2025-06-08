@@ -24,13 +24,12 @@
 
             <div class="relative flex flex-col sm:block">
               <div class="relative w-full">
-                <input type="url" id="urlInput" placeholder=" " formControlName="originalUrl" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full border-0 
-                     bg-[var(--background-color)] text-[var(--text-color)]
-                     focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]/30 
-                     placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
+                <input type="url" id="urlInput" placeholder=" " formControlName="originalUrl" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full 
+                bg-[var(--background-color)] text-[var(--text-color)] border-2 border-[var(--text-color)] focus:outline-none focus:ring-0 focus:ring-[var(--primary-color)]/30 focus:border-[var(--primary-color)] 
+                placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
 
                 <label for="urlInput"
-                  class="absolute left-4 sm:left-6 -translate-y-1/2 text-[var(--text-color)] opacity-75 
+                  class="absolute left-4 sm:left-6 -translate-y-1/2 text-[var(--text-color)] 
                      transition-all duration-200 pointer-events-none px-2 bg-[var(--background-color)]
                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base 
                      peer-focus:top-0 peer-focus:text-xs sm:peer-focus:text-sm  peer-focus:opacity-100 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-xs sm:peer-[:not(:placeholder-shown)]:text-sm">
