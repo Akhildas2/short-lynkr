@@ -37,9 +37,8 @@ export class HomeComponent {
             )]]
         });
         this.urlForm.get('originalUrl')?.valueChanges.subscribe(() => {
-            if (this.submitted) {
+            if (this.urlForm.hasError('alreadyShort')) {
                 this.urlForm.setErrors(null);
-                this.submitted = false;
             }
         });
     }

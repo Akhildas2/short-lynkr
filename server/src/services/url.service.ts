@@ -51,7 +51,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     // Validate expiryDays
     if (expiryDays !== undefined) {
         expiryUpdated = true;
-        if (Number.isInteger(expiryDays) && expiryDays > 0 && expiryDays < 100) {
+        if (Number.isInteger(expiryDays) && expiryDays > 0 && expiryDays <= 100) {
             url.expiresAt = new Date(Date.now() + expiryDays * 24 * 60 * 60 * 1000);
         } else {
             url.expiresAt = undefined;

@@ -7,7 +7,6 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
-import { interval, Subscription } from 'rxjs';
 import { openInNewTab } from '../../../shared/utils/url.utils';
 import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
@@ -28,18 +27,15 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
 
   showQrSizes = false;
   selectedUrl = this.urlStore.selectedUrl;
+  QR_SIZES = [300, 500, 750, 1024];
 
   constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService) { }
 
-  get selected(): UrlEntry | null {
-    return this.selectedUrl();
-  }
-
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.socketService.connect();
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.urlEffects.fetchUrlById(id);
+      await this.urlEffects.fetchUrlById(id);
     }
   }
 

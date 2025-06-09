@@ -30,7 +30,8 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
 
   activeDropdownId: string | null = null;
   showFirstLastButtons = true;
-  urlList = this.urlStore.urls;
+
+  urlList = computed(() => this.urlStore.urls());
 
   // Search & filter
   searchTerm = signal('');
@@ -40,33 +41,33 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   )
 
   // Pagination
-  paginatedUrls: UrlEntry[] = [];
+  paginatedUrls = computed(() => {
+    const urls = this.filteredUrls();
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    return urls.slice(start, end);
+  });
+
   pageSize = 6;
   pageIndex = 0;
 
   constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
     effect(() => {
-      this.pageIndex = 0;
-      this.updatePaginateUrls(this.filteredUrls())
+      const filteredCount = this.filteredUrls().length;
+      if (this.pageIndex * this.pageSize >= filteredCount && filteredCount > 0) {
+        this.pageIndex = 0;
+      }
     });
   }
 
   async ngOnInit(): Promise<void> {
     this.socketService.connect();
     await this.urlEffects.fetchUserUrls();
-    this.updatePaginateUrls(this.filteredUrls());
-  }
-
-  updatePaginateUrls(urls: UrlEntry[]): void {
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedUrls = urls.slice(start, end);
   }
 
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.updatePaginateUrls(this.filteredUrls());
   }
 
   toggleDropdown(id: string, event: MouseEvent): void {
@@ -94,13 +95,15 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
     this.clipboardService.copyToClipboard(url);
   }
 
-  editUrl(url: UrlEntry): void {
+  editUrl(url: UrlEntry) {
     this.urlDialogService.customizeUrl(url);
+    this.urlEffects.fetchUserUrls();
   }
 
   clearSearchAndFilter() {
     this.searchTerm.set('');
     this.filterStatus.set('');
+    this.pageIndex = 0;
   }
 
   deleteUrl(url: UrlEntry) {
@@ -118,6 +121,10 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
         this.urlEffects.deleteUrl(url._id);
       }
     });
+  }
+
+  trackByUrlId(index: number, url: UrlEntry): string {
+    return url._id;
   }
 
   ngOnDestroy(): void {

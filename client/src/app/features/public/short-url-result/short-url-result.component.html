@@ -2,7 +2,7 @@
   <app-header></app-header>
 
   <!-- Main Content -->
-  <main *ngIf="selected as url" class="flex-grow py-4">
+  <main *ngIf="selectedUrl() as url" class="flex-grow py-4">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
       <div class="space-y-6">
 
@@ -16,8 +16,11 @@
                   class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
                   Your Shortened URL is Ready!</h2>
                 <div class="p-4 transition-transform hover:scale-105">
-                  <img [src]="url.qrCodeUrl" alt="QR Code"
+                  <img *ngIf="url.qrCodeUrl;else fallback" [src]="url.qrCodeUrl" alt="QR Code"
                     class="w-full h-full object-contain animate-fade-in rounded-2xl">
+                  <ng-template #fallback>
+                    <p class="text-center text-sm text-red-500">QR code unavailable</p>
+                  </ng-template>
                 </div>
                 <div class="space-y-4">
 
@@ -31,14 +34,8 @@
                   </button>
 
                   <div *ngIf="showQrSizes" class="grid grid-cols-4 gap-2 mt-2">
-                    <button mat-flat-button class="w-full px-4 py-2"
-                      (click)="downloadQrImage(url.qrCodeUrl, 300)">300x300</button>
-                    <button mat-flat-button class="w-full px-4 py-2"
-                      (click)="downloadQrImage(url.qrCodeUrl, 500)">500x500</button>
-                    <button mat-flat-button class="w-full px-4 py-2"
-                      (click)="downloadQrImage(url.qrCodeUrl, 750)">750x750</button>
-                    <button mat-flat-button class="w-full px-4 py-2"
-                      (click)="downloadQrImage(url.qrCodeUrl, 1024)">1024x1024</button>
+                    <button mat-flat-button *ngFor="let size of QR_SIZES" class="w-full px-4 py-2"
+                      (click)="downloadQrImage(url.qrCodeUrl, size)"> {{ size }}x{{ size }}</button>
                   </div>
 
                   <div class="text-center text-sm">
@@ -201,7 +198,7 @@
     </div>
   </main>
 
-  <div *ngIf="!selected" class="flex flex-col items-center justify-center flex-grow h-full text-center">
+  <div *ngIf="!selectedUrl()" class="flex flex-col items-center justify-center flex-grow h-full text-center">
     No shortened links yet.
     <a routerLink="/" class="text-[var(--primary-color)] hover:text-[var(--accent-color)] font-semibold underline ml-1">
       Start by creating your first URL!
