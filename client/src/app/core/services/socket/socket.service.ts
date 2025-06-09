@@ -16,7 +16,26 @@ export class SocketService {
     if (this.listenersRegistered) return;
 
     this.socket.on('urlUpdated', (updated: { id: string; clicks: number }) => {
-      this.urlStore.updateUrl({ _id: updated.id, clicks: updated.clicks } as UrlEntry);
+
+      const currentSelectedUrl = this.urlStore.selectedUrl();
+
+      if (currentSelectedUrl && currentSelectedUrl._id === updated.id) {
+        this.urlStore.setSelectedUrl({
+          ...currentSelectedUrl,
+          clicks: updated.clicks
+        });
+      }
+
+      const currentUrls = this.urlStore.urls();
+      if (currentUrls && currentUrls.length > 0) {
+        const existing = this.urlStore.urls().find(u => u._id === updated.id);
+        if (existing) {
+          this.urlStore.updateUrl({
+            ...existing,
+            clicks: updated.clicks
+          });
+        }
+      }
     });
 
     this.listenersRegistered = true;
