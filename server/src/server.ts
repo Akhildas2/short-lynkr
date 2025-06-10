@@ -43,7 +43,7 @@ app.use((req, res, next) => {
     next();
 });
 
-
+app.set('trust proxy', true)
 // Route handling
 app.use('/api/url', urlRoutes);
 app.use('/api/users', userRoutes);

@@ -1,17 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { SharedModule } from '../../../shared/shared.module';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
-import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../../../../Material.Module';
+import { UrlEffects } from '../../../state/url/url.effects';
+import { UrlStore } from '../../../state/url/url.store';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-statistics',
-  imports: [HeaderComponent,FooterComponent,CommonModule,MaterialModule],
-  templateUrl: './statistics.component.html',
-  styleUrl: './statistics.component.scss'
+  selector: 'app-analytics',
+  imports: [SharedModule, HeaderComponent, FooterComponent],
+  templateUrl: './analytics.component.html',
+  styleUrl: './analytics.component.scss'
 })
-export class StatisticsComponent {
-   displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
+export class AnalyticsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private urlEffects = inject(UrlEffects);
+  private urlStore = inject(UrlStore);
+  urlList = this.urlStore.selectedUrl;
+  constructor() { }
+
+  async ngOnInit(): Promise<void> {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      await this.urlEffects.fetchUrlById(id);
+    }
+  }
+
+
+  displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
   recentActivity = [
     {
       timestamp: new Date(),

@@ -1,5 +1,11 @@
 import { Document, Types } from 'mongoose';
 
+export interface Analytics {
+  ip: string;
+  country: string;
+  timestamp: Date;
+}
+
 export interface UrlDocument extends Document {
   originalUrl: string;
   shortId: string;
@@ -13,6 +19,7 @@ export interface UrlDocument extends Document {
   createdAt: Date;
   updatedAt: Date;
   isActive: Boolean;
+  analytics: Analytics[];
 }
 
 export interface UpdateUrlData {
