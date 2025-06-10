@@ -23,7 +23,7 @@
       <div class="flex lg:mb-2 md:mb-2 items-center space-x-2 whitespace-nowrap">
         <label class="text-md font-medium">Status:</label>
         <select class="px-4 py-3 rounded-xl  border border-black dark:border-white bg-white dark:bg-gray-800 text-md"
-          (change)="filterStatus.set($any($event.target).value)">
+          [value]="filterStatus()" (change)="filterStatus.set($any($event.target).value)">
           <option value="">All</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -175,7 +175,7 @@
 
               <!-- Action Buttons -->
               <div class="grid grid-cols-1 gap-3">
-                <button mat-stroked-button routerLink="/user/analytics"
+                <button mat-stroked-button [routerLink]="['/user/analytics',url._id]"
                   class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
                   <span
                     class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">

@@ -1,5 +1,11 @@
-import mongoose from 'mongoose';
-import { UrlDocument } from '../types/url.interface';
+import mongoose, { Schema } from 'mongoose';
+import { Analytics, UrlDocument } from '../types/url.interface';
+
+const analyticsSchema = new Schema<Analytics>({
+    ip: { type: String, required: true },
+    country: { type: String, required: true },
+    timestamp: { type: Date, default: Date.now }
+});
 
 const urlSchema = new mongoose.Schema<UrlDocument>({
     originalUrl: { type: String, required: true },
@@ -12,6 +18,7 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     tags: { type: [String], default: [] },
     expiresAt: { type: Date },
     isActive: { type: Boolean, default: true },
+    analytics: [analyticsSchema]
 }, { timestamps: true });
 
 

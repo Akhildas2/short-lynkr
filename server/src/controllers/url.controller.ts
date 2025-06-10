@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as urlService from '../services/url.service';
 import { AuthRequest } from '../types/auth';
+import geoip from 'geoip-lite';
 
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -53,8 +54,11 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const redirectToOriginal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { shortId } = req.params;
+        const clientIp = req.ip || 'Unknow';
+        const geo = geoip.lookup(clientIp);
+        const country = geo?.country || 'Unknown';
 
-        const urlData = await urlService.getAndUpdateOriginalUrl(shortId);
+        const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp, country);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
             return;
@@ -97,6 +101,7 @@ export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunc
             res.status(404).json({ message: 'URL not found' });
             return;
         }
+
         res.status(200).json({ url });
 
     } catch (error) {

@@ -81,7 +81,7 @@ export class HomeComponent {
                 if (url && url._id) {
                     this.urlForm.reset();
                     this.submitted = false;
-                    this.router.navigate(['/shortened', url._id]);
+                    this.router.navigate(['/user/shortened', url._id]);
                 }
             } catch (e) {
                 this.isLoading = false;

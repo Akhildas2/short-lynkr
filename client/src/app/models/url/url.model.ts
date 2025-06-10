@@ -12,5 +12,13 @@ export interface UrlEntry {
     expiresAt: Date;
     createdAt: Date;
     updatedAt: Date;
-    isActive:boolean;
+    isActive: boolean;
+    
+    uniqueVisitors?: number;
+    topCountry?: string;
+    topCountryPercentage?: number;
+    conversionRate?: number;
+    conversionRateChange?: number;
+    clicksChange?: number;
+    visitorsChange?: number;
 }
