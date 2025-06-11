@@ -148,10 +148,12 @@ export const getUrlById = async (id: string) => {
         throw new ApiError('URL not found or access denied', 404);
     }
 
-    const totalClicks = url.analytics?.length || 0;
-    const uniqueVisitors = new Set(url.analytics.map(a => a.ip)).size;
+    const analytics = url.analytics || []
+    const totalClicks = analytics.length;
+    const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
 
-    const countryCounts = (url.analytics || []).reduce((acc, { country }) => {
+    // Top country
+    const countryCounts = analytics.reduce((acc, { country }) => {
         acc[country] = (acc[country] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
@@ -163,9 +165,35 @@ export const getUrlById = async (id: string) => {
         ? ((topCountryCount / totalClicks) * 100).toFixed(1)
         : '0.0';
 
-    const conversionRate = (Math.random() * 30).toFixed(2);
-    const clicksChange = Math.floor(Math.random() * 20) + 5;
-    const visitorsChange = Math.floor(Math.random() * 15) + 3;
+    // Time calculations
+    const now = new Date();
+    const oneDay = 24 * 60 * 60 * 1000;
+
+    // Clicks changes
+    const todayClicks = analytics.filter(a => new Date(a.timestamp) >= new Date(now.getTime() - oneDay)).length;
+    const yesterdayClicks = analytics.filter(a => {
+        const time = new Date(a.timestamp).getTime();
+        return time >= now.getTime() - 2 * oneDay && time < now.getTime() - oneDay;
+    }).length;
+    const clicksChange = yesterdayClicks > 0
+        ? (((todayClicks - yesterdayClicks) / yesterdayClicks) * 100).toFixed(2)
+        : '100.00';
+
+    // Visitors changes
+    const todayVisitors = new Set(
+        analytics.filter(a => new Date(a.timestamp) >= new Date(now.getTime() - oneDay)).map(a => a.ip)
+    ).size;
+    const yesterdayVisitors = new Set(
+        analytics.filter(a => {
+            const time = new Date(a.timestamp).getTime();
+            return time >= now.getTime() - 2 * oneDay && time < now.getTime() - oneDay;
+        }).map(a => a.ip)
+    ).size;
+
+    const visitorsChange = yesterdayVisitors > 0
+        ? (((todayVisitors - yesterdayVisitors) / yesterdayVisitors) * 100).toFixed(2)
+        : '100.00';
+
 
     return {
         ...url.toObject(),
@@ -173,8 +201,7 @@ export const getUrlById = async (id: string) => {
         uniqueVisitors,
         topCountry,
         topCountryPercentage: parseFloat(topCountryPercentage),
-        conversionRate: parseFloat(conversionRate),
-        clicksChange,
-        visitorsChange
+        clicksChange: parseFloat(clicksChange),
+        visitorsChange: parseFloat(visitorsChange),
     };
 };

@@ -38,6 +38,14 @@ export class SocketService {
       }
     });
 
+    this.socket.on('urlCreated', (urlData: UrlEntry) => {
+      const currentUrls = this.urlStore.urls();
+      const alreadyExists = currentUrls.some(u => u._id === urlData._id);
+      if (!alreadyExists) {
+        this.urlStore.addUrl(urlData);
+      }
+    });
+
     this.listenersRegistered = true;
   }
 

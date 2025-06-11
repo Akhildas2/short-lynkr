@@ -1,15 +1,15 @@
 <div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
     <app-header></app-header>
 
-    <main class="flex-grow py-8">
-        <div class="container mx-auto px-4 lg:px-8 max-w-7xl" *ngIf="urlList() as url">
+    <main class="flex-grow px-8 md:px-12">
+        <div class="container mx-auto max-w-7xl" *ngIf="urlList() as url">
             <div class="mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold mb-2">Analytics Dashboard</h1>
                 <p>Track performance of your <span class="font-bold hover:text-blue-600">{{ url.shortUrl}}</span></p>
             </div>
 
             <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-10">
                 <div
                     class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transition-transform hover:scale-[1.02]">
                     <div class="flex justify-between items-start">
@@ -22,9 +22,12 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center text-green-500">
-                            <mat-icon>arrow_upward</mat-icon>
-                            <span class="ml-1">{{ url.clicksChange }}% from last week</span>
+                        <div class="flex items-center"
+                            [ngClass]="(url?.clicksChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
+                            <mat-icon
+                                [ngClass]="(url?.clicksChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">{{(url?.clicksChange
+                                || 0) >= 0 ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            <span class="ml-1">{{ url?.clicksChange || 0 }}% from last week</span>
                         </div>
                     </div>
                 </div>
@@ -41,9 +44,12 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <div class="flex items-center text-green-500">
-                            <mat-icon>arrow_upward</mat-icon>
-                            <span class="ml-1">{{ url.visitorsChange }}% from last week</span>
+                        <div class="flex items-center"
+                            [ngClass]="(url?.visitorsChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
+                            <mat-icon [ngClass]="(url?.visitorsChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">{{
+                                (url?.visitorsChange || 0) >= 0 ? 'arrow_upward' :
+                                'arrow_downward'}}</mat-icon>
+                            <span class="ml-1">{{ url?.visitorsChange || 0 }}% from last week</span>
                         </div>
                     </div>
                 </div>
@@ -62,26 +68,6 @@
                     <div class="mt-4">
                         <p>{{ url.topCountryPercentage || 0 }}% of total traffic</p>
                     </div>
-                </div>
-
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transition-transform hover:scale-[1.02]">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-gray-500 dark:text-gray-400">Conversion Rate</p>
-                            <p class="text-3xl font-bold">{{ url.conversionRate }}%</p>
-                        </div>
-                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
-                            <mat-icon class="text-yellow-500 dark:text-yellow-400">percent</mat-icon>
-                        </div>
-                    </div>
-                    <!-- <div class="mt-4">
-                        <div class="flex items-center"
-                            [ngClass]="url.conversionRateChange >= 0 ? 'text-green-500' : 'text-red-500'">
-                            <mat-icon>{{ url.conversionRateChange >= 0 ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                            <span class="ml-1">{{ url.conversionRateChange }}% from last week</span>
-                        </div>
-                    </div> -->
                 </div>
             </div>
 

@@ -1,11 +1,11 @@
 <div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
   <app-header></app-header>
 
-  <div class="px-4 sm:px-6 lg:px-8">
+  <div class="px-8 md:px-12">
     <div class="max-w-7xl mb-4 mx-auto flex flex-col md:flex-row  items-center justify-between gap-4">
       <div class="flex items-center">
         <h1
-          class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] whitespace-nowrap">
+          class="text-4xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] whitespace-nowrap">
           URL Manager
         </h1>
       </div>
@@ -35,7 +35,7 @@
 
 
   <!-- URL Cards Grid -->
-  <div class="flex-1 px-4 sm:px-6 lg:px-8 pb-12">
+  <div class="flex-1 px-8 md:px-12">
     <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
         <div *ngFor="let url of paginatedUrls(); trackBy: trackByUrlId" class="group h-full">
@@ -189,10 +189,12 @@
         </div>
       </div>
 
-      <mat-paginator *ngIf="filteredUrls().length > 0" class="mt-5" [length]="filteredUrls().length"
-        [pageSize]="pageSize" [showFirstLastButtons]="showFirstLastButtons" [pageIndex]="pageIndex"
-        [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)">
-      </mat-paginator>
+      <div class="w-full overflow-hidden">
+        <mat-paginator *ngIf="filteredUrls().length > 0" class="w-full mt-5" [length]="filteredUrls().length"
+          [pageSize]="pageSize()" [showFirstLastButtons]="showFirstLastButtons" [pageIndex]="pageIndex()"
+          [pageSizeOptions]="[ 6, 15, 30, 50, 100]" (page)="onPageChange($event)">
+        </mat-paginator>
+      </div>
 
       <!-- Search No Results State -->
       <div *ngIf="filteredUrls().length === 0 && (searchTerm() || filterStatus())"

@@ -13,12 +13,10 @@ export interface UrlEntry {
     createdAt: Date;
     updatedAt: Date;
     isActive: boolean;
-    
+
     uniqueVisitors?: number;
     topCountry?: string;
     topCountryPercentage?: number;
-    conversionRate?: number;
-    conversionRateChange?: number;
     clicksChange?: number;
     visitorsChange?: number;
 }
