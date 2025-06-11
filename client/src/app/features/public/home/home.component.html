@@ -10,7 +10,7 @@
           class="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
           Shorten. Share. Track.
         </h1>
-        <p class="text-base sm:text-xl opacity-90 max-w-2xl mx-auto px-4">
+        <p class="text-base sm:text-xl opacity-90 max-w-3xl mx-auto px-4">
           Transform long links into concise, trackable URLs and QR codes in seconds
         </p>
       </div>
@@ -25,16 +25,15 @@
             <div class="relative flex flex-col sm:block">
               <div class="relative w-full">
                 <input type="url" id="urlInput" placeholder=" " formControlName="originalUrl" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500/30':
-                  (submitted && urlForm.get('originalUrl')?.hasError('required')) ||(urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.invalid && !urlForm.get('originalUrl')?.hasError('required')),
-                    'border-green-500 focus:border-green-500 focus:ring-green-500/30':
-                   urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.valid}"
-                  (blur)="urlForm.get('originalUrl')?.markAsTouched()" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full 
+                (submitted && urlForm.get('originalUrl')?.hasError('required')) ||(urlForm.get('originalUrl')?.hasError('pattern') && urlForm.get('originalUrl')?.touched) ||
+                (submitted && urlForm.errors?.['alreadyShort']),'border-green-500 focus:border-green-500 focus:ring-green-500/30':urlForm.get('originalUrl')?.valid && !urlForm.errors?.['alreadyShort']
+                }" (blur)="urlForm.get('originalUrl')?.markAsTouched()" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full 
                 bg-[var(--background-color)] text-[var(--text-color)] border-2 border-[var(--text-color)] focus:outline-none focus:ring-0 focus:ring-[var(--primary-color)]/30 focus:border-[var(--primary-color)] 
                 placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
 
-                <label for="urlInput" [ngClass]="{'text-red-500': (submitted && urlForm.get('originalUrl')?.hasError('required')) ||
-                  (urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.invalid && !urlForm.get('originalUrl')?.hasError('required')),
-                  'text-green-500':urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.valid}"
+                <label for="urlInput" [ngClass]="{'text-red-500':(submitted && urlForm.get('originalUrl')?.hasError('required')) 
+                  ||(urlForm.get('originalUrl')?.hasError('pattern') && urlForm.get('originalUrl')?.touched) ||(submitted && urlForm.errors?.['alreadyShort']),
+                  'text-green-500':urlForm.get('originalUrl')?.valid && !urlForm.errors?.['alreadyShort']}"
                   class="absolute left-4 sm:left-6 -translate-y-1/2 text-[var(--text-color)] 
                      transition-all duration-200 pointer-events-none px-2 bg-[var(--background-color)]
                      peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm sm:peer-placeholder-shown:text-base 
@@ -42,28 +41,27 @@
                   Enter your URL here
                 </label>
 
-                <button type="submit" class="absolute top-1/2 right-2 -translate-y-1/2 px-3 py-2 sm:px-5 sm:py-4 rounded-full 
+                <button type="submit" [disabled]="urlForm.pristine || urlForm.invalid || isLoading" class="absolute top-1/2 right-2 -translate-y-1/2 px-3 py-2 sm:px-5 sm:py-4 rounded-full 
                      bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] 
-                     text-white font-bold transition-all duration-200 hover:shadow-lg 
-                     text-sm sm:text-base hover:scale-105 active:scale-95 w-24 sm:w-auto">
+                     text-white font-bold transition-all duration-200 hover:shadow-lg hover:from-blue-600 hover:to-purple-700
+                     text-sm sm:text-base hover:scale-105 active:scale-95 w-24 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
                   <span class="hidden sm:inline">✨ </span>Shorten
                 </button>
               </div>
             </div>
           </div>
 
-          <div
-            *ngIf="(submitted && urlForm.get('originalUrl')?.hasError('required')) ||
-            (urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.invalid && !urlForm.get('originalUrl')?.hasError('required'))"
+          <div *ngIf="submitted && urlForm.get('originalUrl')?.hasError('required')" class="mt-2 text-sm text-red-500">
+            URL is required.
+          </div>
+
+          <div *ngIf="urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.hasError('pattern')"
             class="mt-2 text-sm text-red-500">
+            Please enter a valid URL starting with http:// or https://
+          </div>
 
-            <span *ngIf="submitted && urlForm.get('originalUrl')?.errors?.['required']">
-              URL is required.
-            </span>
-
-            <span *ngIf="urlForm.get('originalUrl')?.errors?.['pattern']">
-              Please enter a valid URL starting with http:// or https://
-            </span>
+          <div *ngIf="submitted && urlForm.errors?.['alreadyShort']" class="mt-2 text-sm text-red-500">
+            This URL is already short and does not need to be shortened again.
           </div>
 
 

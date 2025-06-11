@@ -14,6 +14,8 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
         }
 
         const urlData = await urlService.createShortUrl(originalUrl, userId);
+        const io = req['io'];
+        io?.emit('urlCreated', urlData)
         res.status(201).json(urlData);
 
     } catch (error) {

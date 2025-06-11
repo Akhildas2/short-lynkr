@@ -39,23 +39,27 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   filteredUrls = computed(() =>
     filterUrls(this.urlList(), this.searchTerm(), this.filterStatus())
   )
+  // Pagination signals
+  pageSize = signal(6);
+  pageIndex = signal(0);
 
   // Pagination
   paginatedUrls = computed(() => {
     const urls = this.filteredUrls();
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
+    const start = this.pageIndex() * this.pageSize();
+    const end = start + this.pageSize();
     return urls.slice(start, end);
   });
 
-  pageSize = 6;
-  pageIndex = 0;
+
 
   constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
     effect(() => {
       const filteredCount = this.filteredUrls().length;
-      if (this.pageIndex * this.pageSize >= filteredCount && filteredCount > 0) {
-        this.pageIndex = 0;
+      const currentPageStart = this.pageIndex() * this.pageSize();
+
+      if (currentPageStart >= filteredCount && filteredCount > 0) {
+        this.pageIndex.set(0);
       }
     });
   }
@@ -66,8 +70,8 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(event: PageEvent): void {
-    this.pageIndex = event.pageIndex;
-    this.pageSize = event.pageSize;
+    this.pageIndex.set(event.pageIndex);
+    this.pageSize.set(event.pageSize);
   }
 
   toggleDropdown(id: string, event: MouseEvent): void {
@@ -103,7 +107,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   clearSearchAndFilter() {
     this.searchTerm.set('');
     this.filterStatus.set('');
-    this.pageIndex = 0;
+    this.pageIndex.set(0);
   }
 
   deleteUrl(url: UrlEntry) {

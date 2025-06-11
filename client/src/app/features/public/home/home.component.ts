@@ -37,6 +37,10 @@ export class HomeComponent {
             )]]
         });
         this.urlForm.get('originalUrl')?.valueChanges.subscribe(() => {
+            if (this.submitted) {
+                this.submitted = false;
+            }
+
             if (this.urlForm.hasError('alreadyShort')) {
                 this.urlForm.setErrors(null);
             }
