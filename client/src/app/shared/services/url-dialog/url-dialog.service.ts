@@ -31,7 +31,7 @@ export class UrlDialogService {
           expiryDays || 0,
           shortId || '',
           clickLimit || 0,
-          tags || ''
+        Array.isArray(tags) ? tags : []
         );
       }
     });

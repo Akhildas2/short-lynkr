@@ -3,6 +3,7 @@ import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 import { ApiError } from '../utils/ApiError';
+const UAParser = require('ua-parser-js');
 
 
 export const createShortUrl = async (originalUrl: string, userId?: string) => {
@@ -105,7 +106,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 };
 
 
-export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string, country?: string) => {
+export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string, country?: string, userAgent?: string, referrer?: string) => {
     const url = await UrlModel.findOne({ shortId });
 
     if (!url) {
@@ -120,12 +121,28 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
         throw new ApiError('This link has reached its click limit', 429);
     }
 
+    let browser = 'Unknown';
+    let os = 'Unknown';
+    let device = 'desktop';
+
+    if (userAgent) {
+        const parser = new UAParser(userAgent);
+        browser = parser.getBrowser().name || 'Unknown';
+        os = parser.getOS().name || 'Unknown';
+        device = parser.getDevice().type || 'desktop';
+    }
+
     if (clientIp && country) {
         url.analytics.push({
             ip: clientIp,
-            country: country,
+            country,
+            userAgent: userAgent || 'Unknown',
+            referrer: referrer || 'Direct',
+            browser,
+            os,
+            device,
             timestamp: new Date()
-        })
+        });
     }
 
     url.clicks += 1;
@@ -142,13 +159,24 @@ export const deleteUserUrl = async (id: string, userId?: string) => {
     return await UrlModel.findOneAndDelete({ _id: id, userId });
 };
 
-export const getUrlById = async (id: string) => {
+export const getUrlById = async (id: string, range: string) => {
     const url = await UrlModel.findById(id);
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
     }
 
-    const analytics = url.analytics || []
+    const now = new Date();
+    const rangeMap: Record<string, number> = {
+        '1d': 1,
+        '7d': 7,
+        '30d': 30,
+        '90d': 90,
+    };
+    const days = rangeMap[range] ?? 7;
+    const fromDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+    const analytics = (url.analytics || []).filter(a => new Date(a.timestamp) >= fromDate);
+
     const totalClicks = analytics.length;
     const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
 
@@ -166,7 +194,6 @@ export const getUrlById = async (id: string) => {
         : '0.0';
 
     // Time calculations
-    const now = new Date();
     const oneDay = 24 * 60 * 60 * 1000;
 
     // Clicks changes
@@ -194,6 +221,14 @@ export const getUrlById = async (id: string) => {
         ? (((todayVisitors - yesterdayVisitors) / yesterdayVisitors) * 100).toFixed(2)
         : '100.00';
 
+    const timeSeries = analytics.reduce((acc, entry) => {
+        const date = new Date(entry.timestamp).toISOString().split('T')[0];
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+    }, {} as Record<string, number>);
+
+    const timelineLabels = Object.keys(timeSeries).sort();
+    const timelineData = timelineLabels.map(label => timeSeries[label]);
 
     return {
         ...url.toObject(),
@@ -203,5 +238,7 @@ export const getUrlById = async (id: string) => {
         topCountryPercentage: parseFloat(topCountryPercentage),
         clicksChange: parseFloat(clicksChange),
         visitorsChange: parseFloat(visitorsChange),
+        timelineLabels,
+        timelineData
     };
 };

@@ -91,7 +91,12 @@
                         </div>
                     </div>
                     <div class="h-80">
-                        <!-- Chart would go here (Chart.js, ngx-charts, etc.) -->
+
+                        <app-analytics-chart chartType="line" [data]="timelineData" [labels]="timelineLabels"
+                            [title]="'Clicks Over Time'">
+                        </app-analytics-chart>
+
+
                         <div
                             class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
                             <p class="text-gray-500">Clicks timeline chart visualization</p>
