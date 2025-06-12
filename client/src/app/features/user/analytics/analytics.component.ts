@@ -5,10 +5,11 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { ActivatedRoute } from '@angular/router';
+import { AnalyticsChartComponent } from '../../../shared/components/analytics-chart/analytics-chart.component';
 
 @Component({
   selector: 'app-analytics',
-  imports: [SharedModule, HeaderComponent, FooterComponent],
+  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.scss'
 })
@@ -26,6 +27,13 @@ export class AnalyticsComponent implements OnInit {
     }
   }
 
+  get timelineData(): number[] {
+    return this.urlList()?.timelineData ?? [];
+  }
+
+  get timelineLabels(): string[] {
+    return this.urlList()?.timelineLabels ?? [];
+  }
 
   displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
   recentActivity = [

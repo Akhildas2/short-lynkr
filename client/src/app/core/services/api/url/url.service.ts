@@ -15,7 +15,7 @@ export class UrlService {
     return this.http.post(`${this.apiUrl}/create`, { originalUrl });
   }
 
-  updateUrl(id: string, data: { expiryDays?: number; customCode?: string; clickLimit?: number, tags?: string }): Observable<{ url: UrlEntry }> {
+  updateUrl(id: string, data: { expiryDays?: number; customCode?: string; clickLimit?: number, tags?: string[] }): Observable<{ url: UrlEntry }> {
     return this.http.patch<{ url: UrlEntry }>(`${this.apiUrl}/update/${id}`, data)
   }
 

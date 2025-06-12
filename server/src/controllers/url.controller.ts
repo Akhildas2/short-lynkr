@@ -56,11 +56,13 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const redirectToOriginal = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { shortId } = req.params;
-        const clientIp = req.ip || 'Unknow';
-        const geo = geoip.lookup(clientIp);
+        const clientIp = req.ip || req.headers['x-forwarded-for'] || 'Unknown';
+        const geo = geoip.lookup(clientIp.toString());
         const country = geo?.country || 'Unknown';
+        const userAgent = req.get('User-Agent') || 'Unknown';
+        const referrer = req.get('Referer') || 'Direct';
 
-        const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp, country);
+        const urlData = await urlService.getAndUpdateOriginalUrl(shortId,clientIp.toString(), country, userAgent, referrer);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
             return;
@@ -98,7 +100,8 @@ export const getUserUrls = async (req: AuthRequest, res: Response, next: NextFun
 export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
-        const url = await urlService.getUrlById(id);
+        const range = (req.query.range as string) || '7d';
+        const url = await urlService.getUrlById(id,range);
         if (!url) {
             res.status(404).json({ message: 'URL not found' });
             return;

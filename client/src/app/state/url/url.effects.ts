@@ -30,7 +30,7 @@ export class UrlEffects {
         }
     }
 
-    async updateUrl(id: string, expiryDays: number, customCode: string, clickLimit: number, tags: string): Promise<void> {
+    async updateUrl(id: string, expiryDays: number, customCode: string, clickLimit: number, tags: string[]): Promise<void> {
         this.store.setLoading();
         try {
             const response = await firstValueFrom(this.api.updateUrl(id, { expiryDays, customCode, clickLimit, tags }));
