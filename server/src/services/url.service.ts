@@ -3,6 +3,7 @@ import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 import { ApiError } from '../utils/ApiError';
+import { groupAnalyticsByRange } from '../utils/analytics';
 const UAParser = require('ua-parser-js');
 
 
@@ -164,14 +165,10 @@ export const getUrlById = async (id: string, range: string) => {
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
     }
+    console.log("range", range)
 
     const now = new Date();
-    const rangeMap: Record<string, number> = {
-        '1d': 1,
-        '7d': 7,
-        '30d': 30,
-        '90d': 90,
-    };
+    const rangeMap: Record<string, number> = { '1d': 1, '7d': 7, '30d': 30, '90d': 90 };
     const days = rangeMap[range] ?? 7;
     const fromDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
@@ -221,15 +218,11 @@ export const getUrlById = async (id: string, range: string) => {
         ? (((todayVisitors - yesterdayVisitors) / yesterdayVisitors) * 100).toFixed(2)
         : '100.00';
 
-    const timeSeries = analytics.reduce((acc, entry) => {
-        const date = new Date(entry.timestamp).toISOString().split('T')[0];
-        acc[date] = (acc[date] || 0) + 1;
-        return acc;
-    }, {} as Record<string, number>);
+    const { labels: timelineLabels, data: timelineData } = groupAnalyticsByRange(analytics, range);
+    console.log("timelineLabels",timelineLabels);
+    console.log("timelineData",timelineData);
 
-    const timelineLabels = Object.keys(timeSeries).sort();
-    const timelineData = timelineLabels.map(label => timeSeries[label]);
-
+    
     return {
         ...url.toObject(),
         clicks: totalClicks,

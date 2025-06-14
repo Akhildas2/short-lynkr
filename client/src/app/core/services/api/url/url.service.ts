@@ -23,8 +23,8 @@ export class UrlService {
     return this.http.get(`${this.apiUrl}/my-urls`);
   }
 
-  getUrlById(id: string): Observable<{ url: UrlEntry }> {
-    return this.http.get<{ url: UrlEntry }>(`${this.apiUrl}/${id}`);
+  getUrlById(id: string, range: string = '7d'): Observable<{ url: UrlEntry }> {
+    return this.http.get<{ url: UrlEntry }>(`${this.apiUrl}/${id}?range=${range}`);
   }
 
   redirectToOriginal(shortId: string): Observable<any> {

@@ -70,7 +70,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <!-- Clicks Over Time -->
@@ -83,25 +82,24 @@
                                 <mat-icon>arrow_drop_down</mat-icon>
                             </button>
                             <mat-menu #timeMenu="matMenu">
-                                <button mat-menu-item>Last 24 hours</button>
-                                <button mat-menu-item>Last 7 days</button>
-                                <button mat-menu-item>Last 30 days</button>
-                                <button mat-menu-item>Last 90 days</button>
+                                <button mat-menu-item (click)="changeRange('1d')">Last 24 hours</button>
+                                <button mat-menu-item (click)="changeRange('7d')">Last 7 days</button>
+                                <button mat-menu-item (click)="changeRange('30d')">Last 30 days</button>
+                                <button mat-menu-item (click)="changeRange('90d')">Last 90 days</button>
                             </mat-menu>
                         </div>
                     </div>
-                    <div class="h-80">
-
-                        <app-analytics-chart chartType="line" [data]="timelineData" [labels]="timelineLabels"
-                            [title]="'Clicks Over Time'">
+                    <div>
+                        <app-analytics-chart *ngIf="timelineData.length > 0" chartType="line" [data]="timelineData"
+                            [labels]="timelineLabels" [title]="'Clicks Over Time'">
                         </app-analytics-chart>
 
-
-                        <div
+                        <div *ngIf="timelineData.length === 0"
                             class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
                             <p class="text-gray-500">Clicks timeline chart visualization</p>
                         </div>
                     </div>
+
                 </div>
 
                 <!-- Top Locations -->
