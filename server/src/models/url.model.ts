@@ -4,11 +4,11 @@ import { Analytics, UrlDocument } from '../types/url.interface';
 const analyticsSchema = new Schema<Analytics>({
     ip: { type: String, required: true },
     country: { type: String, required: true },
-    userAgent: { type: String, required: true },
-    referrer: { type: String, required: true },
-    browser: { type: String, required: true },
-    os: { type: String, required: true },
-    device: { type: String, required: true },
+    userAgent: { type: String },
+    referrer: { type: String },
+    browser: { type: String },
+    os: { type: String },
+    device: { type: String },
     timestamp: { type: Date, default: Date.now }
 });
 

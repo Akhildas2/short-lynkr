@@ -18,8 +18,8 @@ export class AnalyticsComponent implements OnInit {
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
   urlList = this.urlStore.selectedUrl;
-  constructor() { }
 
+  selectedRange: '1d' | '7d' | '30d' | '90d' = '7d';
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -27,11 +27,22 @@ export class AnalyticsComponent implements OnInit {
     }
   }
 
+changeRange(range: '1d' | '7d' | '30d' | '90d') {
+  this.selectedRange=range;
+  const id=this.route.snapshot.paramMap.get('id');
+
+  if(id){
+    this.urlEffects.fetchUrlById(id,range)
+  }
+}
+
   get timelineData(): number[] {
+    console.log("timelineData", this.urlList()?.timelineData)
     return this.urlList()?.timelineData ?? [];
   }
 
   get timelineLabels(): string[] {
+    console.log("timelineLabels", this.urlList()?.timelineLabels)
     return this.urlList()?.timelineLabels ?? [];
   }
 
