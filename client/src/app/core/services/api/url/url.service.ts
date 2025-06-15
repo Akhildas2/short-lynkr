@@ -23,7 +23,7 @@ export class UrlService {
     return this.http.get(`${this.apiUrl}/my-urls`);
   }
 
-  getUrlById(id: string, range: string = '7d'): Observable<{ url: UrlEntry }> {
+  getUrlById(id: string, range?: string): Observable<{ url: UrlEntry }> {
     return this.http.get<{ url: UrlEntry }>(`${this.apiUrl}/${id}?range=${range}`);
   }
 

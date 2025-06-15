@@ -6,6 +6,7 @@ import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { ActivatedRoute } from '@angular/router';
 import { AnalyticsChartComponent } from '../../../shared/components/analytics-chart/analytics-chart.component';
+type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 
 @Component({
   selector: 'app-analytics',
@@ -19,30 +20,35 @@ export class AnalyticsComponent implements OnInit {
   private urlStore = inject(UrlStore);
   urlList = this.urlStore.selectedUrl;
 
-  selectedRange: '1d' | '7d' | '30d' | '90d' = '7d';
+  timeRanges: { [key: string]: string } = {
+    '1d': 'Last 24 hours',
+    '7d': 'Last 7 days',
+    '30d': 'Last 30 days',
+    '90d': 'Last 90 days'
+  };
+  selectedRange: TimeRangeKey = '1d';
+
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      await this.urlEffects.fetchUrlById(id);
+      await this.urlEffects.fetchUrlById(id, this.selectedRange);
     }
   }
 
-changeRange(range: '1d' | '7d' | '30d' | '90d') {
-  this.selectedRange=range;
-  const id=this.route.snapshot.paramMap.get('id');
+  changeRange(range: TimeRangeKey) {
+    this.selectedRange = range;
+    const id = this.route.snapshot.paramMap.get('id');
 
-  if(id){
-    this.urlEffects.fetchUrlById(id,range)
+    if (id) {
+      this.urlEffects.fetchUrlById(id, range)
+    }
   }
-}
 
   get timelineData(): number[] {
-    console.log("timelineData", this.urlList()?.timelineData)
     return this.urlList()?.timelineData ?? [];
   }
 
   get timelineLabels(): string[] {
-    console.log("timelineLabels", this.urlList()?.timelineLabels)
     return this.urlList()?.timelineLabels ?? [];
   }
 

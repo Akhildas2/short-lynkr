@@ -1,51 +1,83 @@
-export function groupAnalyticsByRange(
-  analytics: { timestamp: string | Date }[],
-  range: string
-): { labels: string[]; data: number[] } {
+import { format, subDays, startOfDay, addHours, startOfHour, startOfMonth } from 'date-fns';
+
+export type Range = '1d' | '7d' | '30d' | '90d';
+
+interface AnalyticsEntry {
+  timestamp: Date;
+}
+
+export function generateTimelineData(entries: AnalyticsEntry[], range: string) {
   const now = new Date();
-  const timeSeries: Record<string, number> = {};
-
-  // Count clicks per time bucket
-  analytics.forEach(entry => {
-    const dateObj = new Date(entry.timestamp);
-    let key: string;
-
-    if (range === '1d') {
-      key = dateObj.toISOString().slice(11, 13) + ':00'; // Hour
-    } else if (range === '90d') {
-      key = dateObj.toISOString().slice(0, 7); // Month
-    } else {
-      key = dateObj.toISOString().slice(0, 10); // Day
-    }
-
-    timeSeries[key] = (timeSeries[key] || 0) + 1;
-  });
-
-  const labels: string[] = [];
 
   if (range === '1d') {
-    // Last 24 hours: hourly range (today only)
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
+    const start = new Date(end.getTime() - 24 * 60 * 60 * 1000); // 24 hours back
+    const hoursMap: Record<string, number> = {};
+
     for (let i = 0; i < 24; i++) {
-      labels.push(`${i.toString().padStart(2, '0')}:00`);
+      const hour = new Date(start.getTime() + i * 60 * 60 * 1000);
+      const label = format(hour, 'HH:00');
+      hoursMap[label] = 0;
     }
-  } else if (range === '90d') {
-    // Last 90 days: generate month labels for 3 months ending this month
-    const months = new Set<string>();
-    for (let i = 0; i < 90; i++) {
-      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const key = date.toISOString().slice(0, 7);
-      months.add(key);
-    }
-    labels.push(...Array.from(months).reverse());
-  } else {
-    // 7d or 30d: generate daily labels from today to N days back
-    const dayCount = range === '30d' ? 30 : 7;
-    for (let i = dayCount - 1; i >= 0; i--) {
-      const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      labels.push(date.toISOString().slice(0, 10));
-    }
+
+    entries.forEach(({ timestamp }) => {
+      const date = new Date(timestamp);
+      const label = format(date, 'HH:00');
+      if (label in hoursMap) hoursMap[label]++;
+    });
+
+    return {
+      timelineLabels: Object.keys(hoursMap),
+      timelineData: Object.values(hoursMap),
+    };
   }
 
-  const data = labels.map(label => timeSeries[label] || 0);
-  return { labels, data };
+  if (range === '7d' || range === '30d') {
+    const length = range === '7d' ? 7 : 30;
+    const start = startOfDay(subDays(now, length - 1));
+    const days: { label: string; count: number }[] = [];
+
+    for (let i = 0; i < length; i++) {
+      const date = subDays(startOfDay(now), length - 1 - i);
+      days.push({ label: format(date, 'yyyy-MM-dd'), count: 0 });
+    }
+
+    const labelIndexMap = Object.fromEntries(days.map((d, idx) => [d.label, idx]));
+
+    entries.forEach(({ timestamp }) => {
+      const label = format(startOfDay(new Date(timestamp)), 'yyyy-MM-dd');
+      const idx = labelIndexMap[label];
+      if (idx !== undefined) days[idx].count++;
+    });
+
+    return {
+      timelineLabels: days.map(d => d.label),
+      timelineData: days.map(d => d.count),
+    };
+  }
+
+  if (range === '90d') {
+    const months: { label: string; count: number }[] = [];
+    const monthMap = new Map<string, number>();
+
+    for (let i = 3; i >= 0; i--) {
+      const monthStart = startOfMonth(subDays(now, i * 30));
+      const label = format(monthStart, 'yyyy-MM');
+      months.push({ label, count: 0 });
+      monthMap.set(label, months.length - 1);
+    }
+
+    entries.forEach(({ timestamp }) => {
+      const label = format(new Date(timestamp), 'yyyy-MM');
+      const idx = monthMap.get(label);
+      if (idx !== undefined) months[idx].count++;
+    });
+
+    return {
+      timelineLabels: months.map(m => m.label),
+      timelineData: months.map(m => m.count),
+    };
+  }
+
+  return { timelineLabels: [], timelineData: [] };
 }
