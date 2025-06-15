@@ -78,7 +78,7 @@
                         <h2 class="text-xl font-semibold">Clicks Over Time</h2>
                         <div>
                             <button mat-button [matMenuTriggerFor]="timeMenu">
-                                Last 7 days
+                                {{ timeRanges[selectedRange] }}
                                 <mat-icon>arrow_drop_down</mat-icon>
                             </button>
                             <mat-menu #timeMenu="matMenu">

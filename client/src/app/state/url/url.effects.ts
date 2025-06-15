@@ -57,7 +57,7 @@ export class UrlEffects {
         }
     }
 
-    async fetchUrlById(id: string, range: '1d' | '7d' | '30d' | '90d' = '7d'): Promise<void> {
+    async fetchUrlById(id: string, range?: string): Promise<void> {
         this.store.setLoading();
         try {
             const response = await firstValueFrom(this.api.getUrlById(id, range));

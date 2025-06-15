@@ -3,8 +3,9 @@ import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 import { ApiError } from '../utils/ApiError';
-import { groupAnalyticsByRange } from '../utils/analytics';
+import { generateTimelineData } from '../utils/analytics';
 const UAParser = require('ua-parser-js');
+import { startOfHour,subHours ,startOfMonth,startOfDay,subDays,subMonths} from 'date-fns';
 
 
 export const createShortUrl = async (originalUrl: string, userId?: string) => {
@@ -161,20 +162,31 @@ export const deleteUserUrl = async (id: string, userId?: string) => {
 };
 
 export const getUrlById = async (id: string, range: string) => {
+    console.log('range', range);
+
     const url = await UrlModel.findById(id);
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
     }
-    console.log("range", range)
 
     const now = new Date();
     const rangeMap: Record<string, number> = { '1d': 1, '7d': 7, '30d': 30, '90d': 90 };
-    const days = rangeMap[range] ?? 7;
-    const fromDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    const days = rangeMap[range];
+    let fromDate: Date;
+     if (range === '1d') {
+        fromDate = startOfHour(subHours(now, 24)); // 24 hours back
+    } else if (range === '7d' || range === '30d') {
+        fromDate = startOfDay(subDays(now, days - 1)); // Align to daily buckets
+    } else { // 90d
+        fromDate = startOfMonth(subMonths(now, 3)); // First day of month 3 months back
+    }
+    console.log('fromDate', fromDate);
 
     const analytics = (url.analytics || []).filter(a => new Date(a.timestamp) >= fromDate);
 
     const totalClicks = analytics.length;
+    console.log('totalClicks', totalClicks);
+
     const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
 
     // Top country
@@ -218,11 +230,12 @@ export const getUrlById = async (id: string, range: string) => {
         ? (((todayVisitors - yesterdayVisitors) / yesterdayVisitors) * 100).toFixed(2)
         : '100.00';
 
-    const { labels: timelineLabels, data: timelineData } = groupAnalyticsByRange(analytics, range);
-    console.log("timelineLabels",timelineLabels);
-    console.log("timelineData",timelineData);
+    const analyticsEntries = analytics.map(a => ({
+        timestamp: a.timestamp,
+    }));
+    const { timelineLabels, timelineData } = generateTimelineData(analyticsEntries, range);
+    console.log('timelineLabels', 'timelineData', timelineData, timelineLabels);
 
-    
     return {
         ...url.toObject(),
         clicks: totalClicks,
