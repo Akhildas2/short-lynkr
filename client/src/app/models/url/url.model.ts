@@ -34,4 +34,6 @@ export interface UrlEntry {
     visitorsChange?: number;
     timelineData?: number[];
     timelineLabels?: string[];
+    countryClicks?: number[];
+    countryCodes?: string[];
 }

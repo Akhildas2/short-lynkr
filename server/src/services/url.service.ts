@@ -3,9 +3,10 @@ import { generateShortId } from '../utils/shortIdGenerator';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 import { ApiError } from '../utils/ApiError';
-import { generateTimelineData } from '../utils/analytics';
+import { generateTimelineData } from '../utils/generateTimelineData.utils';
+import { getDateRange } from '../utils/getDateRange.utils';
+import { filterAnalyticsByRange, getPercentageChange, getTopCountryInfo } from '../utils/analytics.utils';
 const UAParser = require('ua-parser-js');
-import { startOfHour,subHours ,startOfMonth,startOfDay,subDays,subMonths} from 'date-fns';
 
 
 export const createShortUrl = async (originalUrl: string, userId?: string) => {
@@ -162,89 +163,44 @@ export const deleteUserUrl = async (id: string, userId?: string) => {
 };
 
 export const getUrlById = async (id: string, range: string) => {
-    console.log('range', range);
-
     const url = await UrlModel.findById(id);
-    if (!url) {
-        throw new ApiError('URL not found or access denied', 404);
-    }
+    if (!url) throw new ApiError('URL not found or access denied', 404);
 
     const now = new Date();
-    const rangeMap: Record<string, number> = { '1d': 1, '7d': 7, '30d': 30, '90d': 90 };
-    const days = rangeMap[range];
-    let fromDate: Date;
-     if (range === '1d') {
-        fromDate = startOfHour(subHours(now, 24)); // 24 hours back
-    } else if (range === '7d' || range === '30d') {
-        fromDate = startOfDay(subDays(now, days - 1)); // Align to daily buckets
-    } else { // 90d
-        fromDate = startOfMonth(subMonths(now, 3)); // First day of month 3 months back
-    }
-    console.log('fromDate', fromDate);
+    const { currentFromDate, currentToDate, previousFromDate, previousToDate } = getDateRange(range, now);
 
-    const analytics = (url.analytics || []).filter(a => new Date(a.timestamp) >= fromDate);
+    const analytics = url.analytics || [];
+    const currentAnalytics = filterAnalyticsByRange(analytics, currentFromDate, currentToDate);
+    const previousAnalytics = filterAnalyticsByRange(analytics, previousFromDate, previousToDate);
 
-    const totalClicks = analytics.length;
-    console.log('totalClicks', totalClicks);
+    const totalClicks = currentAnalytics.length;
+    const uniqueVisitors = new Set(currentAnalytics.map(a => a.ip)).size;
+    const previousClicks = previousAnalytics.length;
+    const previousVisitors = new Set(previousAnalytics.map(a => a.ip)).size;
 
-    const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
+    const clicksChange = getPercentageChange(totalClicks, previousClicks);
+    const visitorsChange = getPercentageChange(uniqueVisitors, previousVisitors);
 
-    // Top country
-    const countryCounts = analytics.reduce((acc, { country }) => {
+    const { topCountry, topCountryPercentage } = getTopCountryInfo(currentAnalytics, totalClicks);
+    const countryClicks = currentAnalytics.reduce((acc: Record<string, number>, entry) => {
+        const country = entry.country || 'Unknown';
         acc[country] = (acc[country] || 0) + 1;
         return acc;
-    }, {} as Record<string, number>);
+    }, {});
 
-    const sortedCountries = Object.entries(countryCounts).sort((a, b) => b[1] - a[1])[0];
-    const topCountry = sortedCountries?.[0] || 'Unknown';
-    const topCountryCount = sortedCountries?.[1] || 0;
-    const topCountryPercentage = totalClicks > 0
-        ? ((topCountryCount / totalClicks) * 100).toFixed(1)
-        : '0.0';
-
-    // Time calculations
-    const oneDay = 24 * 60 * 60 * 1000;
-
-    // Clicks changes
-    const todayClicks = analytics.filter(a => new Date(a.timestamp) >= new Date(now.getTime() - oneDay)).length;
-    const yesterdayClicks = analytics.filter(a => {
-        const time = new Date(a.timestamp).getTime();
-        return time >= now.getTime() - 2 * oneDay && time < now.getTime() - oneDay;
-    }).length;
-    const clicksChange = yesterdayClicks > 0
-        ? (((todayClicks - yesterdayClicks) / yesterdayClicks) * 100).toFixed(2)
-        : '100.00';
-
-    // Visitors changes
-    const todayVisitors = new Set(
-        analytics.filter(a => new Date(a.timestamp) >= new Date(now.getTime() - oneDay)).map(a => a.ip)
-    ).size;
-    const yesterdayVisitors = new Set(
-        analytics.filter(a => {
-            const time = new Date(a.timestamp).getTime();
-            return time >= now.getTime() - 2 * oneDay && time < now.getTime() - oneDay;
-        }).map(a => a.ip)
-    ).size;
-
-    const visitorsChange = yesterdayVisitors > 0
-        ? (((todayVisitors - yesterdayVisitors) / yesterdayVisitors) * 100).toFixed(2)
-        : '100.00';
-
-    const analyticsEntries = analytics.map(a => ({
-        timestamp: a.timestamp,
-    }));
+    const analyticsEntries = currentAnalytics.map(a => ({ timestamp: a.timestamp }));
     const { timelineLabels, timelineData } = generateTimelineData(analyticsEntries, range);
-    console.log('timelineLabels', 'timelineData', timelineData, timelineLabels);
 
     return {
         ...url.toObject(),
         clicks: totalClicks,
         uniqueVisitors,
         topCountry,
-        topCountryPercentage: parseFloat(topCountryPercentage),
-        clicksChange: parseFloat(clicksChange),
-        visitorsChange: parseFloat(visitorsChange),
+        topCountryPercentage,
+        clicksChange,
+        visitorsChange,
         timelineLabels,
-        timelineData
+        timelineData,
+        countryClicks,
     };
 };

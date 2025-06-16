@@ -5,7 +5,8 @@
         <div class="container mx-auto max-w-7xl" *ngIf="urlList() as url">
             <div class="mb-10">
                 <h1 class="text-3xl md:text-4xl font-bold mb-2">Analytics Dashboard</h1>
-                <p>Track performance of your <span class="font-bold hover:text-blue-600">{{ url.shortUrl}}</span></p>
+                <p>Track the performance of your <span class="font-bold hover:text-blue-600">{{ url.shortUrl}}</span>
+                </p>
             </div>
 
             <!-- Summary Cards -->
@@ -24,10 +25,11 @@
                     <div class="mt-4">
                         <div class="flex items-center"
                             [ngClass]="(url?.clicksChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
-                            <mat-icon
-                                [ngClass]="(url?.clicksChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">{{(url?.clicksChange
-                                || 0) >= 0 ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
-                            <span class="ml-1">{{ url?.clicksChange || 0 }}% from last week</span>
+                            <mat-icon [ngClass]="(url?.clicksChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
+                                {{(url?.clicksChange || 0) >= 0 ? 'arrow_upward' : 'arrow_downward' }}
+                            </mat-icon>
+                            <span class="ml-1">{{ url?.clicksChange || 0 }}% {{ getRangeComparisonText(selectedRange)
+                                }}</span>
                         </div>
                     </div>
                 </div>
@@ -46,10 +48,11 @@
                     <div class="mt-4">
                         <div class="flex items-center"
                             [ngClass]="(url?.visitorsChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
-                            <mat-icon [ngClass]="(url?.visitorsChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">{{
-                                (url?.visitorsChange || 0) >= 0 ? 'arrow_upward' :
-                                'arrow_downward'}}</mat-icon>
-                            <span class="ml-1">{{ url?.visitorsChange || 0 }}% from last week</span>
+                            <mat-icon [ngClass]="(url?.visitorsChange || 0) >= 0 ? 'text-green-500' : 'text-red-500'">
+                                {{ (url?.visitorsChange || 0) >= 0 ? 'arrow_upward' : 'arrow_downward'}}
+                            </mat-icon>
+                            <span class="ml-1">{{ url?.visitorsChange || 0 }}% {{ getRangeComparisonText(selectedRange)
+                                }}</span>
                         </div>
                     </div>
                 </div>
@@ -66,10 +69,16 @@
                         </div>
                     </div>
                     <div class="mt-4">
-                        <p>{{ url.topCountryPercentage || 0 }}% of total traffic</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            {{ url.topCountryPercentage || 0 }}% of total traffic
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                            Based on {{ selectedRange === '1d' ? 'today' : 'selected period' }}
+                        </p>
                     </div>
                 </div>
             </div>
+
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <!-- Clicks Over Time -->
@@ -106,8 +115,9 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
                     <h2 class="text-xl font-semibold mb-6">Top Locations</h2>
                     <div class="h-80">
-                        <!-- Map chart would go here -->
-                        <div
+                        <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"></app-map-chart>
+
+                        <div *ngIf="countryClickData.length === 0"
                             class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
                             <p class="text-gray-500">Geographical map visualization</p>
                         </div>
