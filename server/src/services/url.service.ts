@@ -183,10 +183,12 @@ export const getUrlById = async (id: string, range: string) => {
 
     const { topCountry, topCountryPercentage } = getTopCountryInfo(currentAnalytics, totalClicks);
     const countryClicks = currentAnalytics.reduce((acc: Record<string, number>, entry) => {
-        const country = entry.country || 'Unknown';
-        acc[country] = (acc[country] || 0) + 1;
+        const code = entry.country?.toUpperCase() || 'UN'; // use ISO-like fallback
+        acc[code] = (acc[code] || 0) + 1;
         return acc;
     }, {});
+
+    console.log('countryClicks', countryClicks);
 
     const analyticsEntries = currentAnalytics.map(a => ({ timestamp: a.timestamp }));
     const { timelineLabels, timelineData } = generateTimelineData(analyticsEntries, range);
