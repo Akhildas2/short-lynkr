@@ -26,7 +26,6 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
 export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
-        console.log("id",id)
         const { customCode, expiryDays, clickLimit, tags } = req.body;
         const userId = req.user?.id;
 
@@ -63,7 +62,7 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
         const userAgent = req.get('User-Agent') || 'Unknown';
         const referrer = req.get('Referer') || 'Direct';
 
-        const urlData = await urlService.getAndUpdateOriginalUrl(shortId,clientIp.toString(), country, userAgent, referrer);
+        const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp.toString(), country, userAgent, referrer);
         if (!urlData) {
             res.status(404).json({ message: 'URL not found' });
             return;
@@ -102,8 +101,8 @@ export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunc
     try {
         const { id } = req.params;
         const range = (req.query.range as string);
-        
-        const url = await urlService.getUrlById(id,range);
+
+        const url = await urlService.getUrlById(id, range);
         if (!url) {
             res.status(404).json({ message: 'URL not found' });
             return;

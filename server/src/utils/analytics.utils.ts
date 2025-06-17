@@ -30,12 +30,6 @@ export function getTopCountryInfo(
         return acc;
     }, {} as Record<string, number>);
 
-    const countryClicks = analytics.reduce((acc: Record<string, number>, entry) => {
-        const country = entry.country || 'Unknown';
-        acc[country] = (acc[country] || 0) + 1;
-        return acc;
-    }, {});
-
     // Sort countries by click count descending
     const sorted: [string, number][] = Object.entries(countryCounts).sort((a, b) => b[1] - a[1]);
 
@@ -50,4 +44,3 @@ export function getTopCountryInfo(
 
     return { topCountry, topCountryPercentage };
 }
-

@@ -1,10 +1,8 @@
 import cron from 'node-cron';
 import urlModel from '../models/url.model';
-import connectDB from '../config/mongodb';
 
 
 (async () => {
-    await connectDB();
 
     cron.schedule('* * * * *', async () => {
         try {

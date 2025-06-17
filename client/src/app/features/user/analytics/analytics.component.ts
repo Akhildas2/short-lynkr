@@ -61,6 +61,7 @@ export class AnalyticsComponent implements OnInit {
       value: Number(value)
     }));
   }
+  
 
   getRangeComparisonText(range: string): string {
     const comparisonTexts: Record<string, string> = {
