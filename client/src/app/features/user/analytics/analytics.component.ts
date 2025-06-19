@@ -20,6 +20,7 @@ export class AnalyticsComponent implements OnInit {
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
   urlList = this.urlStore.selectedUrl;
+  isTimelineLoading = false;
 
   timeRanges: { [key: string]: string } = {
     '1d': 'Last 24 hours',
@@ -32,7 +33,9 @@ export class AnalyticsComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
+      this.isTimelineLoading = true;
       await this.urlEffects.fetchUrlById(id, this.selectedRange);
+      this.isTimelineLoading = false;
     }
   }
 
@@ -41,7 +44,9 @@ export class AnalyticsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
+      this.isTimelineLoading = true;
       this.urlEffects.fetchUrlById(id, range)
+      this.isTimelineLoading = false;
     }
   }
 
@@ -55,13 +60,13 @@ export class AnalyticsComponent implements OnInit {
 
   get countryClickData(): { countryCode: string, value: number }[] {
     const countryClicks = this.urlList()?.countryClicks ?? {};
-    
+
     return Object.entries(countryClicks).map(([countryCode, value]) => ({
       countryCode,
       value: Number(value)
     }));
   }
-  
+
 
   getRangeComparisonText(range: string): string {
     const comparisonTexts: Record<string, string> = {

@@ -1,7 +1,17 @@
-<div class="p-5 rounded-2xl shadow-2xl w-full h-full">
-    <div class="relative h-[400px]">
-        <canvas baseChart [data]="chartData" [labels]="labels" [options]="chartOptions" [type]="chartType"
-            [plugins]="chartPlugins">
-        </canvas>
-    </div>
+<div class="p-5 rounded-2xl shadow-2xl w-full h-full relative">
+  <!-- Spinner -->
+  <div *ngIf="loading" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 rounded-2xl">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <!-- Chart -->
+  <div class="relative h-[400px]" [class.opacity-30]="loading">
+    <canvas baseChart
+      [data]="chartData"
+      [labels]="labels"
+      [options]="chartOptions"
+      [type]="chartType"
+      [plugins]="chartPlugins">
+    </canvas>
+  </div>
 </div>
