@@ -100,7 +100,7 @@
                     </div>
                     <div>
                         <app-analytics-chart *ngIf="timelineData.length > 0" chartType="line" [data]="timelineData"
-                            [labels]="timelineLabels" [title]="'Clicks Over Time'">
+                            [labels]="timelineLabels" [title]="'Clicks Over Time'"  [loading]="isTimelineLoading">
                         </app-analytics-chart>
 
                         <div *ngIf="timelineData.length === 0"
@@ -114,8 +114,8 @@
 
                 <!-- Top Locations -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
-                    <h2 class="text-xl font-semibold mb-6">Top Locations</h2>
-                    <div class="h-[400px]">
+                    <h2 class="text-xl font-semibold mb-6">Clicks Over Time Locations</h2>
+                    <div>
                         <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"></app-map-chart>
 
                         <div *ngIf="countryClickData.length === 0"

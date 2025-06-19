@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { SharedModule } from '../../shared.module';
 
 
 @Component({
   selector: 'app-analytics-chart',
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective,SharedModule],
   templateUrl: './analytics-chart.component.html',
   styleUrl: './analytics-chart.component.scss'
 })
@@ -14,6 +15,7 @@ export class AnalyticsChartComponent implements OnChanges {
   @Input() data: number[] = [];
   @Input() labels: string[] = [];
   @Input() title: string = '';
+  @Input() loading: boolean = false;
 
   public chartData: ChartData<'line' | 'bar' | 'pie' | 'doughnut'> = {
     labels: [],
