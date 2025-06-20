@@ -82,7 +82,7 @@
             <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 <!-- Clicks Over Time -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
+                <div class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-semibold">Clicks Over Time</h2>
                         <div>
@@ -98,14 +98,14 @@
                             </mat-menu>
                         </div>
                     </div>
-                    <div>
-                        <app-analytics-chart *ngIf="timelineData.length > 0" chartType="line" [data]="timelineData"
-                            [labels]="timelineLabels" [title]="'Clicks Over Time'"  [loading]="isTimelineLoading">
+                    <div class="relative flex-grow h-96">
+                        <app-analytics-chart *ngIf="hasTimelineClicks" chartType="line" [data]="timelineData"
+                            [labels]="timelineLabels" [title]="'Clicks Over Time'" [loading]="isTimelineLoading">
                         </app-analytics-chart>
 
-                        <div *ngIf="timelineData.length === 0"
-                            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
-                            <p class="text-gray-500"> No click data available. Interact with a link to see the chart.
+                        <div *ngIf="!hasTimelineClicks && !isTimelineLoading" @zoomIn
+                            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
+                            <p class="text-gray-400"> No click data available. Interact with a link to see the chart.
                             </p>
                         </div>
                     </div>
@@ -113,14 +113,15 @@
                 </div>
 
                 <!-- Top Locations -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
+                <div class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
                     <h2 class="text-xl font-semibold mb-6">Clicks Over Time Locations</h2>
-                    <div>
-                        <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"></app-map-chart>
+                    <div class="relative flex-grow h-96">
+                        <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"
+                            [loading]="isTimelineLoading"></app-map-chart>
 
-                        <div *ngIf="countryClickData.length === 0"
-                            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
-                            <p class="text-gray-500"> No location data available. Click a link to view the map.</p>
+                        <div *ngIf="countryClickData.length === 0 && !isTimelineLoading" @zoomIn
+                            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
+                            <p class="text-gray-400"> No location data available. Click a link to view the map.</p>
                         </div>
                     </div>
                 </div>
@@ -132,33 +133,13 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
                     <h2 class="text-xl font-semibold mb-6">Top Referrers</h2>
                     <div class="space-y-4">
-                        <div>
+                        <div *ngFor="let ref of referrerStats">
                             <div class="flex justify-between mb-1">
-                                <span>Direct / None</span>
-                                <span>42%</span>
+                                <span>{{ ref.name }}</span>
+                                <span>{{ ref.percentage }}%</span>
                             </div>
-                            <mat-progress-bar mode="determinate" value="42" color="primary"></mat-progress-bar>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span>Social Media</span>
-                                <span>28%</span>
-                            </div>
-                            <mat-progress-bar mode="determinate" value="28" color="accent"></mat-progress-bar>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span>Google Search</span>
-                                <span>17%</span>
-                            </div>
-                            <mat-progress-bar mode="determinate" value="17"></mat-progress-bar>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span>Email Campaign</span>
-                                <span>9%</span>
-                            </div>
-                            <mat-progress-bar mode="determinate" value="9" color="warn"></mat-progress-bar>
+                            <mat-progress-bar mode="determinate" [value]="ref.percentage"
+                                color="primary"></mat-progress-bar>
                         </div>
                     </div>
                 </div>
@@ -166,12 +147,20 @@
                 <!-- Devices -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
                     <h2 class="text-xl font-semibold mb-6">Devices</h2>
-                    <div class="h-60">
-                        <!-- Pie chart would go here -->
-                        <div
-                            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
-                            <p class="text-gray-500">Devices pie chart visualization</p>
-                        </div>
+                    <div>
+                        <ng-container *ngIf="deviceChartData.length > 0; else noDeviceData">
+                            <app-analytics-chart chartType="pie" [data]="deviceChartData" [labels]="deviceChartLabels"
+                                [title]="'Devices Breakdown'" [loading]="isTimelineLoading">
+                            </app-analytics-chart>
+                        </ng-container>
+
+                        <ng-template #noDeviceData>
+                            <div
+                                class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
+                                <p class="text-gray-500">No device data available</p>
+                            </div>
+                        </ng-template>
+
                     </div>
                     <div class="grid grid-cols-3 gap-4 mt-4 text-center">
                         <div>

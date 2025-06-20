@@ -36,4 +36,8 @@ export interface UrlEntry {
     timelineLabels?: string[];
     countryClicks?: number[];
     countryCodes?: string[];
+    referrerStats?: { name: string; value: number; percentage: number }[];
+    deviceStats?: { name: string; value: number; percentage: number }[];
+    browserStats?: { name: string; value: number; percentage: number }[];
+    osStats?: { name: string; value: number; percentage: number }[];
 }

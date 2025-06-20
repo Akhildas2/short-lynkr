@@ -6,6 +6,7 @@ import { ApiError } from '../utils/ApiError';
 import { generateTimelineData } from '../utils/generateTimelineData.utils';
 import { getDateRange } from '../utils/getDateRange.utils';
 import { filterAnalyticsByRange, getPercentageChange, getTopCountryInfo } from '../utils/analytics.utils';
+import { getTopValues } from '../utils/getTopValues.utils';
 const UAParser = require('ua-parser-js');
 
 
@@ -188,10 +189,14 @@ export const getUrlById = async (id: string, range: string) => {
         return acc;
     }, {});
 
-    console.log('countryClicks', countryClicks);
-
     const analyticsEntries = currentAnalytics.map(a => ({ timestamp: a.timestamp }));
     const { timelineLabels, timelineData } = generateTimelineData(analyticsEntries, range);
+
+    const referrerStats = getTopValues(currentAnalytics, 'referrer');
+    const deviceStats = getTopValues(currentAnalytics, 'device');
+    const browserStats = getTopValues(currentAnalytics, 'browser');
+    const osStats = getTopValues(currentAnalytics, 'os');
+    console.log("referrer", referrerStats);
 
     return {
         ...url.toObject(),
@@ -204,5 +209,9 @@ export const getUrlById = async (id: string, range: string) => {
         timelineLabels,
         timelineData,
         countryClicks,
+        referrerStats,
+        deviceStats,
+        browserStats,
+        osStats
     };
 };

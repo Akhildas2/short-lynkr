@@ -1,14 +1,16 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { SharedModule } from '../../shared.module';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 
 @Component({
   selector: 'app-analytics-chart',
-  imports: [BaseChartDirective,SharedModule],
+  imports: [BaseChartDirective, SharedModule,SpinnerComponent],
   templateUrl: './analytics-chart.component.html',
-  styleUrl: './analytics-chart.component.scss'
+  styleUrl: './analytics-chart.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnalyticsChartComponent implements OnChanges {
   @Input() chartType: ChartType = 'line';
@@ -21,6 +23,10 @@ export class AnalyticsChartComponent implements OnChanges {
     labels: [],
     datasets: []
   };
+
+  private isDarkMode(): boolean {
+    return document.documentElement.classList.contains('dark');
+  }
 
   // Chart configuration
   public chartOptions: ChartOptions = {
@@ -44,20 +50,53 @@ export class AnalyticsChartComponent implements OnChanges {
   }
 
   private updateChart(): void {
+    const dark = this.isDarkMode();
     this.chartData = {
       labels: this.labels,
       datasets: [{
         label: this.title,
         data: this.data,
         backgroundColor: this.getBackgroundColors(),
-        borderColor: '#4f46e5',
+        borderColor: dark ? '#60a5fa' : '#4f46e5',
         borderWidth: 2,
-        fill: this.chartType === 'line' // only fill area for line chart
+        pointBackgroundColor: '#ffffff',
+        fill: this.chartType === 'line'
       }]
+    };
+
+    const tickColor = dark ? '#f9fafb' : '#A9A9A9';
+    const gridColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.3)';
+    const titleColor = dark ? '#f9fafb' : '#A9A9A9';
+    const legendColor = dark ? '#f9fafb' : '#A9A9A9';
+
+    this.chartOptions.scales = {
+      x: {
+        ticks: {
+          color: tickColor
+        },
+        grid: {
+          color: gridColor
+        }
+      },
+      y: {
+        ticks: {
+          color: tickColor
+        },
+        grid: {
+          color: gridColor
+        }
+      }
     };
 
     if (this.chartOptions.plugins?.title) {
       this.chartOptions.plugins.title.text = this.title;
+      this.chartOptions.plugins.title.color = titleColor;
+    }
+
+    if (this.chartOptions.plugins?.legend) {
+      this.chartOptions.plugins.legend.labels = {
+        color: legendColor
+      };
     }
   }
 
