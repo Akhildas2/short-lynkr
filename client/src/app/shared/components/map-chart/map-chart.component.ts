@@ -1,5 +1,5 @@
-import { Component, Input, NgZone, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Chart, ChartData, ChartOptions, ChartType, registerables } from 'chart.js';
+import { ChangeDetectionStrategy, Component, Input, NgZone, OnChanges, SimpleChanges } from '@angular/core';
+import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from 'chartjs-chart-geo';
 import { BaseChartDirective } from 'ng2-charts';
 import type { FeatureCollection, Geometry } from 'geojson';
@@ -9,18 +9,21 @@ import { SharedModule } from '../../shared.module';
 import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import * as countries from 'i18n-iso-countries';
 import * as enLocale from 'i18n-iso-countries/langs/en.json';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 Chart.register(...registerables, ChoroplethController, GeoFeature, ColorScale, ProjectionScale);
 countries.registerLocale(enLocale);
 
 @Component({
   selector: 'app-map-chart',
-  imports: [BaseChartDirective, SharedModule],
+  imports: [BaseChartDirective, SharedModule,SpinnerComponent],
   templateUrl: './map-chart.component.html',
-  styleUrl: './map-chart.component.scss'
+  styleUrl: './map-chart.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapChartComponent implements OnChanges {
   @Input() data: { countryCode: string, value: number }[] = [];
+  @Input() loading: boolean = false;
   // Timeout to debounce map rendering
   private renderTimeout: any;
 
@@ -37,8 +40,9 @@ export class MapChartComponent implements OnChanges {
   public chartOptions: ChartOptions<'choropleth'> = {
     responsive: true,// Make the chart responsive
     maintainAspectRatio: false,// Do not maintain aspect ratio, fill container
-    showOutline: true,// Show country outlines
+    showOutline: false,// Show country outlines
     showGraticule: false,// Do not show latitude/longitude lines
+    animation: false,
     plugins: {
       legend: {
         display: false
@@ -66,7 +70,7 @@ export class MapChartComponent implements OnChanges {
         axis: 'x',
         quantize: 5,
         legend: {
-          position: 'bottom-right',
+          position: 'top-right',
           align: 'right'
         }
       }
@@ -78,30 +82,28 @@ export class MapChartComponent implements OnChanges {
     if (changes['data'] && this.data?.length > 0) {
       clearTimeout(this.renderTimeout);
       this.renderTimeout = setTimeout(() => {
-        this.ngZone.runOutsideAngular(() => this.loadMap());
-      }, 100);
+        this.ngZone.run(() => this.loadMap());
+      }, 300);
     }
   }
 
 
   private async loadMap() {
     try {
-      const res = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-50m.json');
+      const res = await fetch('https://unpkg.com/world-atlas@2.0.2/countries-110m.json');
       const world: Topology = await res.json();
       const geojson = feature(
         world as any,
         (world as any).objects.countries
       ) as unknown as FeatureCollection<Geometry>;
 
-      // Detect if dark mode is enabled
+      // Calculate isDarkMode
       const isDarkMode = document.documentElement.classList.contains('dark');
 
-      // Build a Map<ISO2, clicks>
       const countryDataMap = new Map(
         this.data.map(d => [d.countryCode.toUpperCase(), d.value])
       );
 
-      // Map GeoJSON features to chart data points
       const chartDataPoints = geojson.features.map((feat: any) => {
         const numericCode = feat.id;
         const iso2 = numericCode ? countries.numericToAlpha2(parseInt(numericCode, 10)) : undefined;
@@ -115,32 +117,34 @@ export class MapChartComponent implements OnChanges {
         };
       });
 
-      // Feed ChartGeo
-      this.chartData = {
-        labels: chartDataPoints.map(dp => dp.feature.properties.name || 'Unknown'),
-        datasets: [{
-          label: 'Clicks by Country',
-          data: chartDataPoints,
-          backgroundColor: (ctx: any) => {
-            const raw = ctx.raw as any;
-            const value = raw?.value ?? 0;
+      this.ngZone.run(() => {
+        const maxValue = Math.max(...chartDataPoints.map(d => d.value));
 
-            if (!value) {
-              return isDarkMode ? 'rgba(55,65,81,0.3)' : 'rgba(229,231,235,0.3)';
-            }
+        this.chartData = {
+          labels: chartDataPoints.map(dp => dp.feature.properties.name || 'Unknown'),
+          datasets: [{
+            label: 'Clicks by Country',
+            data: chartDataPoints,
+            backgroundColor: (ctx: any) => {
+              const raw = ctx.raw as any;
+              const value = raw?.value ?? 0;
 
-            const maxValue = Math.max(...chartDataPoints.map(d => d.value));
-            const intensity = maxValue > 0 ? Math.min(value / maxValue, 1) : 0;
+              if (!value) {
+                return isDarkMode ? 'rgba(55,65,81,0.3)' : 'rgba(243,244,246,0.8)';
+              }
 
-            return isDarkMode
-              ? `rgba(96,165,250,${0.5 + intensity * 0.7})`  // Light blue for dark mode
-              : `rgba(59,130,246,${0.5 + intensity * 0.7})`;
-          },
+              // Use the pre-calculated maxValue
+              const intensity = maxValue > 0 ? Math.min(value / maxValue, 1) : 0;
 
-          borderColor: isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(156,163,175,0.5)',
-          borderWidth: 0.5,
-        }]
-      };
+              return isDarkMode
+                ? `rgba(96,165,250,${0.4 + intensity * 0.6})`
+                : `rgba(59,130,246,${0.4 + intensity * 0.6})`;
+            },
+            borderColor: isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(156,163,175,0.8)',
+            borderWidth: 0.5,
+          }]
+        };
+      });
 
     } catch (err) {
       console.error(err);

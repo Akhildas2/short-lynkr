@@ -7,13 +7,23 @@ import { UrlStore } from '../../../state/url/url.store';
 import { ActivatedRoute } from '@angular/router';
 import { AnalyticsChartComponent } from '../../../shared/components/analytics-chart/analytics-chart.component';
 import { MapChartComponent } from '../../../shared/components/map-chart/map-chart.component';
+import { trigger, style, animate, transition } from '@angular/animations';
+
 type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 
 @Component({
   selector: 'app-analytics',
   imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent],
   templateUrl: './analytics.component.html',
-  styleUrl: './analytics.component.scss'
+  styleUrl: './analytics.component.scss',
+  animations: [
+    trigger('zoomIn', [
+      transition(':enter', [
+        style({ transform: 'scale(0.8)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
+      ])
+    ])
+  ]
 })
 export class AnalyticsComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -21,6 +31,9 @@ export class AnalyticsComponent implements OnInit {
   private urlStore = inject(UrlStore);
   urlList = this.urlStore.selectedUrl;
   isTimelineLoading = false;
+  deviceChartData: number[] = [];
+  deviceChartLabels: string[] = [];
+
 
   timeRanges: { [key: string]: string } = {
     '1d': 'Last 24 hours',
@@ -34,18 +47,26 @@ export class AnalyticsComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isTimelineLoading = true;
-      await this.urlEffects.fetchUrlById(id, this.selectedRange);
+
+      const fetchPromise = this.urlEffects.fetchUrlById(id, this.selectedRange);
+      const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+      await Promise.all([fetchPromise, delayPromise]);
+      this.setChartData();
       this.isTimelineLoading = false;
     }
   }
 
-  changeRange(range: TimeRangeKey) {
+  async changeRange(range: TimeRangeKey) {
     this.selectedRange = range;
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
       this.isTimelineLoading = true;
-      this.urlEffects.fetchUrlById(id, range)
+
+      const fetchPromise = this.urlEffects.fetchUrlById(id, range);
+      const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+      await Promise.all([fetchPromise, delayPromise]);
+
       this.isTimelineLoading = false;
     }
   }
@@ -57,6 +78,9 @@ export class AnalyticsComponent implements OnInit {
   get timelineLabels(): string[] {
     return this.urlList()?.timelineLabels ?? [];
   }
+  get hasTimelineClicks(): boolean {
+    return this.timelineData.some(v => v > 0);
+  }
 
   get countryClickData(): { countryCode: string, value: number }[] {
     const countryClicks = this.urlList()?.countryClicks ?? {};
@@ -67,6 +91,28 @@ export class AnalyticsComponent implements OnInit {
     }));
   }
 
+  get referrerStats() {
+    return this.urlList()?.referrerStats ?? [];
+  }
+
+  get deviceStats() {
+    return this.urlList()?.deviceStats ?? [];
+  }
+
+  private setChartData() {
+    const devices = this.deviceStats;
+    this.deviceChartData = devices.map(d => d.percentage);
+    this.deviceChartLabels = devices.map(d => d.name);
+  }
+
+
+  get browserStats() {
+    return this.urlList()?.browserStats ?? [];
+  }
+
+  get osStats() {
+    return this.urlList()?.osStats ?? [];
+  }
 
   getRangeComparisonText(range: string): string {
     const comparisonTexts: Record<string, string> = {
