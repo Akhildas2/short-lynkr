@@ -10,7 +10,7 @@ describe('AuthFormComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AuthFormComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(AuthFormComponent);
     component = fixture.componentInstance;
