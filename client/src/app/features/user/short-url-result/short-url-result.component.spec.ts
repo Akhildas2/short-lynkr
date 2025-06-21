@@ -10,7 +10,7 @@ describe('ShortUrlResultComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ShortUrlResultComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ShortUrlResultComponent);
     component = fixture.componentInstance;

@@ -10,7 +10,7 @@ describe('MyUrlListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [MyUrlListComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MyUrlListComponent);
     component = fixture.componentInstance;

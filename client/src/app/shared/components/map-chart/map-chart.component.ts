@@ -16,7 +16,7 @@ countries.registerLocale(enLocale);
 
 @Component({
   selector: 'app-map-chart',
-  imports: [BaseChartDirective, SharedModule,SpinnerComponent],
+  imports: [BaseChartDirective, SharedModule, SpinnerComponent],
   templateUrl: './map-chart.component.html',
   styleUrl: './map-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -147,7 +147,6 @@ export class MapChartComponent implements OnChanges {
       });
 
     } catch (err) {
-      console.error(err);
       this.snackbarService.showError('Failed to load map data');
     }
   }
