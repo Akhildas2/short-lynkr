@@ -101,6 +101,7 @@ export class AnalyticsComponent implements OnInit {
 
   private setChartData() {
     const devices = this.deviceStats;
+         console.log('devices', devices);
     this.deviceChartData = devices.map(d => d.percentage);
     this.deviceChartLabels = devices.map(d => d.name);
   }

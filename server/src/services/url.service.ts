@@ -196,7 +196,8 @@ export const getUrlById = async (id: string, range: string) => {
     const deviceStats = getTopValues(currentAnalytics, 'device');
     const browserStats = getTopValues(currentAnalytics, 'browser');
     const osStats = getTopValues(currentAnalytics, 'os');
-
+    console.log('deviceStats',deviceStats);
+    
     return {
         ...url.toObject(),
         clicks: totalClicks,
