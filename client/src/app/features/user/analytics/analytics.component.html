@@ -149,7 +149,7 @@
                     <h2 class="text-xl font-semibold mb-6">Devices</h2>
                     <div>
                         <ng-container *ngIf="deviceChartData.length > 0; else noDeviceData">
-                            <app-analytics-chart chartType="pie" [data]="deviceChartData" [labels]="deviceChartLabels"
+                            <app-analytics-chart chartType="doughnut" [data]="deviceChartData" [labels]="deviceChartLabels"
                                 [title]="'Devices Breakdown'" [loading]="isTimelineLoading">
                             </app-analytics-chart>
                         </ng-container>

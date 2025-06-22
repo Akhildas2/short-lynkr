@@ -7,7 +7,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
   selector: 'app-analytics-chart',
-  imports: [BaseChartDirective, SharedModule,SpinnerComponent],
+  imports: [BaseChartDirective, SharedModule, SpinnerComponent],
   templateUrl: './analytics-chart.component.html',
   styleUrl: './analytics-chart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -49,8 +49,52 @@ export class AnalyticsChartComponent implements OnChanges {
     }
   }
 
-  private updateChart(): void {
-    const dark = this.isDarkMode();
+ private updateChart(): void {
+  const dark = this.isDarkMode();
+
+  // Background and styling colors
+  const tickColor = dark ? '#f9fafb' : '#A9A9A9';
+  const gridColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+  const titleColor = dark ? '#f9fafb' : '#000000';
+  const legendColor = dark ? '#f9fafb' : '#000000';
+
+  // Shared chart options
+  this.chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: legendColor
+        }
+      },
+      title: {
+        display: true,
+        text: this.title,
+        color: titleColor
+      }
+    }
+  };
+
+  // Axis configuration only for line/bar charts
+  if (this.chartType === 'line' || this.chartType === 'bar') {
+    this.chartOptions.scales = {
+      x: {
+        ticks: { color: tickColor },
+        grid: { color: gridColor }
+      },
+      y: {
+        ticks: { color: tickColor },
+        grid: { color: gridColor }
+      }
+    };
+  } else {
+    delete this.chartOptions.scales; // Remove axis for doughnut/pie
+  }
+
+  // Chart data configuration
+  if (this.chartType === 'line' || this.chartType === 'bar') {
     this.chartData = {
       labels: this.labels,
       datasets: [{
@@ -59,56 +103,34 @@ export class AnalyticsChartComponent implements OnChanges {
         backgroundColor: this.getBackgroundColors(),
         borderColor: dark ? '#60a5fa' : '#4f46e5',
         borderWidth: 2,
-        pointBackgroundColor: '#ffffff',
-        fill: this.chartType === 'line'
+        fill: this.chartType === 'line',
+        pointBackgroundColor: '#ffffff'
       }]
     };
-
-    const tickColor = dark ? '#f9fafb' : '#A9A9A9';
-    const gridColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.3)';
-    const titleColor = dark ? '#f9fafb' : '#A9A9A9';
-    const legendColor = dark ? '#f9fafb' : '#A9A9A9';
-
-    this.chartOptions.scales = {
-      x: {
-        ticks: {
-          color: tickColor
-        },
-        grid: {
-          color: gridColor
-        }
-      },
-      y: {
-        ticks: {
-          color: tickColor
-        },
-        grid: {
-          color: gridColor
-        }
-      }
+  } else if (this.chartType === 'doughnut' || this.chartType === 'pie') {
+    this.chartData = {
+      labels: this.labels,
+      datasets: [{
+        data: this.data,
+        backgroundColor: this.getBackgroundColors(),
+        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1
+      }]
     };
-
-    if (this.chartOptions.plugins?.title) {
-      this.chartOptions.plugins.title.text = this.title;
-      this.chartOptions.plugins.title.color = titleColor;
-    }
-
-    if (this.chartOptions.plugins?.legend) {
-      this.chartOptions.plugins.legend.labels = {
-        color: legendColor
-      };
-    }
   }
+}
 
-  private getBackgroundColors(): string[] {
-    if (this.chartType === 'pie' || this.chartType === 'doughnut') {
-      return [
-        'rgba(255, 99, 132, 0.7)',
-        'rgba(54, 162, 235, 0.7)',
-        'rgba(255, 206, 86, 0.7)',
-        'rgba(75, 192, 192, 0.7)',
-      ];
-    }
-    return ['rgba(79, 70, 229, 0.2)'];
-  }
+private getBackgroundColors(): string[] {
+  const baseColors = [
+    'rgba(255, 99, 132, 0.7)',
+    'rgba(54, 162, 235, 0.7)',
+    'rgba(255, 206, 86, 0.7)',
+    'rgba(75, 192, 192, 0.7)',
+    'rgba(153, 102, 255, 0.7)',
+    'rgba(255, 159, 64, 0.7)',
+    'rgba(199, 199, 199, 0.7)'
+  ];
+  return this.data.map((_, i) => baseColors[i % baseColors.length]);
+}
+
 }
