@@ -7,33 +7,29 @@ import { UrlStore } from '../../../state/url/url.store';
 import { ActivatedRoute } from '@angular/router';
 import { AnalyticsChartComponent } from '../../../shared/components/analytics-chart/analytics-chart.component';
 import { MapChartComponent } from '../../../shared/components/map-chart/map-chart.component';
-import { trigger, style, animate, transition } from '@angular/animations';
+import { StatsChartComponent } from '../../../shared/components/stats-chart/stats-chart.component';
+import { StatsListComponent } from "../../../shared/components/stats-list/stats-list.component";
+import { fadeInLeftAnimation, zoomInAnimation, } from '../../../shared/utils/animations.util';
 
 type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 
 @Component({
   selector: 'app-analytics',
-  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent],
+  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.scss',
-  animations: [
-    trigger('zoomIn', [
-      transition(':enter', [
-        style({ transform: 'scale(0.8)', opacity: 0 }),
-        animate('300ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
-      ])
-    ])
-  ]
+  animations: [zoomInAnimation, fadeInLeftAnimation]
 })
 export class AnalyticsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
   urlList = this.urlStore.selectedUrl;
-  isTimelineLoading = false;
+  isLoading = false;
   deviceChartData: number[] = [];
   deviceChartLabels: string[] = [];
-
+  osChartData: number[] = [];
+  osChartLabels: string[] = [];
 
   timeRanges: { [key: string]: string } = {
     '1d': 'Last 24 hours',
@@ -43,31 +39,28 @@ export class AnalyticsComponent implements OnInit {
   };
   selectedRange: TimeRangeKey = '1d';
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.isTimelineLoading = true;
-
-      const fetchPromise = this.urlEffects.fetchUrlById(id, this.selectedRange);
-      const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
-      await Promise.all([fetchPromise, delayPromise]);
-      this.setChartData();
-      this.isTimelineLoading = false;
+      this.loadData(id, this.selectedRange);
     }
+  }
+
+  private async loadData(id: string, range: TimeRangeKey) {
+    this.isLoading = true;
+    const fetchPromise = this.urlEffects.fetchUrlById(id, range);
+    const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
+    await Promise.all([fetchPromise, delayPromise]);
+    this.setChartData();
+    this.setChartDataOs();
+    this.isLoading = false;
   }
 
   async changeRange(range: TimeRangeKey) {
     this.selectedRange = range;
     const id = this.route.snapshot.paramMap.get('id');
-
     if (id) {
-      this.isTimelineLoading = true;
-
-      const fetchPromise = this.urlEffects.fetchUrlById(id, range);
-      const delayPromise = new Promise(resolve => setTimeout(resolve, 2000));
-      await Promise.all([fetchPromise, delayPromise]);
-
-      this.isTimelineLoading = false;
+      this.loadData(id, range);
     }
   }
 
@@ -88,7 +81,7 @@ export class AnalyticsComponent implements OnInit {
     return Object.entries(countryClicks).map(([countryCode, value]) => ({
       countryCode,
       value: Number(value)
-    }));
+    })).sort((a, b) => b.value - a.value);
   }
 
   get referrerStats() {
@@ -101,11 +94,9 @@ export class AnalyticsComponent implements OnInit {
 
   private setChartData() {
     const devices = this.deviceStats;
-         console.log('devices', devices);
     this.deviceChartData = devices.map(d => d.percentage);
     this.deviceChartLabels = devices.map(d => d.name);
   }
-
 
   get browserStats() {
     return this.urlList()?.browserStats ?? [];
@@ -113,6 +104,12 @@ export class AnalyticsComponent implements OnInit {
 
   get osStats() {
     return this.urlList()?.osStats ?? [];
+  }
+
+  private setChartDataOs() {
+    const os = this.osStats;
+    this.osChartData = os.map(d => d.percentage);
+    this.osChartLabels = os.map(d => d.name);
   }
 
   getRangeComparisonText(range: string): string {
@@ -124,6 +121,38 @@ export class AnalyticsComponent implements OnInit {
     };
     return comparisonTexts[range] || 'from previous period';
   }
+
+  get deviceGridClass(): string {
+    const count = this.deviceStats.length;
+
+    if (count === 1) return 'grid grid-cols-1 justify-center';
+    if (count === 2) return 'grid grid-cols-2';
+    if (count === 3) return 'grid grid-cols-3';
+    if (count === 4) return 'grid grid-cols-2 md:grid-cols-4';
+    if (count === 5) return 'grid grid-cols-2 md:grid-cols-5';
+    return 'grid grid-cols-2 md:grid-cols-6'; // for 6 or more
+  }
+
+
+  browserIconMap: Record<string, string> = {
+    Chrome: 'language',
+    Firefox: 'travel_explore',
+    Safari: 'explore',
+    Edge: 'web_asset',
+    Opera: 'tune',
+    Other: 'public',
+  };
+
+  referrerIconMap: Record<string, string> = {
+    Direct: 'link',
+    Google: 'search',
+    Facebook: 'facebook',
+    Twitter: 'alternate_email',
+    Instagram: 'photo_camera',
+    LinkedIn: 'work',
+    Other: 'travel_explore'
+  };
+
 
   displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
   recentActivity = [

@@ -1,0 +1,26 @@
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 h-full flex flex-col">
+    <h2 class="text-xl font-semibold mb-6">{{ title }}</h2>
+    <div class="relative flex-grow h-96">
+        <app-analytics-chart *ngIf="data.length > 0" [chartType]="chartType" [data]="data" [labels]="labels"
+            [title]="title" [loading]="loading">
+        </app-analytics-chart>
+
+        <div *ngIf="data.length === 0 && !loading"
+            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
+            <p class="text-gray-600">{{ emptyText }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="data.length > 0 && !loading" class="mt-6">
+        <h2 class="text-lg font-semibold mb-4 text-center"> Top {{ valueData.length > 6 ? 6 : valueData.length }} {{
+            title }}</h2>
+
+        <div [ngClass]="gridClass + ' gap-4 mt-4 text-center'">
+            <div *ngFor="let item of valueData | slice:0:6" class="text-center">
+                <div class="text-2xl font-bold">{{ item.percentage }}%</div>
+                <div class="text-sm text-gray-500">{{ item.name }} ({{ item.value }})</div>
+            </div>
+        </div>
+    </div>
+
+</div>

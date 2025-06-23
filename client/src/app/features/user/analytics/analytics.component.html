@@ -100,12 +100,12 @@
                     </div>
                     <div class="relative flex-grow h-96">
                         <app-analytics-chart *ngIf="hasTimelineClicks" chartType="line" [data]="timelineData"
-                            [labels]="timelineLabels" [title]="'Clicks Over Time'" [loading]="isTimelineLoading">
+                            [labels]="timelineLabels" [title]="'Clicks Over Time'" [loading]="isLoading">
                         </app-analytics-chart>
 
-                        <div *ngIf="!hasTimelineClicks && !isTimelineLoading" @zoomIn
+                        <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn
                             class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
-                            <p class="text-gray-400"> No click data available. Interact with a link to see the chart.
+                            <p class="text-gray-600"> No click data available. Interact with a link to see the chart.
                             </p>
                         </div>
                     </div>
@@ -117,113 +117,55 @@
                     <h2 class="text-xl font-semibold mb-6">Clicks Over Time Locations</h2>
                     <div class="relative flex-grow h-96">
                         <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"
-                            [loading]="isTimelineLoading"></app-map-chart>
+                            [loading]="isLoading"></app-map-chart>
 
-                        <div *ngIf="countryClickData.length === 0 && !isTimelineLoading" @zoomIn
+                        <div *ngIf="countryClickData.length === 0 && !isLoading" @zoomIn
                             class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
-                            <p class="text-gray-400"> No location data available. Click a link to view the map.</p>
+                            <p class="text-gray-600"> No location data available. Click a link to view the map.</p>
+                        </div>
+                    </div>
+                    <div *ngIf="countryClickData.length > 0 && !isLoading" class="mt-6">
+                        <h2 class="text-lg font-semibold mb-4 text-center"> Top {{ countryClickData.length > 3 ? 3 :
+                            countryClickData.length }} Top Locations</h2>
+
+                        <div [ngClass]="deviceGridClass + ' gap-4 mt-4 text-center'" @fadeInLeft>
+                            <div *ngFor="let item of countryClickData |slice:0:3" class="text-center">
+                                <div class="text-2xl font-bold">{{ item.countryCode }}</div>
+                                <div class="text-sm text-gray-500"> ({{ item.value }})</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Additional Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
                 <!-- Referrers -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
-                    <h2 class="text-xl font-semibold mb-6">Top Referrers</h2>
-                    <div class="space-y-4">
-                        <div *ngFor="let ref of referrerStats">
-                            <div class="flex justify-between mb-1">
-                                <span>{{ ref.name }}</span>
-                                <span>{{ ref.percentage }}%</span>
-                            </div>
-                            <mat-progress-bar mode="determinate" [value]="ref.percentage"
-                                color="primary"></mat-progress-bar>
-                        </div>
-                    </div>
-                </div>
+                <app-stats-list title="Referrers" [items]="referrerStats" [iconMap]="referrerIconMap"
+                    fallbackIcon="travel_explore" [showProgressBar]="true"
+                    emptyText="No referrer data available. Click a shortened link to see referrers.">
+                </app-stats-list>
+
+                <!-- Browsers -->
+                <app-stats-list title="Browsers & Platforms" [items]="browserStats" [iconMap]="browserIconMap"
+                    fallbackIcon="public" [showProgressBar]="false"
+                    emptyText="No browser/platform data available. Click a shortened link to see this.">
+                </app-stats-list>
 
                 <!-- Devices -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
-                    <h2 class="text-xl font-semibold mb-6">Devices</h2>
-                    <div>
-                        <ng-container *ngIf="deviceChartData.length > 0; else noDeviceData">
-                            <app-analytics-chart chartType="doughnut" [data]="deviceChartData" [labels]="deviceChartLabels"
-                                [title]="'Devices Breakdown'" [loading]="isTimelineLoading">
-                            </app-analytics-chart>
-                        </ng-container>
+                <app-stats-chart title="Devices" chartType="doughnut" [data]="deviceChartData"
+                    [labels]="deviceChartLabels" [valueData]="deviceStats" [loading]="isLoading"
+                    [gridClass]="deviceGridClass"
+                    emptyText="No device data available. Click a shortened link to see device stats.">
+                </app-stats-chart>
 
-                        <ng-template #noDeviceData>
-                            <div
-                                class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
-                                <p class="text-gray-500">No device data available</p>
-                            </div>
-                        </ng-template>
+                <!-- OS -->
+                <app-stats-chart title="Operating Systems" chartType="pie" [data]="osChartData" [labels]="osChartLabels"
+                    [valueData]="osStats" [loading]="isLoading" [gridClass]="deviceGridClass"
+                    emptyText="No OS data available. Click a shortened link to see OS stats.">
+                </app-stats-chart>
 
-                    </div>
-                    <div class="grid grid-cols-3 gap-4 mt-4 text-center">
-                        <div>
-                            <div class="text-2xl font-bold">62%</div>
-                            <div class="text-sm text-gray-500">Mobile</div>
-                        </div>
-                        <div>
-                            <div class="text-2xl font-bold">32%</div>
-                            <div class="text-sm text-gray-500">Desktop</div>
-                        </div>
-                        <div>
-                            <div class="text-2xl font-bold">6%</div>
-                            <div class="text-sm text-gray-500">Tablet</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Browsers & OS -->
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
-                    <h2 class="text-xl font-semibold mb-6">Browsers & Platforms</h2>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="mr-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <mat-icon class="text-gray-600" style="width:18px;height:18px">public</mat-icon>
-                            </div>
-                            <div class="flex-grow">
-                                <div>Chrome</div>
-                                <div class="text-sm text-gray-500">58% of traffic</div>
-                            </div>
-                            <div class="text-lg font-semibold">58%</div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="mr-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <mat-icon class="text-gray-600" style="width:18px;height:18px">public</mat-icon>
-                            </div>
-                            <div class="flex-grow">
-                                <div>Safari</div>
-                                <div class="text-sm text-gray-500">22% of traffic</div>
-                            </div>
-                            <div class="text-lg font-semibold">22%</div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="mr-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <mat-icon class="text-gray-600" style="width:18px;height:18px">devices</mat-icon>
-                            </div>
-                            <div class="flex-grow">
-                                <div>iOS</div>
-                                <div class="text-sm text-gray-500">15% of traffic</div>
-                            </div>
-                            <div class="text-lg font-semibold">15%</div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="mr-3 w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <mat-icon class="text-gray-600" style="width:18px;height:18px">devices</mat-icon>
-                            </div>
-                            <div class="flex-grow">
-                                <div>Android</div>
-                                <div class="text-sm text-gray-500">10% of traffic</div>
-                            </div>
-                            <div class="text-lg font-semibold">10%</div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Recent Activity -->
