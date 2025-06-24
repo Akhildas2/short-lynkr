@@ -1,0 +1,18 @@
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transition-transform hover:scale-105 h-full">
+    <div class="flex justify-between items-start">
+        <div>
+            <p class="text-gray-500 dark:text-gray-400">{{ title }}</p>
+            <p class="text-3xl font-bold">{{ value }}</p>
+        </div>
+        <div class="p-3 rounded-xl" [ngClass]="iconBgClass">
+            <mat-icon [ngClass]="iconColorClass">{{ icon }}</mat-icon>
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="flex items-center" [ngClass]="change >= 0 ? 'text-green-500' : 'text-red-500'">
+            <mat-icon [ngClass]="change >= 0 ? 'text-green-500' : 'text-red-500'">{{ change >= 0 ? 'arrow_upward' :
+                'arrow_downward' }}</mat-icon>
+            <span class="ml-1">{{ change }}% {{ changeText }}</span>
+        </div>
+    </div>
+</div>

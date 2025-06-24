@@ -1,7 +1,7 @@
 <button mat-icon-button (click)="toggleTheme()"
-  matTooltip="{{ isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}"
-  class="hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-300">
-  <mat-icon [ngStyle]="{ color: isDark ? 'white' : 'black' }" class="theme-icon transition-colors duration-300">
+  matTooltip="{{ isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" matTooltipPosition="below"
+  class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+  <mat-icon class="transition-colors duration-300" [ngClass]="{ 'text-white': isDark, 'text-black': !isDark }">
     {{ isDark ? 'dark_mode' : 'light_mode' }}
   </mat-icon>
 </button>

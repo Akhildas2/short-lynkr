@@ -9,16 +9,19 @@ import { AnalyticsChartComponent } from '../../../shared/components/analytics-ch
 import { MapChartComponent } from '../../../shared/components/map-chart/map-chart.component';
 import { StatsChartComponent } from '../../../shared/components/stats-chart/stats-chart.component';
 import { StatsListComponent } from "../../../shared/components/stats-list/stats-list.component";
-import { fadeInLeftAnimation, zoomInAnimation, } from '../../../shared/utils/animations.util';
+import { zoomInAnimation } from '../../../shared/utils/animations.util';
+import { SummaryCardComponent } from '../../../shared/components/summary-card/summary-card.component';
+import { AnalyticsEntry } from '../../../models/url/url.model';
+import { ActivityTableComponent } from '../../../shared/components/activity-table/activity-table.component';
 
 type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 
 @Component({
   selector: 'app-analytics',
-  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent],
+  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent, SummaryCardComponent, ActivityTableComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.scss',
-  animations: [zoomInAnimation, fadeInLeftAnimation]
+  animations: [zoomInAnimation]
 })
 export class AnalyticsComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -30,6 +33,7 @@ export class AnalyticsComponent implements OnInit {
   deviceChartLabels: string[] = [];
   osChartData: number[] = [];
   osChartLabels: string[] = [];
+  displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
 
   timeRanges: { [key: string]: string } = {
     '1d': 'Last 24 hours',
@@ -71,6 +75,7 @@ export class AnalyticsComponent implements OnInit {
   get timelineLabels(): string[] {
     return this.urlList()?.timelineLabels ?? [];
   }
+
   get hasTimelineClicks(): boolean {
     return this.timelineData.some(v => v > 0);
   }
@@ -112,6 +117,12 @@ export class AnalyticsComponent implements OnInit {
     this.osChartLabels = os.map(d => d.name);
   }
 
+  get recentActivity(): AnalyticsEntry[] {
+    const analytics = this.urlList()?.analytics ?? [];
+    return analytics.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 10)
+  }
+
   getRangeComparisonText(range: string): string {
     const comparisonTexts: Record<string, string> = {
       '1d': 'from yesterday',
@@ -123,16 +134,26 @@ export class AnalyticsComponent implements OnInit {
   }
 
   get deviceGridClass(): string {
-    const count = this.deviceStats.length;
+    return this.getGridClass(this.deviceStats.length);
+  }
 
+  get osGridClass(): string {
+    return this.getGridClass(this.osStats.length);
+  }
+
+  get countryGridClass(): string {
+    const topCountries = this.countryClickData.slice(0, 3);
+    return this.getGridClass(topCountries.length);
+  }
+
+  private getGridClass(count: number): string {
     if (count === 1) return 'grid grid-cols-1 justify-center';
     if (count === 2) return 'grid grid-cols-2';
     if (count === 3) return 'grid grid-cols-3';
     if (count === 4) return 'grid grid-cols-2 md:grid-cols-4';
-    if (count === 5) return 'grid grid-cols-2 md:grid-cols-5';
-    return 'grid grid-cols-2 md:grid-cols-6'; // for 6 or more
+    if (count === 5) return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5';
+    return 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6'; // 6 or more
   }
-
 
   browserIconMap: Record<string, string> = {
     Chrome: 'language',
@@ -153,43 +174,13 @@ export class AnalyticsComponent implements OnInit {
     Other: 'travel_explore'
   };
 
+  deviceIconMap: Record<string, string> = {
+    Mobile: 'smartphone',
+    Desktop: 'desktop_windows',
+    Tablet: 'tablet',
+    Bot: 'smart_toy',
+    Other: 'devices'
+  };
 
-  displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
-  recentActivity = [
-    {
-      timestamp: new Date(),
-      location: 'New York, US',
-      device: 'iPhone',
-      deviceIcon: 'phone_iphone',
-      referrer: 'Instagram'
-    },
-    {
-      timestamp: new Date(Date.now() - 1000 * 60 * 5),
-      location: 'London, UK',
-      device: 'Chrome Desktop',
-      deviceIcon: 'desktop_windows',
-      referrer: 'Google Search'
-    },
-    {
-      timestamp: new Date(Date.now() - 1000 * 60 * 15),
-      location: 'Berlin, DE',
-      device: 'Android Phone',
-      deviceIcon: 'android',
-      referrer: 'Twitter'
-    },
-    {
-      timestamp: new Date(Date.now() - 1000 * 60 * 25),
-      location: 'Tokyo, JP',
-      device: 'Safari Desktop',
-      deviceIcon: 'desktop_mac',
-      referrer: 'Direct'
-    },
-    {
-      timestamp: new Date(Date.now() - 1000 * 60 * 45),
-      location: 'Sydney, AU',
-      device: 'iPad',
-      deviceIcon: 'tablet_mac',
-      referrer: 'Email'
-    }
-  ];
+
 }

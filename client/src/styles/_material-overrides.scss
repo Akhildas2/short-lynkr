@@ -1,0 +1,86 @@
+:root {
+  // MDC text field variables
+  --mdc-outlined-text-field-label-text-color: var(--text-color);
+  --mdc-outlined-text-field-input-text-color: var(--text-color);
+  --mdc-outlined-text-field-hover-outline-color: var(--text-color);
+  --mdc-outlined-text-field-outline-color: var(--text-color);
+  --mdc-outlined-text-field-focus-outline-color: var(--primary-color);
+  --mdc-outlined-text-field-supporting-text-color: var(--text-color);
+  --mdc-outlined-text-field-error-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-hover-outline-color: var(--error-color);
+  --mdc-outlined-text-field-error-focus-outline-color: var(--error-color);
+
+  // Form field base colors
+  .mat-mdc-form-field {
+    color: var(--text-color) !important;
+  }
+
+  .mat-mdc-floating-label,
+  .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+    color: var(--text-color) !important;
+  }
+
+  .mat-icon,
+  .mat-mdc-form-field-icon-prefix,
+  .mat-mdc-form-field-icon-suffix {
+    color: var(--text-color);
+  }
+
+  // Buttons and icons
+  .mat-mdc-icon-button,
+  .mat-mdc-button {
+    color: var(--text-color); // Consider global button override carefully
+  }
+
+  // Placeholder
+  input::placeholder {
+    color: var(--text-color) !important;
+  }
+
+  // Paginator (if its styles are identical in structure for both themes)
+  .mat-mdc-paginator {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-family: "Inter", sans-serif;
+
+    .mat-mdc-paginator-range-label,
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-min-line {
+      color: var(--text-color);
+    }
+
+    button.mat-mdc-icon-button svg {
+      fill: var(--text-color);
+    }
+
+    button.mat-mdc-icon-button[disabled] svg {
+      fill: var(--text-color);
+      opacity: 0.3 !important;
+    }
+
+    .mat-mdc-select-arrow svg {
+      fill: var(--text-color) !important;
+    }
+  }
+
+  // Dialog styles
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: var(--background-color);
+    --mdc-dialog-subhead-color: var(--text-color);
+    --mdc-dialog-supporting-text-color: var(--text-color);
+  }
+
+  .mat-mdc-dialog-title {
+    color: var(--text-color);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+  }
+
+  .mat-mdc-dialog-content {
+    color: var(--text-color);
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+  }
+}
