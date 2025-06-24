@@ -2,6 +2,7 @@
 @use "./styles/typography" as *;
 @use "./styles/light-theme" as *;
 @use "./styles/dark-theme" as *;
+@use "./styles/material-overrides";
 
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
