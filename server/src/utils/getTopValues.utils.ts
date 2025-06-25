@@ -49,12 +49,15 @@ export function getTopValues(data: any[], key: string) {
     }, {});
 
     const total = Object.values(countMap).reduce((sum, val) => sum + val, 0);
-
     return Object.entries(countMap)
-        .map(([name, value]) => ({
-            name,
-            value,
-            percentage: Math.round((value / total) * 100),
-        }))
-        .sort((a, b) => b.value - a.value); // Optional: sort by count
+        .map(([name, value]) => {
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+            return {
+                name,
+                value,
+                percentage: parseFloat(percentage),
+            };
+        })
+        .sort((a, b) => b.value - a.value);
+
 }

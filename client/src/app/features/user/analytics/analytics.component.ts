@@ -175,12 +175,11 @@ export class AnalyticsComponent implements OnInit {
   };
 
   deviceIconMap: Record<string, string> = {
-    Mobile: 'smartphone',
-    Desktop: 'desktop_windows',
-    Tablet: 'tablet',
-    Bot: 'smart_toy',
-    Other: 'devices'
+    mobile: 'smartphone',
+    desktop: 'desktop_windows',
+    tablet: 'tablet',
+    bot: 'smart_toy',
+    other: 'devices'
   };
-
 
 }

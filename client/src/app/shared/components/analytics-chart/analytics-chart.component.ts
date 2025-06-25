@@ -4,7 +4,6 @@ import { BaseChartDirective } from 'ng2-charts';
 import { SharedModule } from '../../shared.module';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
-
 @Component({
   selector: 'app-analytics-chart',
   imports: [BaseChartDirective, SharedModule, SpinnerComponent],
@@ -73,7 +72,23 @@ export class AnalyticsChartComponent implements OnChanges {
           display: true,
           text: this.title,
           color: titleColor
-        }
+        },
+        tooltip: this.chartType === 'pie' || this.chartType === 'doughnut'
+          ? {
+            callbacks: {
+              label: (tooltipItem) => {
+                const label = tooltipItem.label || '';
+                const value = tooltipItem.raw as number;
+
+                const dataset = tooltipItem.dataset?.data as number[] || [];
+                const total = dataset.reduce((acc, curr) => acc + curr, 0);
+
+                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
+                return `${label}: ${percentage}%`;
+              }
+            }
+          }
+          : undefined
       }
     };
 

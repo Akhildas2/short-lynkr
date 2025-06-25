@@ -1,11 +1,11 @@
-<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 h-full flex flex-col">
+<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 h-full flex flex-col hover:scale-105">
     <h2 class="text-xl font-semibold mb-6">{{ title }}</h2>
     <div class="relative flex-grow h-96">
-        <app-analytics-chart *ngIf="data.length > 0" [chartType]="chartType" [data]="data" [labels]="labels"
-            [title]="title" [loading]="loading">
+        <app-analytics-chart [chartType]="chartType" [data]="data" [labels]="labels" [title]="title"
+            [loading]="loading">
         </app-analytics-chart>
 
-        <div *ngIf="data.length === 0 && !loading"
+        <div *ngIf="!loading && data.length === 0"
             class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
             <p class="text-gray-400 p-2">{{ emptyText }}</p>
         </div>

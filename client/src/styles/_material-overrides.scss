@@ -1,4 +1,5 @@
-:root {
+:root,
+.dark {
   // MDC text field variables
   --mdc-outlined-text-field-label-text-color: var(--text-color);
   --mdc-outlined-text-field-input-text-color: var(--text-color);
@@ -74,13 +75,37 @@
 
   .mat-mdc-dialog-title {
     color: var(--text-color);
-    font-family: "Montserrat", sans-serif;
-    font-weight: 700;
   }
 
   .mat-mdc-dialog-content {
     color: var(--text-color);
-    font-family: "Inter", sans-serif;
-    font-weight: 500;
+  }
+
+  // Table styles
+  .mat-mdc-table {
+    background-color: transparent !important;
+  }
+
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    background-color: transparent !important;
+    color: var(--text-color) !important;
+  }
+
+  .mat-mdc-row {
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: var(--row-hover-bg) !important;
+    }
+  }
+
+  // Alternate (odd) rows
+  .mat-mdc-table .mat-mdc-row:nth-child(odd) {
+    background-color: var(--row-bg-odd) !important;
+
+    &:hover {
+      background-color: var(--row-hover-bg) !important;
+    }
   }
 }
