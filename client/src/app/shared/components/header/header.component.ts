@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { MaterialModule } from '../../../../Material.Module';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { CommonModule } from '@angular/common';
-import { authEffects } from '../../../state/auth/auth.effects';
+import { AuthEffects } from '../../../state/auth/auth.effects';
 import { RouterLink } from '@angular/router';
 import { AuthStore } from '../../../state/auth/auth.store';
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
@@ -14,7 +14,7 @@ import { ClickOutsideDirective } from '../../directives/click-outside.directive'
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-  private authEffects = inject(authEffects);
+  private authEffects = inject(AuthEffects);
   private authStore = inject(AuthStore);
   mobileMenuOpen: boolean = false;
   mobileDropdownOpen: boolean = false;

@@ -8,7 +8,7 @@ import { firstValueFrom } from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 
-export class authEffects {
+export class AuthEffects {
     private authApiService = inject(AuthApiService);
     private authStore = inject(AuthStore);
     private router = inject(Router);

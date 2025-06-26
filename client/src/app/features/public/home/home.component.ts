@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { UrlEffects } from '../../../state/url/url.effects';
 import { CommonModule } from '@angular/common';
 import { isShortUrl } from '../../../shared/utils/url.utils';
-import { authEffects } from '../../../state/auth/auth.effects';
+import { AuthEffects } from '../../../state/auth/auth.effects';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/alert-dialog/alert-dialog.component';
 import { Router } from '@angular/router';
@@ -27,7 +27,7 @@ export class HomeComponent {
     constructor(
         private fb: FormBuilder,
         private urlEffects: UrlEffects,
-        private authEffects: authEffects,
+        private authEffects: AuthEffects,
         private dialog: MatDialog,
         private router: Router
     ) {

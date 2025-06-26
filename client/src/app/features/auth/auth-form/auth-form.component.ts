@@ -4,7 +4,7 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { authEffects } from '../../../state/auth/auth.effects';
+import { AuthEffects } from '../../../state/auth/auth.effects';
 import { ValidationErrorComponent } from '../../../shared/components/validation-error/validation-error/validation-error.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoaderComponent } from '../../../shared/components/loader/loader.component';
@@ -23,7 +23,7 @@ export class AuthFormComponent {
   showLoginPassword = signal(false);
   showRegisterPassword = signal(false);
 
-  constructor(private fb: FormBuilder, private effects: authEffects, private route: ActivatedRoute, private router: Router) {
+  constructor(private fb: FormBuilder, private effects: AuthEffects, private route: ActivatedRoute, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
