@@ -8,7 +8,7 @@ import connectDB from "./config/mongodb";
 import urlRoutes, { redirectRouter } from './routes/url.routes';
 import userRoutes from './routes/user.routes';
 import { errorHandler } from "./middleware/errorHandler";
-import './cron-jobs/cleanup';
+import { startCleanupJob } from "./cron-jobs/cleanup";
 
 // Extend Express Request interface
 declare global {
@@ -66,5 +66,6 @@ const PORT: number = parseInt(process.env.PORT || "3000", 10);
 
 // Connect to the database and start the server
 connectDB().then(() => {
+    startCleanupJob();
     httpServer.listen(PORT, () => console.log(`🚀 Server running with WebSocket on port ${PORT}`));
 });

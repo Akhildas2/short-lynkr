@@ -1,13 +1,10 @@
 import cron from 'node-cron';
 import urlModel from '../models/url.model';
 
-
-(async () => {
-
+export function startCleanupJob() {
     cron.schedule('* * * * *', async () => {
         try {
             const now = new Date();
-
             await urlModel.updateMany(
                 {
                     isActive: true,
@@ -29,5 +26,4 @@ import urlModel from '../models/url.model';
             throw new Error(`URL cleanup cron job failed: ${(error as Error).message}`);
         }
     });
-    
-})();
+}
