@@ -6,7 +6,7 @@
         </app-analytics-chart>
 
         <div *ngIf="!loading && data.length === 0"
-            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full h-full flex items-center justify-center">
+            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
             <p class="text-gray-400 p-2">{{ emptyText }}</p>
         </div>
     </div>
