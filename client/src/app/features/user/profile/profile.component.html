@@ -1,5 +1,6 @@
-<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
+<!-- <div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
     <app-header></app-header>
+    
     <main class="flex-1 flex items-center justify-center p-4">
         <div *ngIf="user" class="card bg-white dark:bg-gray-800 shadow-2xl">
             <button class="mail">
@@ -43,6 +44,47 @@
             </div>
         </div>
     </main>
+
+    <app-footer class="mt-auto"></app-footer>
+</div> -->
+
+<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
+    <app-header></app-header>
+    <mat-card class="profile-card" *ngIf="user">
+        <div class="cover-photo"></div>
+        <div class="avatar-container">
+            <img mat-card-avatar [src]="user.username" alt="Avatar" class="avatar" />
+        </div>
+        <mat-card-content>
+            <h2 class="username">{{ user.username }}</h2>
+            <p class="email">{{ user.email }}</p>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>{{ user }}</h3>
+                    <span>Shortened URLs</span>
+                </div>
+                <div class="stat-item">
+                    <h3>{{ user }}</h3>
+                    <span>Total Clicks</span>
+                </div>
+                <div class="stat-item">
+                    <h3>{{ user }}</h3>
+                    <span>Unique Visitors</span>
+                </div>
+            </div>
+        </mat-card-content>
+
+        <mat-card-actions class="actions">
+            <button mat-stroked-button color="primary">
+                <mat-icon>edit</mat-icon> Edit Profile
+            </button>
+            <button mat-flat-button color="warn">
+                <mat-icon>delete</mat-icon> Delete Account
+            </button>
+        </mat-card-actions>
+    </mat-card>
+
 
 
     <app-footer class="mt-auto"></app-footer>
