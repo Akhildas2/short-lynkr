@@ -7,22 +7,22 @@ import { SharedModule } from '../../../shared/shared.module';
 
 @Component({
     selector: 'app-profile',
-    imports: [HeaderComponent, FooterComponent,SharedModule],
+    imports: [HeaderComponent, FooterComponent, SharedModule],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-    private authStore = inject(AuthStore)
+    private authStore = inject(AuthStore);
+
     constructor(private authEffect: AuthEffects) {
         this.authEffect.checkAuthStatus();
     }
 
-    get user() {
-        return this.authStore.user();
-    }
+    readonly user = this.authStore.user;
+    readonly isAuthenticated = this.authStore.isAuthenticated;
 
-    get isAuthenticated(): boolean {
-        return this.authStore.isAuthenticated();
+    logout(): void {
+        return this.authEffect.logout();
     }
 
 }

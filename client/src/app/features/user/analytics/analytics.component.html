@@ -37,7 +37,8 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
 
                 <!-- Clicks Over Time -->
-                <div class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105">
+                <div
+                    class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
 
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-xl font-semibold">Clicks Over Time</h2>
@@ -56,8 +57,9 @@
                     </div>
 
                     <div class="relative flex-grow h-96">
-                        <app-analytics-chart *ngIf="hasTimelineClicks" chartType="line" [data]="timelineData"
-                            [labels]="timelineLabels" [title]="'Clicks Over Time'" [loading]="isLoading">
+                        <app-analytics-chart *ngIf="isLoading || hasTimelineClicks" chartType="line"
+                            [data]="timelineData" [labels]="timelineLabels" [title]="'Clicks Over Time'"
+                            [loading]="isLoading">
                         </app-analytics-chart>
 
                         <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn
@@ -71,11 +73,12 @@
                 </div>
 
                 <!-- Top Locations -->
-                <div class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105">
+                <div
+                    class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
                     <h2 class="text-xl font-semibold mb-6">Clicks Over Time Locations</h2>
 
                     <div class="relative flex-grow h-96">
-                        <app-map-chart *ngIf="countryClickData.length > 0" [data]="countryClickData"
+                        <app-map-chart *ngIf="isLoading || countryClickData.length > 0" [data]="countryClickData"
                             [loading]="isLoading"></app-map-chart>
 
                         <div *ngIf="countryClickData.length === 0 && !isLoading" @zoomIn

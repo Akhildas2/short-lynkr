@@ -1,9 +1,18 @@
 import cron from 'node-cron';
 import urlModel from '../models/url.model';
+import mongoose from 'mongoose';
+
+function isMongoConnected(): boolean {
+    return mongoose.connection.readyState === 1;
+}
 
 export function startCleanupJob() {
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
         try {
+            if (!isMongoConnected()) {
+                return;
+            }
+
             const now = new Date();
             await urlModel.updateMany(
                 {

@@ -7,7 +7,6 @@ export const AuthStore = signalStore(
     { providedIn: 'root' },
     withState(initialState),
     withComputed(({ user, token }) => ({
-        user: computed(() => user()),
         isAuthenticated: computed(() => !!user() && !!token()),
         username: computed(() => user()?.username || ''),
         userRole: computed(() => user()?.role || '')
