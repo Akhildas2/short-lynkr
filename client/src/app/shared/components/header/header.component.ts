@@ -32,8 +32,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return this.authStore.username();
   }
 
-  logout() {
-    this.authEffects.logout();
+  logout(): void {
+    return this.authEffects.logout();
   }
 
   toggleMobileMenu() {
