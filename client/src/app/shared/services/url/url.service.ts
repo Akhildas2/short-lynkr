@@ -23,5 +23,5 @@ export class UrlService {
       window.open(originalUrl, '_blank');
     }
   }
-  
+
 }

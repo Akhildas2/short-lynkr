@@ -10,7 +10,7 @@ describe('SummaryCardComponent', () => {
     await TestBed.configureTestingModule({
       imports: [SummaryCardComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(SummaryCardComponent);
     component = fixture.componentInstance;
