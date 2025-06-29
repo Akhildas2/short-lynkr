@@ -3,7 +3,7 @@ interface AnalyticsEntry {
     country?: string;
 }
 
-// --- Helper: Filter analytics between two dates ---
+//  Filter analytics between two dates ---
 export function filterAnalyticsByRange(analytics: any[], from: Date, to: Date) {
     return analytics.filter(a => {
         const ts = new Date(a.timestamp);
@@ -11,13 +11,13 @@ export function filterAnalyticsByRange(analytics: any[], from: Date, to: Date) {
     });
 }
 
-// --- Helper: Calculate % change ---
+//  Calculate % change ---
 export function getPercentageChange(current: number, previous: number): number {
     if (previous === 0) return current > 0 ? 100 : 0;
     return Math.round(((current - previous) / previous) * 10000) / 100;
 }
 
-// --- Helper: Get top country and percentage ---
+//  Get top country and percentage ---
 export function getTopCountryInfo(
     analytics: AnalyticsEntry[],
     totalClicks: number
