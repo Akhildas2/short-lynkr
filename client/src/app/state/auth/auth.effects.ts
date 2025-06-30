@@ -1,5 +1,6 @@
 import { inject, Injectable } from "@angular/core";
 import { AuthApiService } from "../../core/services/api/auth/auth-api.service";
+import { UserApiService } from "../../core/services/api/user/user-api.service";
 import { AuthStore } from "./auth.store";
 import { Router } from "@angular/router";
 import { SnackbarService } from "../../shared/services/snackbar/snackbar.service";
@@ -10,6 +11,7 @@ import { firstValueFrom } from "rxjs";
 
 export class AuthEffects {
     private authApiService = inject(AuthApiService);
+    private userApiService = inject(UserApiService);
     private authStore = inject(AuthStore);
     private router = inject(Router);
     private snackbar = inject(SnackbarService);
@@ -55,8 +57,11 @@ export class AuthEffects {
         }
 
         try {
-            const response = await firstValueFrom(this.authApiService.getProfile());
+            const response = await firstValueFrom(this.userApiService.getProfile());
             this.authStore.setUser(response.user);
+            if (response.stats) {
+                this.authStore.setStats(response.stats);
+            }
             return true;
 
         } catch (error) {

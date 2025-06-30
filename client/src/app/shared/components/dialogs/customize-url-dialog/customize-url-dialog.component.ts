@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { UrlEntry } from '../../../models/url/url.model';
+import { UrlEntry } from '../../../../models/url/url.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SharedModule } from '../../shared.module';
+import { SharedModule } from '../../../shared.module';
 
 @Component({
   selector: 'app-customize-url-dialog',

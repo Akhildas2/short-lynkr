@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { HeaderComponent } from "../../../shared/components/header/header.component";
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { HeaderComponent } from "../../../shared/components/ui/header/header.component";
+import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
 import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UrlEffects } from '../../../state/url/url.effects';
@@ -8,9 +8,9 @@ import { CommonModule } from '@angular/common';
 import { isShortUrl } from '../../../shared/utils/url.utils';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { MatDialog } from '@angular/material/dialog';
-import { AlertDialogComponent } from '../../../shared/components/alert-dialog/alert-dialog.component';
+import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { Router } from '@angular/router';
-import { LoaderComponent } from '../../../shared/components/loader/loader.component';
+import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
 import { UrlStore } from '../../../state/url/url.store';
 
 @Component({

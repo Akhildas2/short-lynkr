@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, Input, NgZone, OnChanges, SimpleChanges } from '@angular/core';
+import { SnackbarService } from '../../../services/snackbar/snackbar.service';
+import { SharedModule } from '../../../shared.module';
+import { SpinnerComponent } from '../../ui/spinner/spinner.component';
 import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import { ChoroplethController, GeoFeature, ColorScale, ProjectionScale } from 'chartjs-chart-geo';
 import { BaseChartDirective } from 'ng2-charts';
 import type { FeatureCollection, Geometry } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
-import { SharedModule } from '../../shared.module';
-import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import * as countries from 'i18n-iso-countries';
 import * as enLocale from 'i18n-iso-countries/langs/en.json';
-import { SpinnerComponent } from '../spinner/spinner.component';
 
 Chart.register(...registerables, ChoroplethController, GeoFeature, ColorScale, ProjectionScale);
 countries.registerLocale(enLocale);

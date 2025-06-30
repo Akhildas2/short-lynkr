@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ThemeService } from '../../../core/services/theme/theme.service';
-import { MaterialModule } from '../../../../Material.Module';
+import { ThemeService } from '../../../../core/services/theme/theme.service';
+import { MaterialModule } from '../../../../../Material.Module';
 import { CommonModule } from '@angular/common';
 
 @Component({

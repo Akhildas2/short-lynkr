@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlEntry } from '../../../models/url/url.model';
-import { CustomizeUrlDialogComponent } from '../../components/customize-url-dialog/customize-url-dialog.component';
+import { CustomizeUrlDialogComponent } from '../../components/dialogs/customize-url-dialog/customize-url-dialog.component';
 
 @Injectable({
   providedIn: 'root'

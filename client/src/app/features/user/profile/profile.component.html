@@ -33,17 +33,18 @@
                 class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center pb-8 border-b border-gray-200 dark:border-gray-700">
                 <div
                     class="bg-blue-50 dark:bg-gray-700 p-5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center">
-                    <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">10</h3>
+                    <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ stats()?.totalUrls || 0 }}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Total Shortened URLs</p>
                 </div>
                 <div
                     class="bg-blue-50 dark:bg-gray-700 p-5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center">
-                    <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">180</h3>
+                    <h3 class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ stats()?.totalClicks || 0 }}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Total Clicks</p>
                 </div>
                 <div
                     class="bg-blue-50 dark:bg-gray-700 p-5 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center">
-                    <h3 class="text-3xl font-bold capitalize text-blue-600 dark:text-blue-400">100</h3>
+                    <h3 class="text-3xl font-bold capitalize text-blue-600 dark:text-blue-400">{{
+                        stats()?.uniqueVisitors || 0 }}</h3>
                     <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">Unique Visitors</p>
                 </div>
             </div>
