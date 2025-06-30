@@ -10,4 +10,11 @@ export interface AuthUser {
 export interface AuthResponse {
     user: AuthUser;
     token: string;
+    stats?: ProfileStats;
+}
+
+export interface ProfileStats {
+    totalUrls: number;
+    totalClicks: number;
+    uniqueVisitors: number;
 }

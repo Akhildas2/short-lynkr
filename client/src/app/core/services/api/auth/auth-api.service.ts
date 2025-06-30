@@ -6,25 +6,16 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthApiService {
-  private readonly apiUrl = environment.authApiUrl;
+  private readonly authApiUrl = environment.authApiUrl;
 
   constructor(private http: HttpClient) { }
 
   register(user: { username: string; email: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user);
+    return this.http.post<AuthResponse>(`${this.authApiUrl}/register`, user);
   }
 
   login(credentials: { email: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials);
-  }
-
-  getProfile(): Observable<AuthResponse> {
-    const token = localStorage.getItem('token');
-    return this.http.get<AuthResponse>(`${this.apiUrl}/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    return this.http.post<AuthResponse>(`${this.authApiUrl}/login`, credentials);
   }
 
 }

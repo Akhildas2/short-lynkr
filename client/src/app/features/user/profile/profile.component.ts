@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
+import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { AuthStore } from '../../../state/auth/auth.store';
 import { SharedModule } from '../../../shared/shared.module';
@@ -20,6 +20,7 @@ export class ProfileComponent {
 
     readonly user = this.authStore.user;
     readonly isAuthenticated = this.authStore.isAuthenticated;
+    readonly stats = this.authStore.profileStats;
 
     logout(): void {
         return this.authEffect.logout();

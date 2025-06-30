@@ -10,7 +10,7 @@ describe('CustomizeUrlDialogComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CustomizeUrlDialogComponent]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(CustomizeUrlDialogComponent);
     component = fixture.componentInstance;

@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MaterialModule } from '../../../../Material.Module';
+import { MaterialModule } from '../../../../../Material.Module';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';

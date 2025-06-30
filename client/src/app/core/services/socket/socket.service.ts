@@ -50,7 +50,7 @@ export class SocketService {
   }
 
   constructor() {
-    this.socket = io(environment.baseApi);
+    this.socket = io(environment.baseApiUrl);
     this.registerListeners();
   }
 

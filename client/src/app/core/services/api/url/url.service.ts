@@ -6,32 +6,33 @@ import { UrlEntry } from '../../../../models/url/url.model';
 
 @Injectable({ providedIn: 'root' })
 export class UrlService {
-  private apiUrl = environment.apiUrl;
-  private baseApi = environment.baseApi;
+  private urlApiUrl = environment.urlApiUrl;
+  private baseApiUrl = environment.baseApiUrl;
 
   constructor(private http: HttpClient) { }
 
   createUrl(originalUrl: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/create`, { originalUrl });
+    return this.http.post(`${this.urlApiUrl}/create`, { originalUrl });
   }
 
   updateUrl(id: string, data: { expiryDays?: number; customCode?: string; clickLimit?: number, tags?: string[] }): Observable<{ url: UrlEntry }> {
-    return this.http.patch<{ url: UrlEntry }>(`${this.apiUrl}/update/${id}`, data)
+    return this.http.patch<{ url: UrlEntry }>(`${this.urlApiUrl}/update/${id}`, data)
   }
 
   getUserUrls(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/my-urls`);
+    return this.http.get(`${this.urlApiUrl}/my-urls`);
   }
 
   getUrlById(id: string, range?: string): Observable<{ url: UrlEntry }> {
-    return this.http.get<{ url: UrlEntry }>(`${this.apiUrl}/${id}?range=${range}`);
+    return this.http.get<{ url: UrlEntry }>(`${this.urlApiUrl}/${id}?range=${range}`);
   }
 
   redirectToOriginal(shortId: string): Observable<any> {
-    return this.http.get(`${this.baseApi}/r/${shortId}`, { observe: 'response' })
+    return this.http.get(`${this.baseApiUrl}/r/${shortId}`, { observe: 'response' })
   }
 
   deleteUrl(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`)
+    return this.http.delete<void>(`${this.urlApiUrl}/${id}`)
   }
+
 }

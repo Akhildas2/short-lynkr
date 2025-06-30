@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { SharedModule } from '../../shared.module';
+import { SharedModule } from '../../../shared.module';
 
 @Component({
   selector: 'app-summary-card',

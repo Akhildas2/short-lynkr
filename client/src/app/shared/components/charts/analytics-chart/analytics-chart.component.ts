@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { SharedModule } from '../../shared.module';
-import { SpinnerComponent } from '../spinner/spinner.component';
+import { SharedModule } from '../../../shared.module';
+import { SpinnerComponent } from '../../ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-analytics-chart',

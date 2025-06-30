@@ -1,18 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SharedModule } from '../../../shared/shared.module';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
-import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
+import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
+import { StatsChartComponent } from '../../../shared/components/charts/stats-chart/stats-chart.component';
+import { ActivityTableComponent } from '../../../shared/components/dashboard-widgets/activity-table/activity-table.component';
+import { AnalyticsChartComponent } from '../../../shared/components/charts/analytics-chart/analytics-chart.component';
+import { StatsListComponent } from '../../../shared/components/dashboard-widgets/stats-list/stats-list.component';
+import { SummaryCardComponent } from '../../../shared/components/dashboard-widgets/summary-card/summary-card.component';
+import { MapChartComponent } from '../../../shared/components/charts/map-chart/map-chart.component';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { ActivatedRoute } from '@angular/router';
-import { AnalyticsChartComponent } from '../../../shared/components/analytics-chart/analytics-chart.component';
-import { MapChartComponent } from '../../../shared/components/map-chart/map-chart.component';
-import { StatsChartComponent } from '../../../shared/components/stats-chart/stats-chart.component';
-import { StatsListComponent } from "../../../shared/components/stats-list/stats-list.component";
 import { zoomInAnimation } from '../../../shared/utils/animations.util';
-import { SummaryCardComponent } from '../../../shared/components/summary-card/summary-card.component';
 import { AnalyticsEntry } from '../../../models/url/url.model';
-import { ActivityTableComponent } from '../../../shared/components/activity-table/activity-table.component';
 
 type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 

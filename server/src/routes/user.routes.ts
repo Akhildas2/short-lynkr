@@ -1,13 +1,15 @@
 import { Router } from "express";
-import { getProfile, login, register } from "../controllers/user.controller";
+import { login, register } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth";
+import { changePassword, deleteAccount, editProfile, getProfile } from "../controllers/user.controller";
 
 
 const router = Router();
 
-router.post('/register', register);
-router.post('/login', login)
-router.get('/me', authenticate, getProfile)
+router.get('/me', authenticate, getProfile);
+router.get('/edit', authenticate, editProfile);
+router.get('/change-password', authenticate, changePassword);
+router.get('/delete', authenticate, deleteAccount);
 
 
 export default router;

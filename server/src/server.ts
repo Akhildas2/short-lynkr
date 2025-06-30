@@ -7,6 +7,7 @@ import { createServer } from "http";
 import connectDB from "./config/mongodb";
 import urlRoutes, { redirectRouter } from './routes/url.routes';
 import userRoutes from './routes/user.routes';
+import authRoutes from './routes/auth.routes';
 import { errorHandler } from "./middleware/errorHandler";
 import { startCleanupJob } from "./cron-jobs/cleanup";
 
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 
 app.set('trust proxy', true)
 // Route handling
+app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
 app.use('/api/users', userRoutes);
 app.use('/', redirectRouter);

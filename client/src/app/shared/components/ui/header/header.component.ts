@@ -1,11 +1,11 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { MaterialModule } from '../../../../Material.Module';
-import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { CommonModule } from '@angular/common';
-import { AuthEffects } from '../../../state/auth/auth.effects';
 import { RouterLink } from '@angular/router';
-import { AuthStore } from '../../../state/auth/auth.store';
-import { ClickOutsideDirective } from '../../directives/click-outside.directive';
+import { MaterialModule } from '../../../../../Material.Module';
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
+import { ClickOutsideDirective } from '../../../directives/click-outside.directive';
+import { AuthEffects } from '../../../../state/auth/auth.effects';
+import { AuthStore } from '../../../../state/auth/auth.store';
 
 @Component({
   selector: 'app-header',
