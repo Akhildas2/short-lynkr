@@ -70,9 +70,49 @@ export class AuthEffects {
         }
     }
 
-    logout() {
+    async logout() {
         this.authStore.clearAuth();
         this.snackbar.showInfo('You have been logged out.');
         this.router.navigate(['/auth/sign-in'])
     }
+
+    async editProfile(username: string, email: string): Promise<void> {
+        try {
+            const response = await firstValueFrom(this.userApiService.editProfile({ username, email }));
+            this.authStore.setUser(response.user);
+            this.snackbar.showSuccess('Profile updated successfully.');
+
+        } catch (error: any) {
+            const errorMessage = error?.error.message || 'Update failed.';
+            this.authStore.setError(errorMessage)
+            this.snackbar.showError(errorMessage);
+        }
+    }
+
+    async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+        try {
+            const response = await firstValueFrom(this.userApiService.changePassword({ currentPassword, newPassword }));
+            this.snackbar.showSuccess(response.message)
+
+        } catch (error: any) {
+            const errorMessage = error?.error.message || 'Password change failed.';
+            this.authStore.setError(errorMessage)
+            this.snackbar.showError(errorMessage);
+        }
+    }
+
+    async deleteAccount(): Promise<void> {
+        try {
+            const response = await firstValueFrom(this.userApiService.deleteAccount());
+            this.snackbar.showSuccess(response.message);
+            this.authStore.clearAuth();
+            this.router.navigate(['/auth/sign-in']);
+
+        } catch (error: any) {
+            const errorMessage = error?.error.message || 'Account deletion failed.';
+            this.authStore.setError(errorMessage)
+            this.snackbar.showError(errorMessage);
+        }
+    }
+
 }

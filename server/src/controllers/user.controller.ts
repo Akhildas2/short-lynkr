@@ -57,7 +57,7 @@ export const editProfile = async (req: AuthRequest, res: Response, next: NextFun
             return;
         }
 
-        res.status(200).json({ message: 'Profile updated successfully.', user });
+        res.status(200).json({ user });
 
     } catch (error) {
         next(error);
@@ -90,9 +90,8 @@ export const changePassword = async (req: AuthRequest, res: Response, next: Next
         user.password = hashedPassword;
         await user.save();
 
-        res.status(200).json({ message: 'Password changed successfully.' }
+        res.status(200).json({ message: 'Password changed successfully.' });
 
-        );
     } catch (error) {
         next(error);
     }
@@ -102,7 +101,6 @@ export const changePassword = async (req: AuthRequest, res: Response, next: Next
 export const deleteAccount = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.user?.id;
-
         await Urls.deleteMany({ userId });
 
         const user = await User.findByIdAndDelete(userId);
@@ -112,6 +110,7 @@ export const deleteAccount = async (req: AuthRequest, res: Response, next: NextF
         }
 
         res.status(200).json({ message: 'Account deleted successfully.' });
+
     } catch (error) {
         next(error);
     }

@@ -1,0 +1,63 @@
+<h2 class="text-2xl font-semibold mt-4 px-6">
+    {{ data.mode === 'edit' ? 'Edit Profile' : 'Change Password' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" mat-dialog-content class="space-y-4">
+    <!-- EDIT MODE -->
+    <ng-container *ngIf="data.mode === 'edit'">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Username</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput placeholder="Username" formControlName="username" />
+        </mat-form-field>
+        <app-validation-error [control]="getControl('username')"></app-validation-error>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput placeholder="Email" formControlName="email" />
+        </mat-form-field>
+        <app-validation-error [control]="getControl('email')"></app-validation-error>
+    </ng-container>
+
+    <!-- PASSWORD MODE -->
+    <ng-container *ngIf="data.mode === 'password'">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Current Password</mat-label>
+            <mat-icon matPrefix>lock_outline</mat-icon>
+            <input matInput [type]="showCurrentPassword ? 'text' : 'password'" placeholder="Current Password"
+                formControlName="currentPassword" />
+            <button mat-icon-button matSuffix type="button" (click)="toggleCurrentPasswordVisibility()"
+                [matTooltip]="showCurrentPassword ? 'Hide Password' : 'Show Password'">
+                <mat-icon>{{ showCurrentPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+        </mat-form-field>
+        <app-validation-error [control]="getControl('currentPassword')"></app-validation-error>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>New Password</mat-label>
+            <mat-icon matPrefix>vpn_key</mat-icon>
+            <input matInput [type]="showNewPassword ? 'text' : 'password'" placeholder="New Password"
+                formControlName="newPassword" />
+            <button mat-icon-button matSuffix type="button" (click)="toggleNewPasswordVisibility()"
+                [matTooltip]="showNewPassword ? 'Hide Password' : 'Show Password'">
+                <mat-icon>{{ showNewPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </button>
+        </mat-form-field>
+        <app-validation-error [control]="getControl('newPassword')"></app-validation-error>
+    </ng-container>
+
+    <!-- DIALOG ACTIONS -->
+    <mat-dialog-actions align="end" class="p-6 border-t border-gray-800 dark:border-gray-200 mt-6">
+
+        <button mat-stroked-button type="button" (click)="close()"
+            class="mr-2 px-6 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95"><mat-icon>cancel</mat-icon>Cancel</button>
+
+        <button mat-flat-button [disabled]="form.invalid" [ngClass]="{ 'opacity-50': form.invalid }" type="submit"
+            class="px-6 py-2 rounded-md text-black dark:text-white  bg-blue-500 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-800 transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
+            <mat-icon>{{ data.mode === 'edit' ? 'update' : 'lock_reset' }}</mat-icon>{{ data.mode === 'edit' ? 'Update'
+            : 'Change' }}
+        </button>
+
+    </mat-dialog-actions>
+</form>
