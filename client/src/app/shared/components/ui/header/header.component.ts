@@ -33,7 +33,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    return this.authEffects.logout();
+    this.authEffects.logout();
   }
 
   toggleMobileMenu() {

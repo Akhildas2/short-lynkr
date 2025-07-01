@@ -7,9 +7,9 @@ import { changePassword, deleteAccount, editProfile, getProfile } from "../contr
 const router = Router();
 
 router.get('/me', authenticate, getProfile);
-router.get('/edit', authenticate, editProfile);
-router.get('/change-password', authenticate, changePassword);
-router.get('/delete', authenticate, deleteAccount);
+router.put('/edit', authenticate, editProfile);
+router.put('/change-password', authenticate, changePassword);
+router.delete('/delete', authenticate, deleteAccount);
 
 
 export default router;

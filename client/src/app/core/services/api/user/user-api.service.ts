@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthResponse } from '../../../../models/auth/auth.model';
+import { AuthResponse, AuthUser } from '../../../../models/auth/auth.model';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 
@@ -12,24 +12,27 @@ export class UserApiService {
   private readonly userApiUrl = environment.userApiUrl;
 
   getProfile(): Observable<AuthResponse> {
-    const token = localStorage.getItem('token');
     return this.http.get<AuthResponse>(`${this.userApiUrl}/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
     });
   }
 
-  editProfile(data: { username: string; email: string }): Observable<any> {
-    return this.http.put(`${this.userApiUrl}/edit`, data);
+  editProfile(data: { username: string; email: string }) {
+    return this.http.put<{ user: AuthUser }>(`${this.userApiUrl}/edit`, data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
   }
 
-  changePassword(data: { currentPassword: string; newPassword: string }): Observable<any> {
-    return this.http.put(`${this.userApiUrl}/change-password`, data);
+  changePassword(data: { currentPassword: string; newPassword: string }) {
+    return this.http.put<{ message: string }>(`${this.userApiUrl}/change-password`, data, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
   }
 
-  deleteAccount(): Observable<any> {
-    return this.http.delete(`${this.userApiUrl}/delete`);
+  deleteAccount() {
+    return this.http.delete<{ message: string }>(`${this.userApiUrl}/delete`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
   }
 
 }

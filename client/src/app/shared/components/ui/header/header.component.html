@@ -35,14 +35,30 @@
             'block': isMobile && mobileDropdownOpen,
             'hidden': isMobile && !mobileDropdownOpen
              }">
-              <a routerLink="/user/my-urls" class="block px-4 py-2 hover:text-primary transition-colors"
-                (click)="mobileDropdownOpen = false">My URLs</a>
-              <a routerLink="/user/profile" class="block px-4 py-2 hover:text-primary transition-colors"
-                (click)="mobileDropdownOpen = false">Profile</a>
-              <a routerLink="/qr" class="block px-4 py-2 hover:text-primary transition-colors"
-                (click)="mobileDropdownOpen = false">QR Generator</a>
+
+              <a routerLink="/user/my-urls"
+                class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">
+                <mat-icon class="text-inherit transition-colors">link</mat-icon>
+                My URLs
+              </a>
+
+              <a routerLink="/user/profile"
+                class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">
+                <mat-icon class="text-inherit transition-colors">person</mat-icon>
+                Profile
+              </a>
+
+              <a routerLink="/qr" class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">
+                <mat-icon class="text-inherit transition-colors">qr_code</mat-icon>
+                QR Generator
+              </a>
+
               <button (click)="logout(); mobileDropdownOpen = false"
-                class="block w-full text-left px-4 py-2 hover:text-primary transition-colors">
+                class="flex items-center gap-2 w-full text-left px-4 py-2 hover:text-primary transition-colors">
+                <mat-icon class="text-inherit transition-colors">logout</mat-icon>
                 Logout
               </button>
             </div>
