@@ -30,7 +30,7 @@
   // Buttons and icons
   .mat-mdc-icon-button,
   .mat-mdc-button {
-    color: var(--text-color); // Consider global button override carefully
+    color: var(--text-color);
   }
 
   // Placeholder
@@ -38,7 +38,7 @@
     color: var(--text-color) !important;
   }
 
-  // Paginator (if its styles are identical in structure for both themes)
+  // Paginator
   .mat-mdc-paginator {
     background-color: var(--background-color);
     color: var(--text-color);
@@ -49,20 +49,25 @@
     .mat-mdc-paginator-range-label,
     .mat-mdc-select-value-text,
     .mat-mdc-select-min-line {
-      color: var(--text-color);
+      color: var(--text-color) !important;
     }
 
-    button.mat-mdc-icon-button svg {
-      fill: var(--text-color);
-    }
+    .mat-mdc-icon-button {
+      color: var(--text-color) !important;
 
-    button.mat-mdc-icon-button[disabled] svg {
-      fill: var(--text-color);
-      opacity: 0.3 !important;
-    }
+      .mat-mdc-paginator-icon {
+        fill: var(--text-color) !important;
+      }
 
-    .mat-mdc-select-arrow svg {
-      fill: var(--text-color) !important;
+      &.mat-mdc-button-disabled {
+        color: var(--text-color) !important;
+        opacity: 0.6 !important;
+
+        .mat-mdc-paginator-icon {
+          fill: var(--text-color) !important;
+          opacity: 0.6 !important;
+        }
+      }
     }
   }
 

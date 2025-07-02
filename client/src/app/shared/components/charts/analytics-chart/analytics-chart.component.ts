@@ -33,17 +33,13 @@ export class AnalyticsChartComponent implements OnChanges {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: true },
-      title: {
-        display: true,
-        text: this.title
-      }
     }
   };
 
   public chartPlugins = [];
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] || changes['labels'] || changes['chartType'] || changes['title']) {
+    if (changes['data'] || changes['labels'] || changes['chartType']) {
       this.updateChart();
     }
   }
@@ -54,7 +50,6 @@ export class AnalyticsChartComponent implements OnChanges {
     // Background and styling colors
     const tickColor = dark ? '#f9fafb' : '#A9A9A9';
     const gridColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-    const titleColor = dark ? '#f9fafb' : '#A9A9A9';
     const legendColor = dark ? '#f9fafb' : '#A9A9A9';
 
     // Shared chart options
@@ -67,11 +62,6 @@ export class AnalyticsChartComponent implements OnChanges {
           labels: {
             color: legendColor
           }
-        },
-        title: {
-          display: true,
-          text: this.title,
-          color: titleColor
         },
         tooltip: this.chartType === 'pie' || this.chartType === 'doughnut'
           ? {
