@@ -58,8 +58,7 @@
 
                     <div class="relative flex-grow h-96">
                         <app-analytics-chart *ngIf="isLoading || hasTimelineClicks" chartType="line"
-                            [data]="timelineData" [labels]="timelineLabels" [title]="'Clicks Over Time'"
-                            [loading]="isLoading">
+                            [data]="timelineData" [labels]="timelineLabels" [title]="'Clicks'" [loading]="isLoading">
                         </app-analytics-chart>
 
                         <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn

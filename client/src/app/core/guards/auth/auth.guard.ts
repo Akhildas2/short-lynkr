@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivateFn, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthStore } from '../../../state/auth/auth.store';
 import { jwtDecode } from 'jwt-decode';
 
@@ -16,7 +16,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
   const token = localStorage.getItem('token');
   if (!token) {
-    router.navigate(['/auth/sign-in']);
+    router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 
@@ -27,7 +27,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     if (isExpired) {
       authStore.clearAuth();
       localStorage.removeItem('token');
-      router.navigate(['/auth/sign-in']);
+      router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
       return false;
     }
 
@@ -37,8 +37,9 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
 
   } catch (error) {
+    authStore.clearAuth();
     localStorage.removeItem('token');
-    router.navigate(['/auth/sign-in']);
+    router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 

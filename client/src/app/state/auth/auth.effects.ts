@@ -24,7 +24,15 @@ export class AuthEffects {
 
             this.authStore.setAuthData(response.user, response.token);
             this.snackbar.showSuccess(`Welcome back,${response.user.username || 'User'}!`);
-            this.router.navigate(['']);
+
+            const role = response.user.role;
+            if (role === 'admin') {
+                this.router.navigate(['/admin']);
+            } else if (role === 'user') {
+                this.router.navigate(['/']);
+            } else {
+                this.router.navigate(['/auth/sign-in']);
+            }
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Login failed. Please check your credentials.';
@@ -40,7 +48,16 @@ export class AuthEffects {
 
             this.authStore.setAuthData(response.user, response.token);
             this.snackbar.showSuccess(`Account created successfully! Welcome, ${response.user.username || 'User'}.`);
-            this.router.navigate([''])
+
+            const role = response.user.role;
+            if (role === 'admin') {
+                this.router.navigate(['/admin']);
+            } else if (role === 'user') {
+                this.router.navigate(['/']);
+            } else {
+                this.router.navigate(['/auth/sign-in']);
+            }
+
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Registration failed. Please try again.';
