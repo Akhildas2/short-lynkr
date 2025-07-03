@@ -1,8 +1,4 @@
 import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
-import { MaterialModule } from '../../../../Material.Module';
-import { CommonModule } from '@angular/common';
 import { UrlEntry } from '../../../models/url/url.model';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
@@ -13,14 +9,14 @@ import { ClipboardService } from '../../../shared/services/clipboard/clipboard.s
 import { PageEvent } from '@angular/material/paginator';
 import { filterUrls } from '../../../shared/utils/url-filter.util';
 import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
-import { ClickOutsideDirective } from '../../../shared/directives/click-outside.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { SocketService } from '../../../core/services/socket/socket.service';
+import { SharedModule } from '../../../shared/shared.module';
 
 @Component({
   selector: 'app-my-url-list',
-  imports: [HeaderComponent, FooterComponent, MaterialModule, CommonModule, RouterLink, ClickOutsideDirective],
+  imports: [SharedModule, RouterLink],
   templateUrl: './my-url-list.component.html',
   styleUrl: './my-url-list.component.scss'
 })

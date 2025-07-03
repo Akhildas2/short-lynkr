@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
+import { UserHeaderComponent } from '../../../shared/components/user-layout/user-header/user-header.component';
+import { UserFooterComponent } from '../../../shared/components/user-layout/user-footer/user-footer.component';
 import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthEffects } from '../../../state/auth/auth.effects';
@@ -11,7 +11,7 @@ import { LoaderComponent } from '../../../shared/components/ui/loader/loader.com
 
 @Component({
   selector: 'app-auth-form',
-  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent, LoaderComponent],
+  imports: [CommonModule, UserHeaderComponent, UserFooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent, LoaderComponent],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss'
 })

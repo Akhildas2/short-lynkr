@@ -1,20 +1,18 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { SharedModule } from '../../../shared.module';
 import { RouterLink } from '@angular/router';
-import { MaterialModule } from '../../../../../Material.Module';
-import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
-import { ClickOutsideDirective } from '../../../directives/click-outside.directive';
+import { ThemeToggleComponent } from '../../ui/theme-toggle/theme-toggle.component';
 import { AuthEffects } from '../../../../state/auth/auth.effects';
 import { AuthStore } from '../../../../state/auth/auth.store';
 
 @Component({
-  selector: 'app-header',
-  imports: [MaterialModule, ThemeToggleComponent, CommonModule, RouterLink, ClickOutsideDirective],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  selector: 'app-user-header',
+  imports: [SharedModule,RouterLink,ThemeToggleComponent],
+  templateUrl: './user-header.component.html',
+  styleUrl: './user-header.component.scss'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  private authEffects = inject(AuthEffects);
+export class UserHeaderComponent implements OnInit,OnDestroy{
+private authEffects = inject(AuthEffects);
   private authStore = inject(AuthStore);
   mobileMenuOpen: boolean = false;
   mobileDropdownOpen: boolean = false;
@@ -58,4 +56,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.mobileDropdownOpen = !this.mobileDropdownOpen
     }
   }
+
 }

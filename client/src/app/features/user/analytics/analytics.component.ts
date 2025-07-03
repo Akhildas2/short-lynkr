@@ -1,7 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { SharedModule } from '../../../shared/shared.module';
-import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
 import { StatsChartComponent } from '../../../shared/components/charts/stats-chart/stats-chart.component';
 import { ActivityTableComponent } from '../../../shared/components/dashboard-widgets/activity-table/activity-table.component';
 import { AnalyticsChartComponent } from '../../../shared/components/charts/analytics-chart/analytics-chart.component';
@@ -18,7 +16,7 @@ type TimeRangeKey = '1d' | '7d' | '30d' | '90d';
 
 @Component({
   selector: 'app-analytics',
-  imports: [SharedModule, HeaderComponent, FooterComponent, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent, SummaryCardComponent, ActivityTableComponent],
+  imports: [SharedModule, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent, SummaryCardComponent, ActivityTableComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.scss',
   animations: [zoomInAnimation]

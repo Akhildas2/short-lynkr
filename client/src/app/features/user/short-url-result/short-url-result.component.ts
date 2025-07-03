@@ -3,20 +3,17 @@ import { UrlEntry } from '../../../models/url/url.model';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
-import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
-import { MaterialModule } from '../../../../Material.Module';
 import { openInNewTab } from '../../../shared/utils/url.utils';
 import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 import { SocketService } from '../../../core/services/socket/socket.service';
+import { SharedModule } from '../../../shared/shared.module';
 
 @Component({
   selector: 'app-short-url-result',
-  imports: [CommonModule, HeaderComponent, FooterComponent, MaterialModule, RouterLink],
+  imports: [SharedModule, RouterLink],
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })

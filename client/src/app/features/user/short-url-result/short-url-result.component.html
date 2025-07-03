@@ -1,210 +1,201 @@
-<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
-  <app-header></app-header>
+<!-- Main Content -->
+<main *ngIf="selectedUrl() as url" class="flex-grow py-4">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
+    <div class="space-y-6">
 
-  <!-- Main Content -->
-  <main *ngIf="selectedUrl() as url" class="flex-grow py-4">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
-      <div class="space-y-6">
+      <!-- Main Card Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <!-- QR Code Card  -->
+        <div class="lg:col-span-1 flex justify-center items-center">
+          <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-4 w-full sm:max-w-md">
+            <div class="space-y-3">
+              <h2
+                class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
+                Your Shortened URL is Ready!</h2>
+              <div class="p-4 transition-transform hover:scale-105">
+                <img *ngIf="url.qrCodeUrl;else fallback" [src]="url.qrCodeUrl" alt="QR Code"
+                  class="w-full h-full object-contain animate-fade-in rounded-2xl">
+                <ng-template #fallback>
+                  <p class="text-center text-sm text-red-500">QR code unavailable</p>
+                </ng-template>
+              </div>
+              <div class="space-y-4">
 
-        <!-- Main Card Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          <!-- QR Code Card  -->
-          <div class="lg:col-span-1 flex justify-center items-center">
-            <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-4 w-full sm:max-w-md">
-              <div class="space-y-3">
-                <h2
-                  class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
-                  Your Shortened URL is Ready!</h2>
-                <div class="p-4 transition-transform hover:scale-105">
-                  <img *ngIf="url.qrCodeUrl;else fallback" [src]="url.qrCodeUrl" alt="QR Code"
-                    class="w-full h-full object-contain animate-fade-in rounded-2xl">
-                  <ng-template #fallback>
-                    <p class="text-center text-sm text-red-500">QR code unavailable</p>
-                  </ng-template>
+                <button mat-stroked-button *ngIf="!showQrSizes" (click)="toggleQrSizeOptions()"
+                  class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
+                  <span
+                    class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                    Download QR
+                  </span>
+                  <mat-icon class="ml-2 text-[var(--primary-color)]">download</mat-icon>
+                </button>
+
+                <div *ngIf="showQrSizes" class="grid grid-cols-4 gap-2 mt-2">
+                  <button mat-flat-button *ngFor="let size of QR_SIZES" class="w-full px-4 py-2"
+                    (click)="downloadQrImage(url.qrCodeUrl, size)"> {{ size }}x{{ size }}</button>
                 </div>
-                <div class="space-y-4">
 
-                  <button mat-stroked-button *ngIf="!showQrSizes" (click)="toggleQrSizeOptions()"
-                    class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
-                    <span
-                      class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                      Download QR
-                    </span>
-                    <mat-icon class="ml-2 text-[var(--primary-color)]">download</mat-icon>
-                  </button>
+                <div class="text-center text-sm">
+                  <span>Scan QR code to visit</span>
+                  <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+                    (click)="openLink(url.shortUrl)">
+                    {{ url.shortUrl }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                  <div *ngIf="showQrSizes" class="grid grid-cols-4 gap-2 mt-2">
-                    <button mat-flat-button *ngFor="let size of QR_SIZES" class="w-full px-4 py-2"
-                      (click)="downloadQrImage(url.qrCodeUrl, size)"> {{ size }}x{{ size }}</button>
+        <!-- Analytics Section -->
+        <div class="lg:col-span-2 space-y-6 flex flex-col justify-center">
+          <div class="flex flex-wrap items-center gap-2" *ngIf="url.tags && url.tags.length>0">
+            <mat-icon>label</mat-icon>
+            <mat-chip-set>
+              <mat-chip *ngFor="let tag of url.tags">{{
+                tag
+                }}</mat-chip>
+            </mat-chip-set>
+          </div>
+
+          <!-- Key Metrics Grid -->
+          <div class="flex flex-wrap gap-4 sm:gap-6" *ngIf="url.createdAt">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.createdAt">
+              <div class="flex items-center gap-4">
+                <div class="p-4 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                  <mat-icon class="text-blue-600 dark:text-blue-400">calendar_today</mat-icon>
+                </div>
+                <div>
+                  <p class="text-sm">Created</p>
+                  <p class="text-xl font-semibold dark:text-gray-300">{{url.createdAt | date:'mediumDate'}}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.clicks">
+              <div class="flex items-center gap-4">
+                <div class="p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                  <mat-icon class="text-green-600 dark:text-green-400">trending_up</mat-icon>
+                </div>
+                <div>
+                  <p class="text-sm">Total Clicks</p>
+                  <p class="text-xl font-semibold dark:text-gray-300">{{url.clicks}}</p>
+                  <p *ngIf="url.clickLimit" class="text-xs text-red-600 dark:text-red-400">
+                    {{ url.clickLimit - url.clicks }} clicks remaining (Limit: {{ url.clickLimit }})
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.expiresAt">
+              <div class="flex items-center gap-4">
+                <div class="p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
+                  <mat-icon class="text-red-600 dark:text-red-400">event</mat-icon>
+                </div>
+                <div>
+                  <p class="text-sm">Expires</p>
+                  <p class="text-xl font-semibold dark:text-gray-300">{{url.expiresAt | date:'mediumDate'}}</p>
+                  <p class="text-xs text-red-600 dark:text-red-400">
+                    Expires in {{ calculateDaysRemaining(url.expiresAt) }} day{{ calculateDaysRemaining(url.expiresAt)
+                    === 1 ? '' : 's' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- URL Cards Section -->
+          <div class="space-y-6">
+
+            <!-- Original URL Card -->
+            <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-4 sm:p-6">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3 w-full">
+                  <div class="p-3 sm:p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg shrink-0">
+                    <mat-icon class="text-purple-600 dark:text-purple-400">link</mat-icon>
                   </div>
+                  <div class="w-full">
+                    <p class="text-sm font-medium">Original URL</p>
+                    <a [href]="url.originalUrl" target="_blank"
+                      class="block text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all">
+                      {{ url.originalUrl }}
+                    </a>
+                  </div>
+                </div>
+                <button mat-icon-button (click)="openExternalPage(url.originalUrl)"
+                  class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full self-end sm:self-center shrink-0"
+                  matTooltip="Open in new tab">
+                  <mat-icon>open_in_new</mat-icon>
+                </button>
+              </div>
+            </div>
 
-                  <div class="text-center text-sm">
-                    <span>Scan QR code to visit</span>
-                    <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+            <!-- Short URL Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 sm:p-6">
+              <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-start gap-3 w-full">
+                  <div class="p-3 sm:p-4 bg-teal-100 dark:bg-teal-900/20 rounded-lg shrink-0">
+                    <mat-icon class="text-teal-600 dark:text-teal-400">content_copy</mat-icon>
+                  </div>
+                  <div class="relative w-full">
+                    <p class="text-sm font-medium">Short URL</p>
+                    <span
+                      class="block cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all"
                       (click)="openLink(url.shortUrl)">
                       {{ url.shortUrl }}
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Analytics Section -->
-          <div class="lg:col-span-2 space-y-6 flex flex-col justify-center">
-            <div class="flex flex-wrap items-center gap-2" *ngIf="url.tags && url.tags.length>0">
-              <mat-icon>label</mat-icon>
-              <mat-chip-set>
-                <mat-chip *ngFor="let tag of url.tags">{{
-                  tag
-                  }}</mat-chip>
-              </mat-chip-set>
-            </div>
-
-            <!-- Key Metrics Grid -->
-            <div class="flex flex-wrap gap-4 sm:gap-6" *ngIf="url.createdAt">
-              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]"
-                *ngIf="url.createdAt">
-                <div class="flex items-center gap-4">
-                  <div class="p-4 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-                    <mat-icon class="text-blue-600 dark:text-blue-400">calendar_today</mat-icon>
-                  </div>
-                  <div>
-                    <p class="text-sm">Created</p>
-                    <p class="text-xl font-semibold dark:text-gray-300">{{url.createdAt | date:'mediumDate'}}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]" *ngIf="url.clicks">
-                <div class="flex items-center gap-4">
-                  <div class="p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
-                    <mat-icon class="text-green-600 dark:text-green-400">trending_up</mat-icon>
-                  </div>
-                  <div>
-                    <p class="text-sm">Total Clicks</p>
-                    <p class="text-xl font-semibold dark:text-gray-300">{{url.clicks}}</p>
-                    <p *ngIf="url.clickLimit" class="text-xs text-red-600 dark:text-red-400">
-                      {{ url.clickLimit - url.clicks }} clicks remaining (Limit: {{ url.clickLimit }})
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-2xl flex-1 min-w-[150px]"
-                *ngIf="url.expiresAt">
-                <div class="flex items-center gap-4">
-                  <div class="p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
-                    <mat-icon class="text-red-600 dark:text-red-400">event</mat-icon>
-                  </div>
-                  <div>
-                    <p class="text-sm">Expires</p>
-                    <p class="text-xl font-semibold dark:text-gray-300">{{url.expiresAt | date:'mediumDate'}}</p>
-                    <p class="text-xs text-red-600 dark:text-red-400">
-                      Expires in {{ calculateDaysRemaining(url.expiresAt) }} day{{ calculateDaysRemaining(url.expiresAt)
-                      === 1 ? '' : 's' }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- URL Cards Section -->
-            <div class="space-y-6">
-
-              <!-- Original URL Card -->
-              <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-xl p-4 sm:p-6">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div class="flex items-start gap-3 w-full">
-                    <div class="p-3 sm:p-4 bg-purple-100 dark:bg-purple-900/20 rounded-lg shrink-0">
-                      <mat-icon class="text-purple-600 dark:text-purple-400">link</mat-icon>
-                    </div>
-                    <div class="w-full">
-                      <p class="text-sm font-medium">Original URL</p>
-                      <a [href]="url.originalUrl" target="_blank"
-                        class="block text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all">
-                        {{ url.originalUrl }}
-                      </a>
-                    </div>
-                  </div>
-                  <button mat-icon-button (click)="openExternalPage(url.originalUrl)"
-                    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full self-end sm:self-center shrink-0"
-                    matTooltip="Open in new tab">
+                <div class="flex gap-2 self-end sm:self-center">
+                  <button mat-icon-button (click)="copyUrl(url.shortUrl)"
+                    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="openLink(url.shortUrl)"
+                    class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
                 </div>
               </div>
-
-              <!-- Short URL Card -->
-              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-4 sm:p-6">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div class="flex items-start gap-3 w-full">
-                    <div class="p-3 sm:p-4 bg-teal-100 dark:bg-teal-900/20 rounded-lg shrink-0">
-                      <mat-icon class="text-teal-600 dark:text-teal-400">content_copy</mat-icon>
-                    </div>
-                    <div class="relative w-full">
-                      <p class="text-sm font-medium">Short URL</p>
-                      <span
-                        class="block cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all"
-                        (click)="openLink(url.shortUrl)">
-                        {{ url.shortUrl }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="flex gap-2 self-end sm:self-center">
-                    <button mat-icon-button (click)="copyUrl(url.shortUrl)"
-                      class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
-                      <mat-icon>content_copy</mat-icon>
-                    </button>
-                    <button mat-icon-button (click)="openLink(url.shortUrl)"
-                      class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
-                      <mat-icon>open_in_new</mat-icon>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
+          </div>
 
-            <!-- Action Buttons -->
-            <div class="grid md:grid-cols-2 gap-4">
 
-              <button mat-stroked-button (click)="customizeUrl(url)"
-                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
-                <span
-                  class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                  Customize URL
-                </span>
-                <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
-              </button>
+          <!-- Action Buttons -->
+          <div class="grid md:grid-cols-2 gap-4">
 
-              <button mat-stroked-button [routerLink]="['/user/analytics',url._id]"
-                class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
-                <span
-                  class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                  Analytics
-                </span>
-                <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
-              </button>
+            <button mat-stroked-button (click)="customizeUrl(url)"
+              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
+              <span
+                class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                Customize URL
+              </span>
+              <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
+            </button>
 
-            </div>
+            <button mat-stroked-button [routerLink]="['/user/analytics',url._id]"
+              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
+              <span
+                class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                Analytics
+              </span>
+              <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
+            </button>
+
           </div>
         </div>
-
       </div>
+
     </div>
-  </main>
-
-  <div *ngIf="!selectedUrl()" class="flex flex-col items-center justify-center flex-grow h-full text-center">
-    No shortened links yet.
-    <a routerLink="/" class="text-[var(--primary-color)] hover:text-[var(--accent-color)] font-semibold underline ml-1">
-      Start by creating your first URL!
-    </a>
   </div>
+</main>
 
-
-  <app-footer class="mt-auto"></app-footer>
+<div *ngIf="!selectedUrl()" class="flex flex-col items-center justify-center flex-grow h-full text-center">
+  No shortened links yet.
+  <a routerLink="/" class="text-[var(--primary-color)] hover:text-[var(--accent-color)] font-semibold underline ml-1">
+    Start by creating your first URL!
+  </a>
 </div>
