@@ -1,9 +1,9 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { SharedModule } from '../../../shared.module';
+import { SharedModule } from '../../../../shared.module';
 import { RouterLink } from '@angular/router';
-import { ThemeToggleComponent } from '../../ui/theme-toggle/theme-toggle.component';
-import { AuthEffects } from '../../../../state/auth/auth.effects';
-import { AuthStore } from '../../../../state/auth/auth.store';
+import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.component';
+import { AuthEffects } from '../../../../../state/auth/auth.effects';
+import { AuthStore } from '../../../../../state/auth/auth.store';
 
 @Component({
   selector: 'app-user-header',

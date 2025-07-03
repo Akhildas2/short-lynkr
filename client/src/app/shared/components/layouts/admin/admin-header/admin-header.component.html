@@ -1,0 +1,60 @@
+<header class="flex items-center justify-between px-4 py-2  shadow-sm">
+    <!-- Logo & Menu -->
+    <div class="flex items-center gap-4">
+        <img src="/assets/logo-light.png" alt="ShortLynkr logo light" class="h-10 w-10 object-contain dark:hidden" />
+        <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark"
+            class="h-10 w-10 object-contain hidden dark:block" />
+        <span class="text-2xl font-extrabold tracking-tight text-gray-800 dark:text-gray-100">Short Lynkr</span>
+      <button mat-icon-button class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="flex mx-8 md:block">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Search...</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput placeholder="Search here" class="rounded-full" />
+            <button mat-icon-button matSuffix aria-label="Clear">
+                <mat-icon>clear</mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="flex items-center gap-4">
+        <app-theme-toggle></app-theme-toggle>
+        <button mat-icon-button
+            class="relative text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-full">
+            <mat-icon>notifications</mat-icon>
+            <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+            <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+
+        <!-- User Profile -->
+        <div class="relative group">
+            <button class="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="Profile"
+                    class="h-10 w-10 rounded-full object-cover" />
+                <span class="hidden md:inline-block text-gray-800 dark:text-gray-100 font-medium">Akhil</span>
+                <mat-icon>expand_more</mat-icon>
+            </button>
+            <!-- Dropdown -->
+            <div
+                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 invisible group-hover:visible">
+                <a href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
+                <a href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">Settings</a>
+                <div class="border-t border-gray-100 dark:border-gray-600"></div>
+                <a href="#"
+                    class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">Logout</a>
+            </div>
+        </div>
+
+        <button mat-icon-button class="text-gray-600 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400">
+            <mat-icon>logout</mat-icon>
+        </button>
+    </div>
+</header>
