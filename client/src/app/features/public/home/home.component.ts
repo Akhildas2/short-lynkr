@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { HeaderComponent } from "../../../shared/components/ui/header/header.component";
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
+import { Component } from '@angular/core';
+import { UserHeaderComponent } from '../../../shared/components/user-layout/user-header/user-header.component';
+import { UserFooterComponent } from '../../../shared/components/user-layout/user-footer/user-footer.component';
 import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UrlEffects } from '../../../state/url/url.effects';
@@ -11,11 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { Router } from '@angular/router';
 import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
-import { UrlStore } from '../../../state/url/url.store';
 
 @Component({
     selector: 'app-home',
-    imports: [HeaderComponent, FooterComponent, MaterialModule, ReactiveFormsModule, CommonModule, LoaderComponent],
+    imports: [UserHeaderComponent, UserFooterComponent, MaterialModule, ReactiveFormsModule, CommonModule, LoaderComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'
 })

@@ -1,6 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { HeaderComponent } from '../../../shared/components/ui/header/header.component';
-import { FooterComponent } from '../../../shared/components/ui/footer/footer.component';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { AuthStore } from '../../../state/auth/auth.store';
 import { SharedModule } from '../../../shared/shared.module';
@@ -10,7 +8,7 @@ import { AccountSettingsDialogComponent } from '../../../shared/components/dialo
 
 @Component({
     selector: 'app-profile',
-    imports: [HeaderComponent, FooterComponent, SharedModule],
+    imports: [SharedModule],
     templateUrl: './profile.component.html',
     styleUrl: './profile.component.scss'
 })

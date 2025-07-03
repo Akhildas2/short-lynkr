@@ -23,6 +23,8 @@ export class AuthEffects {
             const response = await firstValueFrom(this.authApiService.login({ email, password }));
 
             this.authStore.setAuthData(response.user, response.token);
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('role', response.user.role);
             this.snackbar.showSuccess(`Welcome back,${response.user.username || 'User'}!`);
 
             const role = response.user.role;
@@ -47,6 +49,8 @@ export class AuthEffects {
             const response = await firstValueFrom(this.authApiService.register({ username, email, password }));
 
             this.authStore.setAuthData(response.user, response.token);
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('role', response.user.role);
             this.snackbar.showSuccess(`Account created successfully! Welcome, ${response.user.username || 'User'}.`);
 
             const role = response.user.role;
@@ -72,6 +76,8 @@ export class AuthEffects {
             this.authStore.clearAuth();
             return false;
         }
+
+        this.authStore.setToken(token);
 
         try {
             const response = await firstValueFrom(this.userApiService.getProfile());
