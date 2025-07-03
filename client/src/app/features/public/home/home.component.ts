@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserHeaderComponent } from '../../../shared/components/user-layout/user-header/user-header.component';
-import { UserFooterComponent } from '../../../shared/components/user-layout/user-footer/user-footer.component';
+import { UserHeaderComponent } from '../../../shared/components/layouts/user/user-header/user-header.component';
+import { UserFooterComponent } from '../../../shared/components/layouts/user/user-footer/user-footer.component';
 import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UrlEffects } from '../../../state/url/url.effects';

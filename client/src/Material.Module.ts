@@ -16,6 +16,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
     exports: [
@@ -35,7 +36,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatMenuModule,
         MatProgressSpinnerModule,
         MatGridListModule,
-        MatPaginatorModule
+        MatPaginatorModule,
+        MatToolbarModule
     ]
 
 })
