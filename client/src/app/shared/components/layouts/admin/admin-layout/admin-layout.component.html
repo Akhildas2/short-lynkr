@@ -1,7 +1,24 @@
-<div class="min-h-screen bg-[var(--background-color)] text-[var(--text-color)] flex flex-col">
-    <app-admin-header></app-admin-header>
+<mat-drawer-container class="h-screen bg-[var(--background-color)] text-[var(--text-color)]">
 
-    <router-outlet></router-outlet>
+    <!-- Sidebar -->
+    <mat-drawer #drawer [mode]="'side'" [opened]="true" [ngClass]="sidebarCollapsed ? 'w-20' : 'w-64'"
+        class="bg-[var(--background-color)] text-[var(--text-color)] transition-all duration-300 ease-in-out overflow-hidden">
+        <app-admin-sidebar [collapsed]="sidebarCollapsed"></app-admin-sidebar>
+    </mat-drawer>
 
-    <app-admin-footer class="mt-auto"></app-admin-footer>
-</div>
+    <!-- Main Content -->
+    <mat-drawer-content class="flex flex-col h-full transition-all duration-300 ease-in-out"
+        [ngClass]="sidebarCollapsed ? 'ml-20' : 'ml-64'">
+        <!-- Header -->
+        <app-admin-header [collapsed]="sidebarCollapsed" (toggleSidebar)="toggleSidebar()"></app-admin-header>
+
+        <!-- Main Router Outlet -->
+        <main class="flex-1 p-6 overflow-y-auto">
+            <router-outlet></router-outlet>
+        </main>
+
+        <!-- Footer (sticks to bottom) -->
+        <app-admin-footer></app-admin-footer>
+    </mat-drawer-content>
+
+</mat-drawer-container>

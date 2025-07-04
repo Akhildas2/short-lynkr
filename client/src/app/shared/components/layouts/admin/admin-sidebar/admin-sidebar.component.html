@@ -1,0 +1,33 @@
+<div class="h-full flex flex-col transition-all duration-300 ease-in-out">
+
+    <!-- Logo -->
+    <div class="flex items-center px-4 py-4">
+        <div class="flex-shrink-0">
+            <img src="/assets/logo-light.png" alt="ShortLynkr logo light" class="h-10 w-10 object-contain dark:hidden">
+            <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark"
+                class="h-10 w-10 object-contain hidden dark:block">
+        </div>
+        <span *ngIf="!collapsed" class="ml-3 text-xl font-semibold transition-opacity duration-300">
+            Short Lynkr
+        </span>
+    </div>
+
+    <!-- Nav Links -->
+    <nav class="flex-1 space-y-1 mt-4">
+        <a routerLink="/admin/dashboard" routerLinkActive="bg-gray-700"
+            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
+            <mat-icon class="text-lg">dashboard</mat-icon>
+            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">Dashboard</span>
+        </a>
+        <a routerLink="/admin/urls" routerLinkActive="bg-gray-700"
+            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
+            <mat-icon class="text-lg">link</mat-icon>
+            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">Links</span>
+        </a>
+        <a routerLink="/admin/users" routerLinkActive="bg-gray-700"
+            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
+            <mat-icon class="text-lg">people</mat-icon>
+            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">People</span>
+        </a>
+    </nav>
+</div>
