@@ -14,8 +14,8 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 export class AdminLayoutComponent {
   sidebarCollapsed = true;
 
-  toggleSidebar() {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
+  toggleSidebar(): boolean {
+    return this.sidebarCollapsed = !this.sidebarCollapsed;
   }
-  
+
 }

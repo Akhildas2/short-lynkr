@@ -17,6 +17,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
     exports: [
@@ -37,7 +38,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
         MatProgressSpinnerModule,
         MatGridListModule,
         MatPaginatorModule,
-        MatSidenavModule
+        MatSidenavModule,
+        MatDividerModule
     ]
 
 })
