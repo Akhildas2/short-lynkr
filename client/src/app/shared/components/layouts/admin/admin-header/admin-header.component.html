@@ -1,43 +1,74 @@
-<header class="flex justify-between items-center h-20 px-4 shadow transition-all duration-300 ease-in-out">
-  <!-- ensure this wrapper is full-height -->
-  <div class="flex items-center gap-4 max-w-7xl w-full mx-auto h-full">
+<header class="flex justify-between items-center h-20 px-4 shadow-md transition-all duration-300 ease-in-out">
+
+  <div class="flex items-center gap-4 max-w-7xl w-full h-full">
     <!-- Menu Button -->
-    <button mat-icon-button (click)="toggleSidebar.emit()">
-      <mat-icon>{{ collapsed ? 'menu' : 'menu_open' }}</mat-icon>
+    <button mat-icon-button (click)="toggleSidebar.emit()" class="hover:bg-gray-200 dark:hover:bg-gray-700">
+      <mat-icon class="flex items-center">{{ collapsed ? 'menu' : 'menu_open' }}</mat-icon>
     </button>
 
     <!-- Search Bar -->
-    <!-- use my-auto to center vertically -->
-    <div class="max-w-2xl w-full my-auto">
-      <mat-form-field appearance="outline" class="w-full rounded-full">
+    <div class="flex-1 flex items-center h-full max-w-xl">
+      <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
         <mat-label>Search...</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput placeholder="Search here" />
-        <button mat-icon-button matSuffix>
-          <mat-icon>clear</mat-icon>
+        <mat-icon matPrefix class="text-gray-500">search</mat-icon>
+        <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />
+        <button mat-icon-button matSuffix class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+          <mat-icon class="flex items-center">clear</mat-icon>
         </button>
       </mat-form-field>
     </div>
+
   </div>
 
   <!-- Actions -->
-  <div class="flex items-center gap-3">
+  <div class="flex items-center gap-4">
+    <!-- Toggle Theme Button -->
     <app-theme-toggle></app-theme-toggle>
-    <button mat-icon-button><mat-icon class="flex justify-center items-center">notifications</mat-icon></button>
 
-    <div class="relative group">
-      <button class="flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-full">
-        <img src="https://randomuser.me/api/portraits/men/68.jpg" class="h-9 w-9 rounded-full" />
-        <span class="hidden md:inline">Akhil</span>
-        <mat-icon>expand_more</mat-icon>
-      </button>
-      <div class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 border rounded opacity-0 group-hover:opacity-100 invisible group-hover:visible transition">
-        <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Profile</a>
-        <a class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Settings</a>
-        <a class="block px-4 py-2 text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600">Logout</a>
+    <!-- Notifications Button -->
+    <button mat-icon-button class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+      <mat-icon class="flex items-center">notifications</mat-icon>
+      <span
+        class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
+    </button>
+
+    <!-- Profile -->
+    <div class="relative">
+      <div (click)="toggleProfileMenu()"
+        class="flex items-center gap-2 p-2 w-32 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+        <img src="https://randomuser.me/api/portraits/men/68.jpg"
+          class="h-10 w-auto rounded-full border-2 border-gray-300 dark:border-gray-600" />
+        <span class="hidden md:inline text-gray-700 dark:text-gray-200 font-medium">
+          Akhil
+        </span>
+        <mat-icon class="expand_more">expand_more</mat-icon>
       </div>
+
+      <!-- menu -->
+      <div *ngIf="showProfileMenu"
+        class="absolute right-0 top-full mt-2 w-32 bg-white dark:bg-gray-700 rounded shadow-lg transition-opacity duration-200">
+        <span class="text-gray-700 dark:text-gray-200 font-medium">
+          Akhil
+        </span>
+        <span class="text-gray-700 dark:text-gray-200 font-medium">
+          email
+        </span>
+        <mat-divider />
+        <a routerLink="/admin/profile"
+          class="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </a>
+
+      </div>
+
     </div>
 
-    <button mat-icon-button><mat-icon class="flex justify-center items-center">logout</mat-icon></button>
+
+    <!-- Logout Button -->
+    <button mat-icon-button class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+      <mat-icon class="flex items-center">logout</mat-icon>
+    </button>
+
   </div>
 </header>

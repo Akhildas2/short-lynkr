@@ -10,5 +10,26 @@ import { RouterLink } from '@angular/router';
 })
 export class AdminSidebarComponent {
   @Input() collapsed = false;
+  items = [
+    {
+      routeLink: '/admin/dashboard',
+      icon: 'dashboard',
+      label: 'Dashboard'
+    },
+    {
+      routeLink: '/admin/urls',
+      icon: 'link',
+      label: 'Links'
+    }, {
+      routeLink: '/admin/users',
+      icon: 'people',
+      label: 'People'
+    },
+    {
+      routeLink: '/admin/reports',
+      icon: 'bar_chart',
+      label: 'Reports'
+    }
+  ];
 
 }

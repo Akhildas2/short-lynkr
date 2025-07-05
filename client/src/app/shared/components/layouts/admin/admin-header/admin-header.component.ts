@@ -11,5 +11,15 @@ import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.comp
 export class AdminHeaderComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
   @Input() collapsed = false;
-  
+  showProfileMenu = false;
+  hideSearch = true;
+
+  toggleProfileMenu(): boolean {
+    return this.showProfileMenu = !this.showProfileMenu
+  }
+
+  toggleSearch(): boolean {
+    return this.hideSearch = !this.hideSearch
+  }
+
 }

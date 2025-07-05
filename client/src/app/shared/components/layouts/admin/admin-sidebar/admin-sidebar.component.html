@@ -1,33 +1,42 @@
-<div class="h-full flex flex-col transition-all duration-300 ease-in-out">
+<div class="h-full flex flex-col overflow-hidden" [ngClass]="{ 'items-center': collapsed, 'items-start': !collapsed }">
 
     <!-- Logo -->
-    <div class="flex items-center px-4 py-4">
+    <div class="flex items-center justify-center p-5 w-full border-b border-gray-300 dark:border-gray-700"
+        [ngClass]="{ 'justify-center': collapsed, 'justify-start': !collapsed }">
         <div class="flex-shrink-0">
-            <img src="/assets/logo-light.png" alt="ShortLynkr logo light" class="h-10 w-10 object-contain dark:hidden">
+            <img src="/assets/logo-light.png" alt="ShortLynkr logo light"
+                class="h-10 w-auto scale-125 object-contain dark:hidden" />
             <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark"
-                class="h-10 w-10 object-contain hidden dark:block">
+                class="h-10 w-auto scale-125 object-contain hidden dark:block" />
         </div>
-        <span *ngIf="!collapsed" class="ml-3 text-xl font-semibold transition-opacity duration-300">
-            Short Lynkr
+        <span *ngIf="!collapsed"
+            class="ml-3 text-2xl font-bold text-gray-800 dark:text-gray-100 transition-opacity duration-300">
+            ShortLynkr
         </span>
     </div>
 
     <!-- Nav Links -->
-    <nav class="flex-1 space-y-1 mt-4">
-        <a routerLink="/admin/dashboard" routerLinkActive="bg-gray-700"
-            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
-            <mat-icon class="text-lg">dashboard</mat-icon>
-            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">Dashboard</span>
+    <nav class="flex-1 flex flex-col space-y-2 mt-6 w-full px-2">
+        @for(item of items; track $index){
+        <a [routerLink]="item.routeLink" routerLinkActive="bg-primary text-white dark:bg-primary-dark shadow-lg"
+            class="flex items-center w-full h-12 rounded-lg px-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 group"
+            [matTooltip]="item.label" matTooltipPosition="right" [matTooltipDisabled]="!collapsed">
+            <mat-icon
+                class="text-gray-600 dark:text-gray-300 icon-size-transform flex-shrink-0 group-[.router-link-active]:text-white transition-colors duration-300"
+                [ngClass]="{ 'mx-auto': collapsed }">{{item.icon}}</mat-icon>
+            <span *ngIf="!collapsed" class="ml-4 text-lg">{{item.label}}</span>
         </a>
-        <a routerLink="/admin/urls" routerLinkActive="bg-gray-700"
-            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
-            <mat-icon class="text-lg">link</mat-icon>
-            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">Links</span>
-        </a>
-        <a routerLink="/admin/users" routerLinkActive="bg-gray-700"
-            class="flex items-center px-4 py-2 rounded hover:bg-gray-700 group">
-            <mat-icon class="text-lg">people</mat-icon>
-            <span *ngIf="!collapsed" class="ml-3 transition-opacity duration-300">People</span>
-        </a>
+        }
     </nav>
+
+    <div class="flex flex-col py-4 space-y-2 mt-6 w-full px-2 border-t border-gray-300 dark:border-gray-600">
+        <a routerLink="/admin/settings" routerLinkActive="bg-primary text-white dark:bg-primary-dark shadow-lg"
+            class="flex items-center w-full h-12 rounded-lg px-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 group"
+            matTooltip="Settings" matTooltipPosition="right" [matTooltipDisabled]="!collapsed">
+            <mat-icon
+                class="text-gray-600 dark:text-gray-300 icon-size-transform flex-shrink-0 group-[.router-link-active]:text-white transition-colors duration-300"
+                [ngClass]="{ 'mx-auto': collapsed }">settings</mat-icon>
+            <span *ngIf="!collapsed" class="ml-4 text-lg">Settings</span>
+        </a>
+    </div>
 </div>
