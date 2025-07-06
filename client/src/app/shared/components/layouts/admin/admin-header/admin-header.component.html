@@ -7,7 +7,7 @@
     </button>
 
     <!-- Search Bar -->
-    <div class="flex-1 flex items-center h-full max-w-xl">
+    <div class="flex-1 flex items-center h-full max-w-xl ">
       <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
         <mat-label>Search...</mat-label>
         <mat-icon matPrefix class="text-gray-500">search</mat-icon>
@@ -32,36 +32,57 @@
         class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">3</span>
     </button>
 
-    <!-- Profile -->
+    <!-- Profile Dropdown -->
     <div class="relative">
+      <!-- Profile Button -->
       <div (click)="toggleProfileMenu()"
-        class="flex items-center gap-2 p-2 w-32 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-        <img src="https://randomuser.me/api/portraits/men/68.jpg"
-          class="h-10 w-auto rounded-full border-2 border-gray-300 dark:border-gray-600" />
-        <span class="hidden md:inline text-gray-700 dark:text-gray-200 font-medium">
+        class="flex items-center gap-2 pl-2 pr-3 py-2 rounded-full cursor-pointer bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+        <!-- Avatar -->
+        <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="User Avatar"
+          class="h-10 w-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover flex-shrink-0" />
+
+        <!-- Name -->
+        <span class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate max-w-[120px]">
           Akhil
         </span>
-        <mat-icon class="expand_more">expand_more</mat-icon>
+
+        <!-- Dropdown Icon -->
+        <mat-icon class="text-gray-600 dark:text-gray-300 flex-shrink-0">
+          expand_more
+        </mat-icon>
       </div>
 
-      <!-- menu -->
+      <!-- Dropdown Menu -->
       <div *ngIf="showProfileMenu"
-        class="absolute right-0 top-full mt-2 w-32 bg-white dark:bg-gray-700 rounded shadow-lg transition-opacity duration-200">
-        <span class="text-gray-700 dark:text-gray-200 font-medium">
-          Akhil
-        </span>
-        <span class="text-gray-700 dark:text-gray-200 font-medium">
-          email
-        </span>
-        <mat-divider />
+        class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 transition-all duration-300 ease-in-out">
+        <!-- User Info -->
+        <div class="px-4 py-3">
+          <!-- User Name -->
+          <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            Akhil
+          </p>
+
+          <!-- Email with Icon -->
+          <p class="text-base text-gray-500 dark:text-gray-400 flex items-center mr-2">
+            <mat-icon class="text-base text-gray-500 dark:text-gray-400">email</mat-icon>
+            akhilexample.com
+          </p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Menu Items -->
         <a routerLink="/admin/profile"
-          class="flex items-center gap-2 px-4 py-2 hover:bg-gray-200 dark:hover:bg-gray-600">
-          <mat-icon>person</mat-icon>
+          class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+          <mat-icon class="text-base">person</mat-icon>
           <span>Profile</span>
         </a>
-
+        <a routerLink="/logout"
+          class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
+          <mat-icon class="text-base">logout</mat-icon>
+          <span>Logout</span>
+        </a>
       </div>
-
     </div>
 
 
