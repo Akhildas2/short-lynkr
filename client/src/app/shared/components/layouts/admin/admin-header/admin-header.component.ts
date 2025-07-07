@@ -10,7 +10,9 @@ import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.comp
 })
 export class AdminHeaderComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
+  @Input() sidebarState: 0 | 1 | 2 = 1;
   @Input() collapsed = false;
+  @Input() isMobile = false;
   showProfileMenu = false;
   hideSearch = true;
 
@@ -20,6 +22,13 @@ export class AdminHeaderComponent {
 
   toggleSearch(): boolean {
     return this.hideSearch = !this.hideSearch
+  }
+
+  get toggleIcon(): string {
+    if (this.isMobile) {
+      return this.sidebarState === 0 ? 'menu' : 'close';
+    }
+    return ['menu', 'chevron_right', 'close'][this.sidebarState];
   }
 
 }

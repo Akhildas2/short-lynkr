@@ -3,7 +3,8 @@
   <div class="flex items-center gap-4 max-w-7xl w-full h-full">
     <!-- Menu Button -->
     <button mat-icon-button (click)="toggleSidebar.emit()" class="hover:bg-gray-200 dark:hover:bg-gray-700">
-      <mat-icon class="flex items-center">{{ collapsed ? 'menu' : 'menu_open' }}</mat-icon>
+      <mat-icon [class.rotate-180]="sidebarState === 2" class="flex items-center transition-transform duration-500">{{
+        toggleIcon }}</mat-icon>
     </button>
 
     <!-- Search Bar -->
@@ -35,7 +36,7 @@
     <!-- Profile Dropdown -->
     <div class="relative">
       <!-- Profile Button -->
-      <div (click)="toggleProfileMenu()"
+      <div (click)="toggleProfileMenu()"  
         class="flex items-center gap-2 pl-2 pr-3 py-2 rounded-full cursor-pointer bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
         <!-- Avatar -->
         <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="User Avatar"
@@ -53,7 +54,7 @@
       </div>
 
       <!-- Dropdown Menu -->
-      <div *ngIf="showProfileMenu"
+      <div *ngIf="showProfileMenu" (appClickOutside)="showProfileMenu = false"
         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 transition-all duration-300 ease-in-out">
         <!-- User Info -->
         <div class="px-4 py-3">
@@ -79,7 +80,7 @@
         </a>
         <a routerLink="/logout"
           class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
-          <mat-icon class="text-base">logout</mat-icon>
+          <mat-icon class="text-base text-red-600">logout</mat-icon>
           <span>Logout</span>
         </a>
       </div>
