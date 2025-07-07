@@ -1,0 +1,8 @@
+mat-sidenav {
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+mat-sidenav.h-64 {
+  height: 16rem;
+}

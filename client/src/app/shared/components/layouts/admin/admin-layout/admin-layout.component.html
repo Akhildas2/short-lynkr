@@ -1,16 +1,37 @@
 <mat-sidenav-container class="h-screen bg-[var(--background-color)] text-[var(--text-color)] overflow-hidden">
 
     <!-- Sidebar -->
-    <mat-sidenav #drawer [mode]="'side'" [opened]="true" [ngClass]="sidebarCollapsed ? 'w-20' : 'w-64'" class="bg-[var(--background-color)] text-[var(--text-color)] shadow-lg 
-        transition-all duration-300 ease-in-out rounded-none border-r border-gray-300 dark:border-gray-700">
-        <app-admin-sidebar [collapsed]="sidebarCollapsed"></app-admin-sidebar>
+    <mat-sidenav #drawer [mode]="isMobile ? 'over' : 'side' " [position]="'start'" [opened]="sidebarState !== 0"
+        (closedStart)="onSidenavClosed()" [ngClass]="{
+      'w-0': sidebarState === 0,
+      'w-64': sidebarState === 2,
+      'w-20':  !isMobile && sidebarState === 1
+    }" class="bg-[var(--background-color)] text-[var(--text-color)] shadow-lg 
+      transition-all duration-300 ease-in-out rounded-none border-r border-gray-300 dark:border-gray-700">
+
+        <!-- Close Button -->
+        <button *ngIf="isMobile && sidebarState === 2" (click)="toggleSidebar()"
+            class="bg-[var(--background-color)] fixed top-1/2 left-64 z-50 p-2 flex items-center justify-center shadow-lg border border-gray-300 dark:border-gray-700">
+            <mat-icon class="scale-125 text-red-600">close</mat-icon>
+        </button>
+
+        <app-admin-sidebar [collapsed]="sidebarState === 1" (toggleSidebar)="toggleSidebar()"
+            (linkClicked)="onSidebarLinkClicked()"></app-admin-sidebar>
     </mat-sidenav>
 
+    <!-- Mobile Overlay  -->
+    <div *ngIf="isMobile && sidebarState === 2" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+        (click)="closeSidebar()">
+    </div>
+
     <!-- Main Content -->
-    <mat-sidenav-content class="flex flex-col h-full transition-all duration-300 ease-in-out"
-        [ngClass]="sidebarCollapsed ? 'ml-20' : 'ml-64'">
+    <mat-sidenav-content class="flex flex-col h-full transition-all duration-300 ease-in-out" [ngClass]="{
+         'ml-0': isMobile || sidebarState === 0,
+    'ml-20': !isMobile && sidebarState === 1,
+    'ml-64': !isMobile && sidebarState === 2
+    }">
         <!-- Header -->
-        <app-admin-header [collapsed]="sidebarCollapsed" (toggleSidebar)="toggleSidebar()"
+        <app-admin-header [sidebarState]="sidebarState" [isMobile]="isMobile" (toggleSidebar)="toggleSidebar()"
             class="border-b border-gray-300 dark:border-gray-700"></app-admin-header>
 
         <!-- Main Router Outlet -->
