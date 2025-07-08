@@ -8,13 +8,13 @@
     </button>
 
     <!-- Search Bar -->
-    <div class="flex-1 flex items-center h-full max-w-xl ">
+    <div *ngIf="!isMobile" class="flex-1 flex items-center h-full max-w-xl ">
       <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
         <mat-label>Search...</mat-label>
         <mat-icon matPrefix class="text-gray-500">search</mat-icon>
         <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />
         <button mat-icon-button matSuffix class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
-          <mat-icon class="flex items-center">clear</mat-icon>
+          <mat-icon class="flex items-center">cancel</mat-icon>
         </button>
       </mat-form-field>
     </div>
@@ -23,6 +23,13 @@
 
   <!-- Actions -->
   <div class="flex items-center gap-4">
+
+    <!-- Mobile Search Toggle Button -->
+    <button *ngIf="isMobile" mat-icon-button (click)="toggleMobileSearch()"
+      class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+      <mat-icon class="flex items-center">{{ showMobileSearch ? 'close' : 'search' }}</mat-icon>
+    </button>
+
     <!-- Toggle Theme Button -->
     <app-theme-toggle></app-theme-toggle>
 
@@ -36,7 +43,7 @@
     <!-- Profile Dropdown -->
     <div class="relative">
       <!-- Profile Button -->
-      <div (click)="toggleProfileMenu()"  
+      <div (click)="toggleProfileMenu()"
         class="flex items-center gap-2 pl-2 pr-3 py-2 rounded-full cursor-pointer bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
         <!-- Avatar -->
         <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="User Avatar"
@@ -78,7 +85,7 @@
           <mat-icon class="text-base">person</mat-icon>
           <span>Profile</span>
         </a>
-        <a routerLink="/logout"
+        <a routerLink="/logout" *ngIf="isMobile"
           class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
           <mat-icon class="text-base text-red-600">logout</mat-icon>
           <span>Logout</span>
@@ -88,9 +95,23 @@
 
 
     <!-- Logout Button -->
-    <button mat-icon-button class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+    <button *ngIf="!isMobile" mat-icon-button
+      class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
       <mat-icon class="flex items-center">logout</mat-icon>
     </button>
 
   </div>
 </header>
+
+<!-- Mobile Search Panel (dropdown) -->
+<div *ngIf="isMobile && showMobileSearch"
+  class="px-4 pb-4 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+  <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
+    <mat-label>Search...</mat-label>
+    <mat-icon matPrefix class="text-gray-500">search</mat-icon>
+    <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />
+    <button mat-icon-button matSuffix class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+      <mat-icon class="flex items-center">cancel</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
