@@ -14,14 +14,14 @@ export class AdminHeaderComponent {
   @Input() collapsed = false;
   @Input() isMobile = false;
   showProfileMenu = false;
-  hideSearch = true;
+  showMobileSearch = false;
 
   toggleProfileMenu(): boolean {
     return this.showProfileMenu = !this.showProfileMenu
   }
 
-  toggleSearch(): boolean {
-    return this.hideSearch = !this.hideSearch
+  toggleMobileSearch(): boolean {
+    return this.showMobileSearch = !this.showMobileSearch
   }
 
   get toggleIcon(): string {
