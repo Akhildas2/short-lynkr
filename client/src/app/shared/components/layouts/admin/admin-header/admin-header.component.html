@@ -8,7 +8,7 @@
     </button>
 
     <!-- Search Bar -->
-    <div *ngIf="!isMobile" class="flex-1 flex items-center h-full max-w-xl ">
+    <div *ngIf="!isSmallDevice" class="flex-1 flex items-center h-full max-w-xl ">
       <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
         <mat-label>Search...</mat-label>
         <mat-icon matPrefix class="text-gray-500">search</mat-icon>
@@ -22,10 +22,10 @@
   </div>
 
   <!-- Actions -->
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-2 sm:gap-4 ml-4 ">
 
     <!-- Mobile Search Toggle Button -->
-    <button *ngIf="isMobile" mat-icon-button (click)="toggleMobileSearch()"
+    <button *ngIf="isSmallDevice" mat-icon-button (click)="toggleMobileSearch()"
       class="text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
       <mat-icon class="flex items-center">{{ showMobileSearch ? 'close' : 'search' }}</mat-icon>
     </button>
@@ -50,7 +50,8 @@
           class="h-10 w-10 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover flex-shrink-0" />
 
         <!-- Name -->
-        <span class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate max-w-[120px]">
+        <span *ngIf="!isSmallDevice"
+          class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate max-w-[120px]">
           Akhil
         </span>
 
@@ -104,9 +105,9 @@
 </header>
 
 <!-- Mobile Search Panel (dropdown) -->
-<div *ngIf="isMobile && showMobileSearch"
-  class="px-4 pb-4 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
-  <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
+<div *ngIf="isSmallDevice && showMobileSearch"
+  class="bg-white dark:bg-gray-900 px-4 pb-4 flex items-center justify-center border-b border-gray-200 dark:border-gray-700">
+  <mat-form-field appearance="outline" class="w-11/12 h-14 self-center rounded-search">
     <mat-label>Search...</mat-label>
     <mat-icon matPrefix class="text-gray-500">search</mat-icon>
     <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />

@@ -25,6 +25,7 @@ export interface UrlDocument extends Document {
   updatedAt: Date;
   isActive: boolean;
   analytics: Analytics[];
+  isBlocked: boolean;
 }
 
 export interface UpdateUrlData {

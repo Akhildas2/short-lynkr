@@ -9,7 +9,7 @@ const analyticsSchema = new Schema<Analytics>({
     browser: { type: String },
     os: { type: String },
     device: { type: String },
-    timestamp: { type: Date, default: Date.now }
+    timestamp: { type: Date, default: Date.now },
 });
 
 const urlSchema = new mongoose.Schema<UrlDocument>({
@@ -23,7 +23,9 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     tags: { type: [String], default: [] },
     expiresAt: { type: Date },
     isActive: { type: Boolean, default: true },
-    analytics: [analyticsSchema]
+    analytics: [analyticsSchema],
+    isBlocked: { type: Boolean, default: false },
+
 }, { timestamps: true });
 
 
