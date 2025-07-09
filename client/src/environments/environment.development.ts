@@ -5,4 +5,5 @@ export const environment = {
   urlApiUrl: 'http://localhost:3333/api/url',
   authApiUrl: 'http://localhost:3333/api/auth',
   userApiUrl: 'http://localhost:3333/api/users',
+  adminApiUrl: 'http://localhost:3333/api/admin',
 };
