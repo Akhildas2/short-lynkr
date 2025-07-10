@@ -64,12 +64,45 @@ export class AdminEffects {
     async deleteUser(id: string) {
         this.store.setLoading();
         try {
-            const users = await firstValueFrom(this.api.deleteUser(id));
-            this.store.removeUser(users);
+            await firstValueFrom(this.api.deleteUser(id));
+            this.store.removeUser(id);
             this.snackbar.showSuccess('User deleted successfully.');
 
         } catch (error: any) {
             this.handleError(error, 'Failed to delete user.');
+        }
+    }
+
+    // URL Management
+    async fetchAllUrls() {
+        this.store.setLoading();
+        try {
+            const urls = await firstValueFrom(this.api.getAllUrls());
+            this.store.setUrls(urls);
+        } catch (error: any) {
+            this.handleError(error, 'Failed to fetch URLs.');
+        }
+    }
+
+    async toggleBlockUrl(id: string) {
+        this.store.setLoading();
+        try {
+            const updatedUrl = await firstValueFrom(this.api.toggleBlockUrl(id));
+            this.store.updateUrl(updatedUrl);
+            this.snackbar.showSuccess('URL block status changed.');
+        } catch (error: any) {
+            this.handleError(error, 'Failed to block/unblock URL.');
+        }
+    }
+
+    async deleteUrl(id: string) {
+        this.store.setLoading();
+        try {
+            await firstValueFrom(this.api.deleteUrl(id));
+            this.store.removeUrl(id);
+            this.snackbar.showSuccess('URL deleted successfully.');
+        } catch (error: any) {
+            this.handleError(error, 'Failed to delete URL.');
         }
     }
 

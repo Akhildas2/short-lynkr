@@ -10,7 +10,7 @@ interface MenuItem {
 
 @Component({
   selector: 'app-admin-sidebar',
-  imports: [SharedModule, RouterLink, RouterLinkActive,RouterModule],
+  imports: [SharedModule, RouterLink, RouterLinkActive, RouterModule],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'
 })
@@ -21,9 +21,9 @@ export class AdminSidebarComponent {
 
   items: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', routeLink: '/admin/dashboard' },
+    { icon: 'people', label: 'Users', routeLink: '/admin/users' },
     { icon: 'link', label: 'Urls', routeLink: '/admin/urls' },
     { icon: 'analytics', label: 'Analytics', routeLink: '/admin/analytics' },
-    { icon: 'people', label: 'Users', routeLink: '/admin/users' },
     //{ icon: 'folder', label: 'Categories', routeLink: '/admin/categories' },
     // { icon: 'security', label: 'Security', routeLink: '/admin/security' }
   ];
