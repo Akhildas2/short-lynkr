@@ -1,0 +1,54 @@
+<h2 class="text-2xl font-semibold mt-4 px-6">
+    {{ data.mode === 'add' ? 'Add New User' : 'Edit User' }}
+</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" mat-dialog-content class="space-y-2">
+    <!-- Username -->
+    <div>
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Username</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input matInput placeholder="Username" formControlName="username" />
+        </mat-form-field>
+        <app-validation-error [control]="getControl('username')"></app-validation-error>
+    </div>
+
+    <!-- Email -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <mat-icon matPrefix>email</mat-icon>
+        <input matInput placeholder="Email" formControlName="email" />
+    </mat-form-field>
+    <app-validation-error [control]="getControl('email')"></app-validation-error>
+
+    <!-- Role -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Role</mat-label>
+        <mat-icon matPrefix>supervisor_account</mat-icon>
+        <mat-select formControlName="role">
+            <mat-option value="user">User</mat-option>
+            <mat-option value="admin">Admin</mat-option>
+            <mat-option value="moderator">Moderator</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <app-validation-error [control]="getControl('role')"></app-validation-error>
+
+    <!-- Password (Add Mode Only) -->
+    <ng-container *ngIf="data.mode === 'add'">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Password</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input matInput type="password" placeholder="Password" formControlName="password" />
+        </mat-form-field>
+    </ng-container>
+    <app-validation-error [control]="getControl('password')"></app-validation-error>
+
+    <!-- Actions -->
+    <mat-dialog-actions align="end" class="p-6 border-t border-gray-800 dark:border-gray-200 mt-6">
+        <button mat-stroked-button type="button" (click)="close()"><mat-icon>clear</mat-icon> Cancel</button>
+        <button mat-stroked-button type="submit" [disabled]="form.invalid" class="bg-blue-400 dark:bg-primary">
+            <mat-icon>{{ data.mode === 'add' ? 'person_add' : 'edit' }}</mat-icon>
+            {{ data.mode === 'add' ? 'Add User' : 'Update User' }}
+        </button>
+    </mat-dialog-actions>
+</form>

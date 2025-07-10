@@ -2,10 +2,11 @@ import { AdminState } from "./user-state.model";
 
 export interface User {
     _id: string;
-    name: string;
+    username: string;
     email: string;
     role: string;
     isBlocked: boolean;
+    password: string;
     createdAt?: string;
     updatedAt?: string;
 }

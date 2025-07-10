@@ -1,4 +1,3 @@
-import { getUserUrls } from '../controllers/url.controller';
 import Urls from '../models/url.model';
 import User from '../models/user.model';
 import { IUser } from '../types/user.interface';
@@ -11,7 +10,7 @@ type UrlId = string | Types.ObjectId;
 const AdminService = {
     // ===== USERS =====
     async getAllUsers() {
-        return await User.find().select('-password'); // don’t return passwords
+        return await User.find().select('-password').lean();
     },
 
     async createUser(data: Partial<IUser>) {
@@ -19,11 +18,14 @@ const AdminService = {
         if (existing) throw new ApiError('User already exists.', 409);
 
         const user = new User(data);
-        return await user.save();
+        await user.save();
+        return user.toObject();
     },
 
     async updateUser(userId: UserId, data: Partial<IUser>) {
-        return await User.findByIdAndUpdate(userId, data, { new: true });
+        const user = await User.findByIdAndUpdate(userId, data, { new: true });
+        if (!user) throw new ApiError('User not found', 404);
+        return user.toObject();
     },
 
     async toggleBlockUser(userId: UserId) {
@@ -32,31 +34,34 @@ const AdminService = {
 
         user.isBlocked = !user.isBlocked;
         await user.save();
-
-        return { success: true, isBlocked: user.isBlocked };
+        return user.toObject();
     },
 
     async deleteUser(userId: UserId) {
-        return await User.findByIdAndDelete(userId)
+        const result = await User.findByIdAndDelete(userId);
+        if (!result) throw new ApiError('User not found', 404);
+        return result.toObject();
     },
 
     // ===== URLS =====
     async getAllUrls() {
-        return await Urls.find().populate('user', 'name email');
+        return await Urls.find().populate('userId', 'username email').lean();
     },
 
     async toggleBlockUrl(urlId: UrlId) {
         const url = await Urls.findById(urlId);
-        if (!url) throw new Error('URL not found');
+        if (!url) throw new ApiError('URL not found', 404);
+
         url.isBlocked = !url.isBlocked;
         await url.save();
-        return { success: true, isBlocked: url.isBlocked };
+        return url.toObject();
     },
 
     async deleteUrl(urlId: UrlId) {
-        return await Urls.findByIdAndDelete(urlId);
-    },
-
-}
+        const result = await Urls.findByIdAndDelete(urlId);
+        if (!result) throw new ApiError('URL not found', 404);
+        return result.toObject();
+    }
+};
 
 export default AdminService;
