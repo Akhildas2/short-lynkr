@@ -15,6 +15,7 @@ import { ValidationErrorComponent } from '../../forms/validation-error/validatio
 export class AdminUserDialogComponent implements OnInit {
   private adminEffects = inject(AdminEffects);
   form!: FormGroup;
+  showPassword: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<AdminUserDialogComponent>,
@@ -35,7 +36,9 @@ export class AdminUserDialogComponent implements OnInit {
       role: new FormControl(this.data.user?.role || 'user', Validators.required),
       password: new FormControl('', this.data.mode === 'add' ? [
         Validators.required,
-        Validators.minLength(8)
+        Validators.minLength(8),
+        Validators.maxLength(16),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
       ] : [])
     });
   }
@@ -60,4 +63,8 @@ export class AdminUserDialogComponent implements OnInit {
     return this.form.get(name);
   }
 
+  togglePassword(event: Event) {
+    event.stopPropagation();
+    this.showPassword = !this.showPassword;
+  }
 }

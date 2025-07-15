@@ -17,6 +17,7 @@ export class AlertDialogComponent {
       title: string;
       content: string;
       actionText?: string;
+      actionIcon: string;
       actionRoute?: string;
       confirmOnly?: boolean;
     },

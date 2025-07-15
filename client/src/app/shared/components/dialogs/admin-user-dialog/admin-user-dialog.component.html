@@ -2,53 +2,61 @@
     {{ data.mode === 'add' ? 'Add New User' : 'Edit User' }}
 </h2>
 
-<form [formGroup]="form" (ngSubmit)="submit()" mat-dialog-content class="space-y-2">
-    <!-- Username -->
-    <div>
+<div mat-dialog-content class="w-full h-full flex items-center justify-center">
+    <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-md space-y-3">
+        <!-- Username -->
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>Username</mat-label>
             <mat-icon matPrefix>person</mat-icon>
             <input matInput placeholder="Username" formControlName="username" />
         </mat-form-field>
         <app-validation-error [control]="getControl('username')"></app-validation-error>
-    </div>
 
-    <!-- Email -->
-    <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Email</mat-label>
-        <mat-icon matPrefix>email</mat-icon>
-        <input matInput placeholder="Email" formControlName="email" />
-    </mat-form-field>
-    <app-validation-error [control]="getControl('email')"></app-validation-error>
-
-    <!-- Role -->
-    <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Role</mat-label>
-        <mat-icon matPrefix>supervisor_account</mat-icon>
-        <mat-select formControlName="role">
-            <mat-option value="user">User</mat-option>
-            <mat-option value="admin">Admin</mat-option>
-            <mat-option value="moderator">Moderator</mat-option>
-        </mat-select>
-    </mat-form-field>
-    <app-validation-error [control]="getControl('role')"></app-validation-error>
-
-    <!-- Password (Add Mode Only) -->
-    <ng-container *ngIf="data.mode === 'add'">
+        <!-- Email -->
         <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Password</mat-label>
-            <mat-icon matPrefix>lock</mat-icon>
-            <input matInput type="password" placeholder="Password" formControlName="password" />
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input matInput placeholder="Email" formControlName="email" />
         </mat-form-field>
-    </ng-container>
-    <app-validation-error [control]="getControl('password')"></app-validation-error>
+        <app-validation-error [control]="getControl('email')"></app-validation-error>
 
-    <!-- Actions -->
-    <mat-dialog-actions align="end" class="p-6 border-t border-gray-800 dark:border-gray-200 mt-6">
-        <button mat-stroked-button type="button" (click)="close()"><mat-icon>clear</mat-icon> Cancel</button>
-        <button mat-stroked-button type="submit" [disabled]="form.invalid" class="bg-blue-400 dark:bg-primary">
-            <mat-icon>{{ data.mode === 'add' ? 'person_add' : 'edit' }}</mat-icon>
-            {{ data.mode === 'add' ? 'Add User' : 'Update User' }}
-        </button>
-    </mat-dialog-actions>
-</form>
+        <!-- Role -->
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Role</mat-label>
+            <mat-icon matPrefix>supervisor_account</mat-icon>
+            <mat-select formControlName="role">
+                <mat-option value="user">User</mat-option>
+                <mat-option value="moderator">Moderator</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <app-validation-error [control]="getControl('role')"></app-validation-error>
+
+        <!-- Password (Add Mode Only) -->
+        <ng-container *ngIf="data.mode === 'add'">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Password</mat-label>
+                <mat-icon matPrefix>lock</mat-icon>
+                <input matInput [type]="showPassword ? 'text' : 'password' " placeholder="Password"
+                    formControlName="password" autocomplete="new-password" />
+                <button mat-icon-button matSuffix type="button" (click)="togglePassword($event)"
+                    aria-label="Toggle password visibility">
+                    <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+            </mat-form-field>
+        </ng-container>
+        <app-validation-error [control]="getControl('password')"></app-validation-error>
+
+        <!-- Actions -->
+        <mat-dialog-actions align="end"
+            class="flex justify-end gap-4 p-4 border-t border-gray-300 dark:border-gray-700 mt-6">
+            <button mat-stroked-button type="button" (click)="close()"
+                class="mr-2 px-6 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95"><mat-icon>clear</mat-icon>
+                Cancel</button>
+            <button mat-flat-button [disabled]="form.invalid" [ngClass]="{ 'opacity-50': form.invalid }" type="submit"
+                class="px-6 py-2 rounded-md text-black dark:text-white  bg-blue-500 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-800 transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
+                <mat-icon>{{ data.mode === 'add' ? 'person_add' : 'edit' }}</mat-icon>
+                {{ data.mode === 'add' ? 'Add User' : 'Update User' }}
+            </button>
+        </mat-dialog-actions>
+    </form>
+</div>
