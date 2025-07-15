@@ -12,8 +12,10 @@
       <mat-form-field appearance="outline" class="w-full h-14 self-center rounded-search">
         <mat-label>Search...</mat-label>
         <mat-icon matPrefix class="text-gray-500">search</mat-icon>
-        <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />
-        <button mat-icon-button matSuffix class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+        <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200"
+          [formControl]="searchControl" />
+        <button mat-icon-button matSuffix (click)="clearSearch()"
+          class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
           <mat-icon class="flex items-center">cancel</mat-icon>
         </button>
       </mat-form-field>
@@ -110,8 +112,9 @@
   <mat-form-field appearance="outline" class="w-11/12 h-14 self-center rounded-search">
     <mat-label>Search...</mat-label>
     <mat-icon matPrefix class="text-gray-500">search</mat-icon>
-    <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" />
-    <button mat-icon-button matSuffix class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
+    <input matInput placeholder="Search here" class="text-gray-800 dark:text-gray-200" [formControl]="searchControl" />
+    <button mat-icon-button matSuffix (click)="clearSearch()"
+      class="mr-2 text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700">
       <mat-icon class="flex items-center">cancel</mat-icon>
     </button>
   </mat-form-field>

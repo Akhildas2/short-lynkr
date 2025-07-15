@@ -67,6 +67,7 @@ export class HomeComponent {
                     title: 'Sign In Required',
                     content: 'This feature is only available to logged-in users. Please sign in to continue.',
                     actionText: 'Sign In',
+                    actionIcon: 'trending_flat',
                     actionRoute: '/auth/sign-in',
                     confirmOnly: false
                 }

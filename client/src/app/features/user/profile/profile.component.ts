@@ -5,6 +5,7 @@ import { SharedModule } from '../../../shared/shared.module';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { AccountSettingsDialogComponent } from '../../../shared/components/dialogs/account-settings-dialog/account-settings-dialog.component';
+import { AuthUser } from '../../../models/auth/auth.model';
 
 @Component({
     selector: 'app-profile',
@@ -44,12 +45,13 @@ export class ProfileComponent {
     }
 
 
-    deleteUser() {
+    deleteUser(user: AuthUser) {
         const dialog = this.dialog.open(AlertDialogComponent, {
             data: {
                 tilte: 'Delete User?',
-                content: `Are you sure you want to delete your account? This action cannot be undone.`,
+                content: `Are you sure you want to delete the user "${user.username}"? This action cannot be undone.`,
                 actionText: 'Delete',
+                actionIcon: 'delete',
                 confirmOnly: true
             }
         });

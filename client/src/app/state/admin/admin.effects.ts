@@ -49,10 +49,10 @@ export class AdminEffects {
         }
     }
 
-    async toggleBlockUser(id: string) {
+    async toggleBlockUser(id: string, isBlocked: boolean) {
         this.store.setLoading();
         try {
-            const updatedUser = await firstValueFrom(this.api.toggleBlockUser(id));
+            const updatedUser = await firstValueFrom(this.api.toggleBlockUser(id, isBlocked));
             this.store.updateUser(updatedUser);
             this.snackbar.showSuccess('User block status changed.');
 

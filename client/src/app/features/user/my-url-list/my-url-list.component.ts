@@ -112,6 +112,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
         title: 'Delete URL?',
         content: `Are you sure you want to delete this URL: "${url.shortUrl}"? This action cannot be undone.`,
         actionText: 'Delete',
+        actionIcon: 'delete',
         confirmOnly: true
       },
     });

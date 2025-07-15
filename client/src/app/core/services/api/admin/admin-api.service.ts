@@ -25,8 +25,8 @@ export class AdminApiService {
     return this.http.put<User>(`${this.adminApi}/users/${id}`, user);
   }
 
-  toggleBlockUser(id: string): Observable<any> {
-    return this.http.patch(`${this.adminApi}/users/${id}/block`, {});
+  toggleBlockUser(id: string, isBlocked: boolean): Observable<any> {
+    return this.http.patch(`${this.adminApi}/users/${id}/block`, { isBlocked });
   }
 
   deleteUser(id: string): Observable<any> {

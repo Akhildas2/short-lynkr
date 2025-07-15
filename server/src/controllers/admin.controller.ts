@@ -38,7 +38,11 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
 
 export const blockUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const result = await AdminService.toggleBlockUser(req.params.id);
+        const { isBlocked } = req.body;
+        if (typeof isBlocked !== 'boolean') {
+            res.status(400).json({ message: 'Invalid "isBlocked" value' });
+        }
+        const result = await AdminService.toggleBlockUser(req.params.id, isBlocked);
         res.status(200).json(result);
 
     } catch (error) {
