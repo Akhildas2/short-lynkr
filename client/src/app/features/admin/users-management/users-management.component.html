@@ -1,22 +1,21 @@
 <div class="px-4 sm:px-1">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
-        <h2 class="text-4xl font-bold">User Management</h2>
+        <h2 class="text-2xl sm:text-4xl font-bold">User Management</h2>
 
         <!-- Dropdown + Add Button -->
-        <div class="flex items-center gap-3">
+        <div class="flex flex-row flex-wrap w-full sm:w-auto justify-between items-center gap-3">
+
             <!-- Filter Dropdown -->
-            <mat-form-field appearance="outline" class="h-12 w-full sm:w-auto">
-                <mat-label>Filter Users</mat-label>
-                <mat-select>
-                    <mat-option value="">All</mat-option>
-                    <mat-option value="false">Active</mat-option>
-                    <mat-option value="true">Blocked</mat-option>
-                </mat-select>
-            </mat-form-field>
+            <select [(ngModel)]="statusFilter" (ngModelChange)="applyStatusFilter($event)" class="h-10 w-30 px-3 py-2 border border-gray-600 rounded-lg
+               dark:bg-gray-800 dark:border-gray-400 dark:text-white">
+                <option value="">All</option>
+                <option value="false">Active</option>
+                <option value="true">Blocked</option>
+            </select>
+
 
             <!-- Add User Button -->
-            <button mat-raised-button color="primary" class="dark:text-black w-full sm:w-auto"
-                (click)="openAddUserDialog()">
+            <button mat-raised-button class="dark:text-black px-4 py-2 w-auto" (click)="openAddUserDialog()">
                 <mat-icon class="dark:text-black">add</mat-icon>
                 Add User
             </button>
@@ -111,6 +110,6 @@
             </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons></mat-paginator>
+        <mat-paginator class="pr-0" [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons></mat-paginator>
     </div>
 </div>

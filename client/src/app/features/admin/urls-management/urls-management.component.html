@@ -1,1 +1,81 @@
-<p>urls-management works!</p>
+<div>
+    <div class="flex flex-row justify-between items-center gap-4 mb-4">
+        <h2 class="text-2xl sm:text-4xl font-bold">Url Management</h2>
+
+        <!-- Dropdown + Add Button -->
+        <div class="flex w-full sm:w-auto items-center gap-3">
+
+            <!-- Filter Dropdown -->
+            <select class="h-10 w-30 px-4 py-2 border border-gray-600 rounded-lg
+               dark:bg-gray-800 dark:border-gray-400 dark:text-white">
+                <option value="">All</option>
+                <option value="false">Active</option>
+                <option value="true">Blocked</option>
+            </select>
+
+        </div>
+    </div>
+
+    <div class="p-4">
+
+        <!-- URLs Grid -->
+        <div *ngIf="urls().length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div *ngFor="let url of urls()"
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 relative">
+
+                <!-- Header: Original URL -->
+                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 truncate mb-1">
+                    {{ url.originalUrl }}
+                </h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                    {{ url.shortUrl }}
+                </p>
+
+                <!-- QR Code -->
+                <div class="my-3">
+                    <img [src]="url.qrCodeUrl" alt="QR Code" class="w-24 h-24 rounded-lg border" />
+                </div>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex flex-col">
+                        <span class="font-medium">Clicks</span>
+                        <span class="text-lg font-semibold">{{ url.clicks }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-medium">Unique Visitors</span>
+                        <span class="text-lg font-semibold">{{ url.uniqueVisitors || 0 }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-medium">Top Country</span>
+                        <span class="truncate">{{ url.topCountry || 'N/A' }}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-medium">Active</span>
+                        <span [class.text-green-600]="url.isActive" [class.text-red-600]="!url.isActive"
+                            class="font-semibold">
+                            {{ url.isActive ? 'Yes' : 'No' }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Analytics Summary -->
+                <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                    <p *ngIf="url.topCountryPercentage">
+                        {{ url.topCountryPercentage }}% of traffic from {{ url.topCountry }}
+                    </p>
+                    <p *ngIf="url.visitorsChange">
+                        Visitors Change: <span [class.text-green-500]="url.visitorsChange > 0"
+                            [class.text-red-500]="url.visitorsChange < 0">
+                            {{ url.visitorsChange > 0 ? '+' : '' }}{{ url.visitorsChange }}%
+                        </span>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

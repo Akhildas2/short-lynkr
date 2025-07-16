@@ -22,7 +22,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
     private adminStore = inject(AdminStore);
     private adminEffects = inject(AdminEffects);
     private globalSearchService = inject(GlobalSearchService);
-
+    statusFilter = '';
     displayedColumns: string[] = ['username', 'email', 'role', 'isBlocked', 'actions'];
     dataSource = new MatTableDataSource<User>();
     @ViewChild(MatSort) sort!: MatSort;
@@ -40,13 +40,19 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
 
         // Custom filter predicate for global search
         this.dataSource.filterPredicate = (data: User, filter: string): boolean => {
-            const searchStr = filter.toLowerCase();
-            return (
-                data.username.toLowerCase().includes(searchStr) ||
-                data.email.toLowerCase().includes(searchStr) ||
-                data.role.toLowerCase().includes(searchStr)
-            );
+            const { search, status } = JSON.parse(filter);
+
+            const matchesSearch =
+                data.username.toLowerCase().includes(search) ||
+                data.email.toLowerCase().includes(search) ||
+                data.role.toLowerCase().includes(search);
+
+            const matchesStatus =
+                status === '' || String(data.isBlocked) === status;
+
+            return matchesSearch && matchesStatus;
         };
+
     }
 
 
@@ -57,10 +63,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.globalSearchService.searchTerm$
             .pipe(takeUntil(this.destroy$))
             .subscribe(term => {
-                this.dataSource.filter = term.trim().toLowerCase();
-                if (this.dataSource.paginator) {
-                    this.dataSource.paginator.firstPage();
-                }
+                this.applyFilter(term.trim().toLowerCase(), this.statusFilter);
             });
     }
 
@@ -72,6 +75,18 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    applyStatusFilter(value: string) {
+        this.statusFilter = value;
+        this.applyFilter(this.globalSearchService.currentSearchTerm.trim().toLowerCase(), value);
+    }
+
+    applyFilter(search: string, status: string) {
+        this.dataSource.filter = JSON.stringify({ search, status });
+        if (this.dataSource.paginator) {
+            this.dataSource.paginator.firstPage();
+        }
     }
 
     async openAddUserDialog() {
@@ -140,6 +155,5 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
             await this.adminEffects.toggleBlockUser(user._id, newStatus);
         }
     }
-
 
 }
