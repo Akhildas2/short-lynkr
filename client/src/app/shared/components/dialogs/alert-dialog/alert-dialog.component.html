@@ -4,7 +4,7 @@
   <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-500"></div>
 
   <!-- Dialog Inner Content -->
-  <div class="p-6 sm:p-10">
+  <div class="p-4">
     <!-- Header Icon & Title -->
     <div class="text-center mb-8">
 
@@ -29,10 +29,10 @@
     </mat-dialog-content>
 
     <!-- Action Buttons -->
-    <mat-dialog-actions class="flex flex-row justify-center items-center gap-4 w-full flex-wrap sm:flex-nowrap">
+    <mat-dialog-actions class="flex flex-wrap justify-center gap-4 px-8 py-3">
       <!-- Cancel Button -->
       <button mat-stroked-button
-        class="group w-full sm:w-auto px-8 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-300 ease-out"
+        class="group w-full sm:w-auto border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-300 ease-out"
         (click)="close()">
         <span class="flex items-center justify-center gap-2">
           <span class="group-hover:-translate-x-1 transition-transform">Cancel</span>
@@ -47,7 +47,7 @@
           'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/30 hover:shadow-green-500/50': data.actionIcon === 'lock_open',
           'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/30 hover:shadow-blue-500/50': !['delete', 'block', 'unblock'].includes(data.actionIcon)
         }"
-        class="group w-full sm:w-auto px-8 py-3 rounded-2xl text-white font-semibold bg-gradient-to-r transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-xl active:scale-95"
+        class="group w-full sm:w-auto ml-0 rounded-2xl text-white font-semibold bg-gradient-to-r transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg active:scale-95"
         (click)="performAction()">
         <span class="flex items-center justify-center gap-2">
           <span class="group-hover:-translate-x-1 transition-transform">
@@ -59,7 +59,7 @@
         </span>
       </button>
 
-
     </mat-dialog-actions>
+
   </div>
 </div>
