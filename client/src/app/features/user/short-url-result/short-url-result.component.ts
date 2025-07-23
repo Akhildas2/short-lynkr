@@ -3,8 +3,7 @@ import { UrlEntry } from '../../../models/url/url.model';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
-import { openInNewTab } from '../../../shared/utils/url.utils';
-import { UrlService } from '../../../shared/services/url/url.service';
+import { openUrl } from '../../../shared/utils/url.utils';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
@@ -26,7 +25,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   selectedUrl = this.urlStore.selectedUrl;
   QR_SIZES = [300, 500, 750, 1024];
 
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService) { }
+  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService) { }
 
   async ngOnInit(): Promise<void> {
     this.socketService.connect();
@@ -36,12 +35,8 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     }
   }
 
-  openLink(url: string) {
-    this.urlService.openShortUrl(url);
-  }
-
-  openExternalPage(url: string): void {
-    openInNewTab(url);
+  openUrlHandler(url: string, newTab: boolean = true): void {
+    openUrl(url, newTab);
   }
 
   copyUrl(url: string): void {

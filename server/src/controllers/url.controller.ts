@@ -64,8 +64,7 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
 
         const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp.toString(), country, userAgent, referrer);
         if (!urlData) {
-            res.status(404).json({ message: 'URL not found' });
-            return;
+            return res.redirect(302, `${process.env.CLIENT_URL}/error?code=404&message=URL not found`);
         }
 
         const io = req['io'];
@@ -74,10 +73,13 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
             clicks: urlData.clicks
         })
 
-        res.status(200).json({ originalUrl: urlData.originalUrl, urlData });
+        res.redirect(302, urlData.originalUrl);
 
-    } catch (error) {
-        next(error);
+    } catch (error: any) {
+         const status = error.status || error.statusCode || 500;
+        const message = error.message || 'Something went wrong';
+
+        res.redirect(302, `${process.env.CLIENT_URL}/error?code=${status}&message=${encodeURIComponent(message)}`);
     }
 };
 

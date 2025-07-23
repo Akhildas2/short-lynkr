@@ -18,6 +18,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
     exports: [
@@ -39,7 +40,8 @@ import { MatDividerModule } from '@angular/material/divider';
         MatGridListModule,
         MatPaginatorModule,
         MatSidenavModule,
-        MatDividerModule
+        MatDividerModule,
+        MatSortModule
     ]
 
 })

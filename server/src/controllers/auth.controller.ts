@@ -44,6 +44,11 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             return
         }
 
+        if (user.isBlocked) {
+            res.status(403).json({ message: 'Your account has been blocked. Please contact support for assistance.' });
+            return;
+        }
+
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET!,

@@ -112,7 +112,6 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 
 export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string, country?: string, userAgent?: string, referrer?: string) => {
     const url = await UrlModel.findOne({ shortId });
-
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
     }

@@ -38,7 +38,7 @@
                 <div class="text-center text-sm">
                   <span>Scan QR code to visit</span>
                   <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
-                    (click)="openLink(url.shortUrl)">
+                    (click)="openUrlHandler(url.shortUrl, false)">
                     {{ url.shortUrl }}
                   </span>
                 </div>
@@ -117,13 +117,13 @@
                   </div>
                   <div class="w-full">
                     <p class="text-sm font-medium">Original URL</p>
-                    <a [href]="url.originalUrl" target="_blank"
+                    <a (click)="openUrlHandler(url.originalUrl, false)"
                       class="block text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all">
                       {{ url.originalUrl }}
                     </a>
                   </div>
                 </div>
-                <button mat-icon-button (click)="openExternalPage(url.originalUrl)"
+                <button mat-icon-button (click)="openUrlHandler(url.originalUrl, true)"
                   class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full self-end sm:self-center shrink-0"
                   matTooltip="Open in new tab">
                   <mat-icon>open_in_new</mat-icon>
@@ -142,7 +142,7 @@
                     <p class="text-sm font-medium">Short URL</p>
                     <span
                       class="block cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base break-all"
-                      (click)="openLink(url.shortUrl)">
+                      (click)="openUrlHandler(url.shortUrl, false)">
                       {{ url.shortUrl }}
                     </span>
                   </div>
@@ -153,7 +153,7 @@
                     class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Copy to clipboard">
                     <mat-icon>content_copy</mat-icon>
                   </button>
-                  <button mat-icon-button (click)="openLink(url.shortUrl)"
+                  <button mat-icon-button (click)="openUrlHandler(url.shortUrl, true)"
                     class="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full" matTooltip="Open in new tab">
                     <mat-icon>open_in_new</mat-icon>
                   </button>
@@ -165,21 +165,33 @@
 
 
           <!-- Action Buttons -->
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
+            <!-- Home Button -->
+            <button mat-stroked-button [routerLink]="['/home']"
+              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
+              <span
+                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                Home
+              </span>
+              <mat-icon class="ml-2 text-[var(--primary-color)]">home</mat-icon>
+            </button>
+
+            <!-- Customize Url Button -->
             <button mat-stroked-button (click)="customizeUrl(url)"
               class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
               <span
-                class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
                 Customize URL
               </span>
               <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
             </button>
 
+            <!-- Analytics Button -->
             <button mat-stroked-button [routerLink]="['/user/analytics',url._id]"
               class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
               <span
-                class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
                 Analytics
               </span>
               <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
@@ -193,9 +205,32 @@
   </div>
 </main>
 
-<div *ngIf="!selectedUrl()" class="flex flex-col items-center justify-center flex-grow h-full text-center">
-  No shortened links yet.
-  <a routerLink="/" class="text-[var(--primary-color)] hover:text-[var(--accent-color)] font-semibold underline ml-1">
-    Start by creating your first URL!
-  </a>
+<!-- Empty State for Short URL Result -->
+<div *ngIf="!selectedUrl()"
+  class="flex flex-col items-center justify-center text-center py-20 px-4 sm:px-0 h-full  min-h-[calc(100vh-160px)]">
+  <!-- Icon Container -->
+  <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full
+           bg-gradient-to-br from-yellow-100 via-amber-200 to-orange-300
+           dark:from-yellow-800 dark:via-amber-700 dark:to-orange-800
+           shadow-xl ring-4 ring-yellow-300/40 dark:ring-amber-400/30 animate-bounce">
+    <mat-icon class="text-yellow-700 dark:text-yellow-100 scale-150 drop-shadow-md">link_off</mat-icon>
+  </div>
+
+  <!-- Title -->
+  <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+    No Shortened Links
+  </h3>
+
+  <!-- Description -->
+  <p class="text-gray-600 dark:text-gray-400 max-w-md mb-8 leading-relaxed">
+    It looks like you haven’t created any shortened URLs yet. Tap below to get started.
+  </p>
+
+  <!-- Action Button -->
+  <button routerLink="/home" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]
+           hover:from-blue-600 hover:to-purple-700 active:scale-95 rounded-xl text-white font-medium
+           shadow-lg hover:shadow-2xl transition-transform duration-300 ease-out">
+    <mat-icon class="text-white">add_link</mat-icon>
+    <span>Create URL</span>
+  </button>
 </div>
