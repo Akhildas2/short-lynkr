@@ -113,4 +113,8 @@
       background-color: var(--row-hover-bg) !important;
     }
   }
+
+  .mat-sort-header-arrow {
+    color: var(--text-color, #fff);
+  }
 }

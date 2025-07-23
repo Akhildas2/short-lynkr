@@ -102,7 +102,7 @@
                 class="flex items-center justify-center space-x-2 bg-white dark:bg-gray-900 rounded-xl p-4 shadow-2xl">
                 <span
                   class="flex-1 z-10 text-center cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-sm sm:text-base font-medium break-all"
-                  (click)="openLink(url.shortUrl)">
+                  (click)="openUrlHandler(url.shortUrl, false)">
                   {{ url.shortUrl }}
                 </span>
 
@@ -116,7 +116,7 @@
               <!-- Original URL -->
               <div
                 class="cursor-pointer relative z-20 bg-white dark:bg-gray-900 rounded-xl p-4 border-l-4 border-[var(--primary-color)] shadow-xl"
-                (click)="openExternalPage(url.originalUrl)">
+                (click)="openUrlHandler(url.originalUrl, true)">
                 <span class="block text-sm text-center break-all">
                   {{ url.originalUrl }}
                 </span>
@@ -225,27 +225,32 @@
     </div>
 
 
-    <!-- Empty State -->
-    <div *ngIf="urlList().length === 0" class="text-center py-20">
+    <!-- Empty State for URL List -->
+    <div *ngIf="urlList().length === 0"
+      class="flex flex-col items-center justify-center text-center py-20 px-4 sm:px-0">
       <!-- Icon Container -->
-      <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full 
-         shadow-xl ring-4 animate-pulse
-         bg-gradient-to-br from-yellow-100 via-amber-200 to-orange-300 ring-yellow-400/30
-         dark:from-yellow-800 dark:via-amber-700 dark:to-orange-800 dark:ring-amber-500/30">
-        <mat-icon class="text-yellow-700 dark:text-yellow-200 scale-150 drop-shadow-md">warning</mat-icon>
+      <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full
+           bg-gradient-to-br from-yellow-100 via-amber-200 to-orange-300
+           dark:from-yellow-800 dark:via-amber-700 dark:to-orange-800
+           shadow-xl ring-4 ring-yellow-300/40 dark:ring-amber-400/30 animate-pulse">
+        <mat-icon class="text-yellow-700 dark:text-yellow-100 scale-150 drop-shadow-md">warning</mat-icon>
       </div>
 
-
       <!-- Title -->
-      <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">No URLs Found</h3>
+      <h3 class="text-3xl sm:text-4xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+        No URLs Found
+      </h3>
 
       <!-- Description -->
-      <p class="text-gray-600 dark:text-gray-400 mb-6">Start by creating your first shortened URL.</p>
+      <p class="text-gray-600 dark:text-gray-400 max-w-md mb-8 leading-relaxed">
+        You don’t have any shortened URLs yet. Create your first one now and start sharing!
+      </p>
 
       <!-- Action Button -->
-      <button routerLink="/home"
-        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] hover:from-blue-600 hover:to-purple-700  rounded-xl transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg">
-        <mat-icon>add_circle</mat-icon>
+      <button routerLink="/home" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]
+           hover:from-blue-600 hover:to-purple-700 active:scale-95 rounded-xl text-white font-medium
+           shadow-lg hover:shadow-2xl transition-transform duration-300 ease-out">
+        <mat-icon class="text-white">add_circle</mat-icon>
         <span>Create URL</span>
       </button>
     </div>

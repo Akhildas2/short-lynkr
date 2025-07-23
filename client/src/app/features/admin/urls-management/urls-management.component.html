@@ -1,76 +1,103 @@
-<div>
-    <div class="flex flex-row justify-between items-center gap-4 mb-4">
-        <h2 class="text-2xl sm:text-4xl font-bold">Url Management</h2>
+<div class="p-6">
 
-        <!-- Dropdown + Add Button -->
-        <div class="flex w-full sm:w-auto items-center gap-3">
+    <div class="flex flex-row justify-between items-start gap-4 mb-4">
+        <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Url Management</h2>
 
-            <!-- Filter Dropdown -->
-            <select class="h-10 w-30 px-4 py-2 border border-gray-600 rounded-lg
-               dark:bg-gray-800 dark:border-gray-400 dark:text-white">
-                <option value="">All</option>
-                <option value="false">Active</option>
-                <option value="true">Blocked</option>
-            </select>
+        <!-- Filter Dropdown -->
+        <select class="h-10 px-5 py-2 border border-gray-400 rounded-xl shadow-sm
+                       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                       dark:bg-gray-800 dark:border-gray-500  dark:focus:ring-blue-400">
+            <option value="">All</option>
+            <option value="false">Active</option>
+            <option value="true">Blocked</option>
+        </select>
 
-        </div>
     </div>
 
-    <div class="p-4">
+    <div class="mt-8">
 
         <!-- URLs Grid -->
-        <div *ngIf="urls().length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div *ngIf="urls().length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <div *ngFor="let url of urls()"
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition duration-300 p-5 relative">
+                class="p-2 bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 ease-in-out flex flex-col">
 
-                <!-- Header: Original URL -->
-                <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100 truncate mb-1">
-                    {{ url.originalUrl }}
-                </h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {{ url.shortUrl }}
-                </p>
+                <div class="flex justify-between items-start mb-4">
+                    <span class="text-lg font-bold truncate">
+                        {{ url.shortUrl }}
+                    </span>
+
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full uppercase tracking-wide"
+                        [ngClass]="{ 'bg-green-100 text-green-800': url.isActive, 'bg-red-100 text-red-800': !url.isActive }">
+                        {{ url.isActive ? 'Active' : 'Blocked' }}
+                    </span>
+                </div>
 
                 <!-- QR Code -->
-                <div class="my-3">
-                    <img [src]="url.qrCodeUrl" alt="QR Code" class="w-24 h-24 rounded-lg border" />
-                </div>
+                <div class="grid grid-cols-2 gap-2 py-4 text-sm text-gray-700 dark:text-gray-300">
+                    <div class="flex flex-col">
+                        <img [src]="url.qrCodeUrl" alt="QR Code" class="w-40 h-40 rounded-lg border" />
+                    </div>
 
-                <!-- Stats -->
-                <div class="grid grid-cols-2 gap-2 text-sm text-gray-700 dark:text-gray-300">
                     <div class="flex flex-col">
-                        <span class="font-medium">Clicks</span>
-                        <span class="text-lg font-semibold">{{ url.clicks }}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-medium">Unique Visitors</span>
-                        <span class="text-lg font-semibold">{{ url.uniqueVisitors || 0 }}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-medium">Top Country</span>
-                        <span class="truncate">{{ url.topCountry || 'N/A' }}</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-medium">Active</span>
-                        <span [class.text-green-600]="url.isActive" [class.text-red-600]="!url.isActive"
-                            class="font-semibold">
-                            {{ url.isActive ? 'Yes' : 'No' }}
-                        </span>
+                        <div class="flex-row">
+                            <span class="font-medium">Created At:</span>
+                            <span class="text-lg font-semibold ml-2">{{ url.createdAt }}</span>
+                        </div>
+                        <div class="flex-row">
+                            <span class="font-medium">Expiry At:</span>
+                            <span class="text-lg font-semibold ml-2">{{ url.expiresAt }}</span>
+                        </div>
+                        <div class="flex-row">
+                            <span class="font-medium">Click:</span>
+                            <span class="text-lg font-semibold ml-2">{{ url.clicks}}</span>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Analytics Summary -->
-                <div class="mt-3 text-xs text-gray-500 dark:text-gray-400">
-                    <p *ngIf="url.topCountryPercentage">
-                        {{ url.topCountryPercentage }}% of traffic from {{ url.topCountry }}
-                    </p>
-                    <p *ngIf="url.visitorsChange">
-                        Visitors Change: <span [class.text-green-500]="url.visitorsChange > 0"
-                            [class.text-red-500]="url.visitorsChange < 0">
-                            {{ url.visitorsChange > 0 ? '+' : '' }}{{ url.visitorsChange }}%
-                        </span>
-                    </p>
+                <!-- Analytics Section -->
+                <div class="grid grid-cols-3 gap-2 p-2 border-t border-b border-gray-200 dark:border-gray-500">
+                    <div
+                        class="flex flex-col items-center justify-center p-3 bg-blue-50 dark:bg-blue-800 rounded-lg group hover:bg-blue-100 transition-colors duration-200">
+                        <span class="font-bold text-blue-600 dark:text-blue-400">{{ url.uniqueVisitors }}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-300">Unique Visitors</span>
+                    </div>
+
+                    <div
+                        class="flex flex-col items-center justify-center p-3 bg-green-50 dark:bg-green-800 rounded-lg group hover:bg-green-100 transition-colors duration-200">
+                        <span class="font-bold text-green-600 dark:text-green-400">{{ url.topCountry || 'N/A' }}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-300">Top Country</span>
+                    </div>
+
+                    <div
+                        class="flex flex-col items-center justify-center p-3 bg-purple-50 dark:bg-purple-800 rounded-lg group hover:bg-purple-100 transition-colors duration-200">
+                        <span class="font-bold text-purple-600 dark:text-purple-400">{{ url.clickLimit }}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-300">Click Limit</span>
+                    </div>
                 </div>
+
+                <!-- Original URL -->
+                <div
+                    class="cursor-pointer relative z-20 bg-white dark:bg-gray-900 rounded-xl p-4 border-l-4 border-[var(--primary-color)] shadow-xl">
+                    <span class="block text-sm text-center break-all">
+                        {{ url.originalUrl }}
+                    </span>
+                </div>
+
+                <!-- Action -->
+                <div class="flex justify-between gap-2 border-t border-gray-200 dark:border-gray-500 py-2 pb-2">
+                    <button mat-stroked-button
+                        [ngClass]="{'bg-red-300 dark:bg-red-600':!url.isActive,'bg-green-300 dark:bg-green-700':url.isActive}"
+                        class="px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                        {{ url.isActive ? 'Block URL' : 'Unblock URL' }}
+                    </button>
+
+                    <button mat-raised-button
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                        Delete
+                    </button>
+                </div>
+
 
             </div>
         </div>

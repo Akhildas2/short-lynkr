@@ -85,22 +85,4 @@ export class UrlEffects {
         }
     }
 
-    async redirectToOriginalUrl(shortId: string): Promise<string | null> {
-        try {
-            const response = await firstValueFrom(this.api.redirectToOriginal(shortId));
-            const originalUrl = response?.body?.originalUrl || response?.url;
-
-            if (!originalUrl) {
-                this.snackbar.showError('Original URL not found.');
-                return null;
-            }
-
-            return originalUrl;
-        } catch (error: any) {
-            const errorMessage = error?.error?.message || 'Unable to open link.';
-            this.snackbar.showError(errorMessage);
-            return null;
-        }
-    }
-
 }

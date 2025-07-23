@@ -3,8 +3,6 @@ import { UrlEntry } from '../../../models/url/url.model';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { RouterLink } from '@angular/router';
-import { openInNewTab } from '../../../shared/utils/url.utils';
-import { UrlService } from '../../../shared/services/url/url.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { PageEvent } from '@angular/material/paginator';
 import { filterUrls } from '../../../shared/utils/url-filter.util';
@@ -13,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { SocketService } from '../../../core/services/socket/socket.service';
 import { SharedModule } from '../../../shared/shared.module';
+import { openUrl } from '../../../shared/utils/url.utils';
 
 @Component({
   selector: 'app-my-url-list',
@@ -47,9 +46,11 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
     return urls.slice(start, end);
   });
 
+  openUrlHandler(url: string, newTab: boolean = true): void {
+    openUrl(url, newTab);
+  }
 
-
-  constructor(private urlService: UrlService, private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
+  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
     effect(() => {
       const filteredCount = this.filteredUrls().length;
       const currentPageStart = this.pageIndex() * this.pageSize();
@@ -81,14 +82,6 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
 
   closeDropdown() {
     this.activeDropdownId = null;
-  }
-
-  openLink(url: string) {
-    this.urlService.openShortUrl(url);
-  }
-
-  openExternalPage(url: string): void {
-    openInNewTab(url);
   }
 
   copyUrl(url: string): void {
