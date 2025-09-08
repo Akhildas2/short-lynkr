@@ -84,10 +84,10 @@ export class AdminEffects {
         }
     }
 
-    async toggleBlockUrl(id: string) {
+    async toggleBlockUrl(id: string, isBlocked: boolean) {
         this.store.setLoading();
         try {
-            const updatedUrl = await firstValueFrom(this.api.toggleBlockUrl(id));
+            const updatedUrl = await firstValueFrom(this.api.toggleBlockUrl(id, isBlocked));
             this.store.updateUrl(updatedUrl);
             this.snackbar.showSuccess('URL block status changed.');
         } catch (error: any) {

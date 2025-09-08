@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../../../../models/user/user.model';
 import { Observable } from 'rxjs';
 import { UrlEntry } from '../../../../models/url/url.model';
+import { AdminAnalytics } from '../../../../models/analytic/adminAnalytics.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +38,16 @@ export class AdminApiService {
     return this.http.get<UrlEntry[]>(`${this.adminApi}/urls`);
   }
 
-  toggleBlockUrl(id: string): Observable<UrlEntry> {
-    return this.http.patch<UrlEntry>(`${this.adminApi}/urls/${id}/block`, {});
+  toggleBlockUrl(id: string, isBlocked: boolean): Observable<UrlEntry> {
+    return this.http.patch<UrlEntry>(`${this.adminApi}/urls/${id}/block`, { isBlocked });
   }
 
   deleteUrl(id: string): Observable<any> {
     return this.http.delete(`${this.adminApi}/urls/${id}`);
   }
+
+  getAdminAnalytics(range: string): Observable<AdminAnalytics> {
+    return this.http.get<AdminAnalytics>(`${this.adminApi}/analytics`, { params: { range } });
+  }
+
 }

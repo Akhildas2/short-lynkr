@@ -15,5 +15,9 @@ export class SummaryCardComponent {
   @Input() changeText: string = '';
   @Input() iconBgClass: string = '';
   @Input() iconColorClass: string = '';
+  @Input() flagClass?: string;
+  @Input() osIcon: Record<string, string> = {};
+  @Input() iconType: 'flag' | 'os' | 'none' = 'none';
+
 
 }

@@ -3,11 +3,15 @@ import { Document, Types } from 'mongoose';
 export interface Analytics {
   ip: string;
   country: string;
-  userAgent: string;
-  referrer: string;
-  browser: string;
-  os: string;
-  device: string;
+  region?: string;
+  city?: string;
+  timezone?: string;
+  ll?: number[];
+  userAgent?: string;
+  referrer?: string;
+  browser?: string;
+  os?: string;
+  device?: string;
   timestamp: Date;
 }
 
@@ -26,6 +30,7 @@ export interface UrlDocument extends Document {
   isActive: boolean;
   analytics: Analytics[];
   isBlocked: boolean;
+  blockedAt: Date | null;
 }
 
 export interface UpdateUrlData {

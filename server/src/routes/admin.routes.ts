@@ -15,4 +15,7 @@ router.get('/urls', authenticate, AdminController.listUrls);
 router.patch('/urls/:id/block', authenticate, AdminController.blockUrl);
 router.delete('/urls/:id', authenticate, AdminController.deleteUrl);
 
+// ===== Analytics =====
+router.get('/analytics', authenticate, AdminController.getAdminAnalytics);
+
 export default router;

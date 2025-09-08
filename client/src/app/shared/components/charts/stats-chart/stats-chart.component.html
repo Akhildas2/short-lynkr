@@ -6,10 +6,12 @@
             [loading]="loading">
         </app-analytics-chart>
 
-        <div *ngIf="!loading && data.length === 0"
-            class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
-            <p class="text-gray-400 p-2">{{ emptyText }}</p>
+        <div *ngIf="!loading && data.length === 0">
+            <app-no-data [variant]="noDataVariant" [icon]="noDataIcon" [title]="noDataTitle"
+                [description]="noDataDescription">
+            </app-no-data>
         </div>
+        
     </div>
 
     <div *ngIf="data.length > 0 && !loading" class="mt-6">
@@ -17,11 +19,22 @@
             title }}</h2>
 
         <div [ngClass]="gridClass + ' gap-4 mt-4 text-center'">
-            <div *ngFor="let item of valueData | slice:0:6" class="text-center">
+            <div *ngFor="let item of valueData | slice:0:6" class="text-center flex flex-col items-center">
+                <!-- Icon -->
+                <div class="text-3xl mb-2">
+                    <i [ngClass]="iconMap[item.name] || fallbackIcon"></i>
+                </div>
+
+                <!-- Percentage -->
                 <div class="text-2xl font-bold">{{ item.percentage }}%</div>
-                <div class="text-sm text-gray-500">{{ item.name }} ({{ item.value }})</div>
+
+                <!-- Label -->
+                <div class="text-sm text-gray-500">
+                    {{ item.name }} ({{ item.value }})
+                </div>
             </div>
         </div>
+
     </div>
 
 </div>

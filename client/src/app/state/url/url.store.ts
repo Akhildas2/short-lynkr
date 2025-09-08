@@ -52,7 +52,6 @@ export const UrlStore = signalStore(
                 error: null
             });
         },
-
         clearSelectedUrl() {
             patchState(store, { selectedUrl: null });
         }

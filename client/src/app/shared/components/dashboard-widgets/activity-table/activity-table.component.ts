@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { SharedModule } from '../../../shared.module';
+import { LocationService } from '../../../utils/location.service';
 
 @Component({
   selector: 'app-activity-table',
@@ -12,27 +13,44 @@ export class ActivityTableComponent {
   @Input() displayedColumns: string[] = [];
   @Input() deviceIconMap: Record<string, string> = {};
   @Input() referrerIconMap: Record<string, string> = {};
+  @Input() referrerIconMapFallbackIcon: string = '';
+  @Input() deviceIconMapFallbackIcon: string = '';
+  @Input() iconMap: Record<string, string> = {};
+  @Input() fallbackIcon: string = '';
+  
+  private locationService = inject(LocationService);
 
-  getReferrerIcon(referrer: string): string {
-    const key = this.normalizeReferrer(referrer);
-    return this.referrerIconMap[key] || this.referrerIconMap['Other'] || 'travel_explore';
-  }
+  getReferrerKey(referrer: string): string {
+    if (!referrer) return 'Other';
 
-  private normalizeReferrer(ref: string): string {
-    if (!ref || ref === 'Direct') return 'Direct';
+    if (referrer.toLowerCase() === 'direct') return 'Direct';
 
     try {
-      const hostname = new URL(ref).hostname;
-      if (hostname.includes('google')) return 'Google';
-      if (hostname.includes('facebook')) return 'Facebook';
-      if (hostname.includes('twitter')) return 'Twitter';
-      if (hostname.includes('instagram')) return 'Instagram';
-      if (hostname.includes('linkedin')) return 'LinkedIn';
+      const url = new URL(referrer);
+      const host = url.hostname.toLowerCase();
+
+      if (host.includes('google')) return 'Google';
+      if (host.includes('facebook')) return 'Facebook';
+      if (host.includes('instagram')) return 'Instagram';
+      if (host.includes('linkedin')) return 'LinkedIn';
+      if (host.includes('twitter') || host.includes('x.com')) return 'Twitter';
+      if (host.includes('youtube')) return 'YouTube';
+
       return 'Other';
-    } catch (e) {
-      return 'Other';
+    } catch {
+      return referrer;
     }
   }
 
+  getCountryName(code: string): string {
+    if (!code) return 'Unknown';
+    return this.locationService.getCountryName(code.toUpperCase());
+  }
+
+  capitalize(str: string | undefined): string {
+    if (!str) return '';
+    str = str.toLowerCase();
+    return str[0].toUpperCase() + str.slice(1);
+  }
 
 }

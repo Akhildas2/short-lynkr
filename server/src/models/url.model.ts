@@ -4,6 +4,10 @@ import { Analytics, UrlDocument } from '../types/url.interface';
 const analyticsSchema = new Schema<Analytics>({
     ip: { type: String, required: true },
     country: { type: String, required: true },
+    region: { type: String },
+    city: { type: String },
+    timezone: { type: String },
+    ll: { type: [Number] },
     userAgent: { type: String },
     referrer: { type: String },
     browser: { type: String },
@@ -25,7 +29,7 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     isActive: { type: Boolean, default: true },
     analytics: [analyticsSchema],
     isBlocked: { type: Boolean, default: false },
-
+    blockedAt: { type: Date, default: null }
 }, { timestamps: true });
 
 

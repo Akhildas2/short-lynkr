@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { ChartData, ChartOptions, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { SharedModule } from '../../../shared.module';
@@ -12,8 +12,9 @@ import { SpinnerComponent } from '../../ui/spinner/spinner.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnalyticsChartComponent implements OnChanges {
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective;
   @Input() chartType: ChartType = 'line';
-  @Input() data: number[] = [];
+  @Input() data: number[] | { label: string, data: number[], borderColor?: string, yAxisID?: string }[] = [];
   @Input() labels: string[] = [];
   @Input() title: string = '';
   @Input() loading: boolean = false;
@@ -47,83 +48,100 @@ export class AnalyticsChartComponent implements OnChanges {
   private updateChart(): void {
     const dark = this.isDarkMode();
 
-    // Background and styling colors
     const tickColor = dark ? '#f9fafb' : '#A9A9A9';
     const gridColor = dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-    const legendColor = dark ? '#f9fafb' : '#A9A9A9';
+    const legendColor = dark ? '#FF9B45' : '#A9A9A9';
 
-    // Shared chart options
+    // Chart options
     this.chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          display: true,
-          labels: {
-            color: legendColor
-          }
-        },
+        legend: { display: true, labels: { color: legendColor } },
         tooltip: this.chartType === 'pie' || this.chartType === 'doughnut'
           ? {
             callbacks: {
               label: (tooltipItem) => {
                 const label = tooltipItem.label || '';
                 const value = tooltipItem.raw as number;
-
                 const dataset = tooltipItem.dataset?.data as number[] || [];
                 const total = dataset.reduce((acc, curr) => acc + curr, 0);
-
                 const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
                 return `${label}: ${percentage}%`;
               }
             }
           }
           : undefined
-      }
+      },
+      scales: this.chartType === 'line' || this.chartType === 'bar'
+        ? {
+          x: { ticks: { color: tickColor }, grid: { color: gridColor } },
+          y: { type: 'linear', display: true, position: 'left', ticks: { color: tickColor }, grid: { color: gridColor } },
+        }
+        : undefined
     };
 
-    // Axis configuration only for line/bar charts
+    // --- Line / Bar charts ---
     if (this.chartType === 'line' || this.chartType === 'bar') {
-      this.chartOptions.scales = {
-        x: {
-          ticks: { color: tickColor },
-          grid: { color: gridColor }
-        },
-        y: {
-          ticks: { color: tickColor },
-          grid: { color: gridColor }
+      if (Array.isArray(this.data) && typeof this.data[0] !== 'number') {
+        // Multi-dataset
+        if (this.chartData.datasets.length !== this.data.length) {
+          this.chartData.datasets = (this.data as any[]).map(d => ({
+            label: d.label,
+            data: d.data,
+            borderColor: d.borderColor || '#4f46e5',
+            backgroundColor: d.borderColor || '#4f46e5',
+            borderWidth: 2,
+            fill: false,
+            tension: 0.4,
+            yAxisID: d.yAxisID || 'y'
+          }));
+        } else {
+          (this.data as any[]).forEach((d, i) => {
+            this.chartData.datasets[i].data = d.data;
+            this.chartData.datasets[i].borderColor = d.borderColor || '#4f46e5';
+          });
         }
-      };
-    } else {
-      delete this.chartOptions.scales; // Remove axis for doughnut/pie
+        this.chartData.labels = this.labels;
+      } else {
+        // Single dataset
+        this.chartData.labels = this.labels;
+        if (!this.chartData.datasets[0]) {
+          this.chartData.datasets[0] = {
+            label: this.title,
+            data: this.data as number[],
+            borderColor: dark ? '#60a5fa' : '#4f46e5',
+            backgroundColor: dark ? '#60a5fa' : '#4f46e5',
+            borderWidth: 2,
+            fill: this.chartType === 'line',
+            pointBackgroundColor: '#ffffff',
+            tension: 0.4
+          };
+        } else {
+          this.chartData.datasets[0].data = this.data as number[];
+          this.chartData.datasets[0].borderColor = dark ? '#60a5fa' : '#4f46e5';
+          this.chartData.datasets[0].backgroundColor = dark ? '#60a5fa' : '#4f46e5';
+        }
+      }
     }
 
-    // Chart data configuration
-    if (this.chartType === 'line' || this.chartType === 'bar') {
+    // --- Pie / Doughnut charts ---
+    if (this.chartType === 'doughnut' || this.chartType === 'pie') {
       this.chartData = {
         labels: this.labels,
         datasets: [{
-          label: this.title,
-          data: this.data,
-          backgroundColor: 'rgba(79, 70, 229, 0.2)',
-          borderColor: dark ? '#60a5fa' : '#4f46e5',
-          borderWidth: 2,
-          fill: this.chartType === 'line',
-          pointBackgroundColor: '#ffffff'
-        }]
-      };
-    } else if (this.chartType === 'doughnut' || this.chartType === 'pie') {
-      this.chartData = {
-        labels: this.labels,
-        datasets: [{
-          data: this.data,
+          data: this.data as number[],
           backgroundColor: this.getBackgroundColors(),
           borderColor: 'rgba(0, 0, 0, 0.1)',
           borderWidth: 1
         }]
       };
     }
+
+    // Update chart smoothly
+    this.chart?.update();
   }
+
 
   private getBackgroundColors(): string[] {
 

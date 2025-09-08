@@ -1,13 +1,25 @@
 <div
     class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 h-full flex flex-col hover:scale-105 border border-gray-200 dark:border-gray-700">
     <h2 class="text-xl font-semibold mb-6">{{ title }}</h2>
+
+    <div class="relative flex-grow h-96" *ngIf="items.length === 0">
+        <app-no-data [variant]="noDataVariant" [icon]="noDataIcon" [title]="noDataTitle"
+            [description]="noDataDescription">
+        </app-no-data>
+    </div>
+
     <div class="space-y-4">
         <ng-container *ngFor="let item of items">
             <div class="flex items-center justify-between mb-2">
                 <div class="flex items-center gap-2">
-                    <mat-icon>{{ iconMap[item.name] || fallbackIcon }}</mat-icon>
+                    <ng-container *ngIf="title.includes('Top Countries')&& item.name !== 'Unknown'; else normalIcon">
+                        <span class="fi fi-{{ item.name | lowercase }}"></span>
+                    </ng-container>
+                    <ng-template #normalIcon>
+                        <i [ngClass]="iconMap[item.name] || fallbackIcon"></i>
+                    </ng-template>
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {{ item.name }} ({{ item.value }})
+                        {{ getFullName(item) }} ({{ item.value }})
                     </span>
                 </div>
                 <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">
@@ -19,9 +31,6 @@
                 class="rounded-full h-2 mb-4">
             </mat-progress-bar>
         </ng-container>
-        <div *ngIf="items.length === 0"
-            class="bg-gray-100 dark:bg-gray-700/50 rounded-xl w-full  flex items-center justify-center h-40">
-            <p class="text-gray-400 p-2">{{ emptyText }}</p>
-        </div>
+
     </div>
 </div>

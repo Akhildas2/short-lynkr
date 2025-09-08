@@ -1,0 +1,13 @@
+<div *ngIf="!isLoading" class="fixed right-10 bottom-10 flex flex-col gap-4 ">
+    <!-- Scroll Up -->
+    <button *ngIf="showScrollUp" (click)="scrollTo('up')" matTooltip="Scroll to Top"
+        class="p-3 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition border border-gray-800 dark:border-white">
+        <mat-icon class="flex justify-center text-white">arrow_upward</mat-icon>
+    </button>
+
+    <!-- Scroll Down -->
+    <button *ngIf="showScrollDown" (click)="scrollTo('down')" matTooltip="Scroll to Bottom"
+        class="p-3 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition border border-gray-800 dark:border-white">
+        <mat-icon class="flex justify-center text-white">arrow_downward</mat-icon>
+    </button>
+</div>
