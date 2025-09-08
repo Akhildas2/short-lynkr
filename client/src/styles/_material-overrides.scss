@@ -117,4 +117,24 @@
   .mat-sort-header-arrow {
     color: var(--text-color, #fff);
   }
+
+  @media (max-width: 380px) {
+    .mat-mdc-paginator-range-label {
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .mat-mdc-paginator-navigation-first,
+    .mat-mdc-paginator-navigation-previous,
+    .mat-mdc-paginator-navigation-next,
+    .mat-mdc-paginator-navigation-last {
+      width: 30px;
+      height: 30px;
+    }
+
+    .mat-mdc-paginator-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }

@@ -3,17 +3,30 @@
     <div class="flex justify-between items-start">
         <div>
             <p class="text-gray-500 dark:text-gray-400">{{ title }}</p>
-            <p class="text-3xl font-bold">{{ value }}</p>
+            <p class="mt-2 text-2xl font-bold flex items-center gap-2">
+                <!-- Show flag only for flag cards -->
+                <ng-container *ngIf="iconType === 'flag' && flagClass">
+                    <span [ngClass]="flagClass || 'fi fi-un'" class="text-4xl hover:scale-125"></span>
+                </ng-container>
+
+                <!-- Show OS icon only for OS cards -->
+                <ng-container *ngIf="iconType === 'os' && osIcon && value as osName">
+                    <i [ngClass]="osIcon[osName] || 'fas fa-server'" class="text-4xl hover:scale-125"></i>
+                </ng-container>
+                {{ value }}
+            </p>
         </div>
         <div class="p-3 rounded-xl" [ngClass]="iconBgClass">
             <mat-icon [ngClass]="iconColorClass">{{ icon }}</mat-icon>
         </div>
     </div>
-    <div class="mt-4">
+    <div class="mt-4" *ngIf="changeText">
         <div class="flex items-center" [ngClass]="change >= 0 ? 'text-green-500' : 'text-red-500'">
-            <mat-icon [ngClass]="change >= 0 ? 'text-green-500' : 'text-red-500'">{{ change >= 0 ? 'arrow_upward' :
-                'arrow_downward' }}</mat-icon>
+            <mat-icon [ngClass]="change >= 0 ? 'text-green-500' : 'text-red-500'">
+                {{ change >= 0 ? 'arrow_upward' : 'arrow_downward' }}
+            </mat-icon>
             <span class="ml-1">{{ change }}% {{ changeText }}</span>
         </div>
     </div>
+
 </div>

@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminLayoutComponent } from '../../shared/components/layouts/admin/admin-layout/admin-layout.component';
 import { UsersManagementComponent } from './users-management/users-management.component';
 import { UrlsManagementComponent } from './urls-management/urls-management.component';
+import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'users', component: UsersManagementComponent },
       { path: 'urls', component: UrlsManagementComponent },
+      { path: 'analytics', component: AdminAnalyticsComponent },
     ]
   }
 ];

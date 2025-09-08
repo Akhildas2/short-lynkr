@@ -1,3 +1,6 @@
+import { BaseAnalyticsData } from "../base-analytics-data/base-analytics.interface";
+import { User } from "../user/user.model";
+
 export interface AnalyticsEntry {
     ip: string;
     country: string;
@@ -10,13 +13,13 @@ export interface AnalyticsEntry {
 }
 
 
-export interface UrlEntry {
+export interface UrlEntry extends BaseAnalyticsData {
     _id: string;
     originalUrl: string;
     shortId: string;
     shortUrl: string;
     qrCodeUrl: string;
-    userId: string;
+    userId: User;
     clicks: number;
     expiryDays: number;
     clickLimit: number;
@@ -25,19 +28,10 @@ export interface UrlEntry {
     createdAt: Date;
     updatedAt: Date;
     isActive: boolean;
-    analytics?: AnalyticsEntry[];
+    isBlocked: boolean;
 
     uniqueVisitors?: number;
     topCountry?: string;
     topCountryPercentage?: number;
-    clicksChange?: number;
-    visitorsChange?: number;
-    timelineData?: number[];
-    timelineLabels?: string[];
-    countryClicks?: number[];
-    countryCodes?: string[];
-    referrerStats?: { name: string; value: number; percentage: number }[];
-    deviceStats?: { name: string; value: number; percentage: number }[];
-    browserStats?: { name: string; value: number; percentage: number }[];
-    osStats?: { name: string; value: number; percentage: number }[];
+    countryClicks?: Record<string, number>;
 }

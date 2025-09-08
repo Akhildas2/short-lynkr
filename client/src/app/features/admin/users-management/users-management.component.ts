@@ -11,10 +11,11 @@ import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { GlobalSearchService } from '../../../shared/services/global-search/global-search.service';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 
 @Component({
     selector: 'app-users-management',
-    imports: [SharedModule],
+    imports: [SharedModule, ScrollButtonsComponent],
     templateUrl: './users-management.component.html',
     styleUrl: './users-management.component.scss'
 })
@@ -22,20 +23,42 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
     private adminStore = inject(AdminStore);
     private adminEffects = inject(AdminEffects);
     private globalSearchService = inject(GlobalSearchService);
+
     statusFilter = '';
     displayedColumns: string[] = ['username', 'email', 'role', 'isBlocked', 'actions'];
+
     dataSource = new MatTableDataSource<User>();
-    @ViewChild(MatSort) sort!: MatSort;
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
     private destroy$ = new Subject<void>();
 
-    usersEffect: any;
+    private _paginator!: MatPaginator;
+    private _sort!: MatSort;
+
+    @ViewChild(MatPaginator)
+    set paginator(paginator: MatPaginator) {
+        this._paginator = paginator;
+        if (this.dataSource) {
+            this.dataSource.paginator = this._paginator;
+        }
+    }
+
+    @ViewChild(MatSort)
+    set sort(sort: MatSort) {
+        this._sort = sort;
+        if (this.dataSource) {
+            this.dataSource.sort = this._sort;
+        }
+    }
 
     constructor(private dialog: MatDialog) {
-        // Effect to update the dataSource when users in the store change
-        this.usersEffect = effect(() => {
-            const users = this.adminStore.users();
-            this.dataSource.data = users;
+        effect(() => {
+            this.dataSource.data = this.adminStore.users();
+            if (this._sort) {
+                this.dataSource.sort = this._sort;
+            }
+            if (this._paginator) {
+                this.dataSource.paginator = this._paginator;
+            }
+
         });
 
         // Custom filter predicate for global search
@@ -55,11 +78,10 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
 
     }
 
-
     ngOnInit(): void {
         this.adminEffects.fetchAllUsers();
 
-        // Subscribe to global search term changes
+        // global search subscription
         this.globalSearchService.searchTerm$
             .pipe(takeUntil(this.destroy$))
             .subscribe(term => {
@@ -77,15 +99,35 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
         this.destroy$.complete();
     }
 
-    applyStatusFilter(value: string) {
-        this.statusFilter = value;
-        this.applyFilter(this.globalSearchService.currentSearchTerm.trim().toLowerCase(), value);
+    applyStatusFilter(status: string) {
+        this.statusFilter = status;
+        const search = this.globalSearchService.currentSearchTerm.trim().toLowerCase();
+        this.applyFilter(search, status);
     }
 
     applyFilter(search: string, status: string) {
         this.dataSource.filter = JSON.stringify({ search, status });
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
+        }
+    }
+
+    clearFilters() {
+        this.statusFilter = '';
+        this.globalSearchService.setSearchTerm('');
+        this.applyFilter('', '');
+    }
+
+    getRoleIcon(role: string): string {
+        switch (role.toLowerCase()) {
+            case 'admin':
+                return 'security';
+            case 'moderator':
+                return 'gavel';
+            case 'user':
+                return 'person';
+            default:
+                return 'help_outline';
         }
     }
 
@@ -137,7 +179,7 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
     async toggleBlockUser(user: User) {
         const newStatus = !user.isBlocked;
         const action = newStatus ? 'Block' : 'Unblock';
-        const icon = newStatus ? 'lock' : 'lock_open';
+        const icon = newStatus ? 'lock_person' : 'how_to_reg';
 
         const confirmed = await firstValueFrom(
             this.dialog.open(AlertDialogComponent, {

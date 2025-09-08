@@ -5,8 +5,7 @@ import { UpdateUrlData, UrlDocument } from '../types/url.interface';
 import { ApiError } from '../utils/ApiError';
 import { generateTimelineData } from '../utils/generateTimelineData.utils';
 import { getDateRange } from '../utils/getDateRange.utils';
-import { filterAnalyticsByRange, getPercentageChange, getTopCountryInfo } from '../utils/analytics.utils';
-import { getTopValues } from '../utils/getTopValues.utils';
+import { aggregateStats, filterAnalyticsByRange, getPercentageChange, getTop } from '../utils/analytics.utils';
 const UAParser = require('ua-parser-js');
 
 
@@ -110,7 +109,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 };
 
 
-export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string, country?: string, userAgent?: string, referrer?: string) => {
+export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string, geo?: { country: string; region: string; city: string; timezone: string; ll: number[] }, userAgent?: string, referrer?: string) => {
     const url = await UrlModel.findOne({ shortId });
     if (!url) {
         throw new ApiError('URL not found or access denied', 404);
@@ -122,6 +121,10 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
     // Check click limit
     if (url.clickLimit && url.clicks >= url.clickLimit) {
         throw new ApiError('This link has reached its click limit', 429);
+    }
+    // Check if URL is blocked
+    if (url.isBlocked) {
+        throw new ApiError('This link has been blocked', 403);
     }
 
     let browser = 'Unknown';
@@ -135,10 +138,14 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
         device = parser.getDevice().type || 'desktop';
     }
 
-    if (clientIp && country) {
+    if (clientIp && geo) {
         url.analytics.push({
             ip: clientIp,
-            country,
+            country: geo.country,
+            region: geo.region,
+            city: geo.city,
+            timezone: geo.timezone,
+            ll: geo.ll,
             userAgent: userAgent || 'Unknown',
             referrer: referrer || 'Direct',
             browser,
@@ -173,6 +180,7 @@ export const getUrlById = async (id: string, range: string) => {
     const currentAnalytics = filterAnalyticsByRange(analytics, currentFromDate, currentToDate);
     const previousAnalytics = filterAnalyticsByRange(analytics, previousFromDate, previousToDate);
 
+    // --- Current & Previous ---
     const totalClicks = currentAnalytics.length;
     const uniqueVisitors = new Set(currentAnalytics.map(a => a.ip)).size;
     const previousClicks = previousAnalytics.length;
@@ -181,35 +189,37 @@ export const getUrlById = async (id: string, range: string) => {
     const clicksChange = getPercentageChange(totalClicks, previousClicks);
     const visitorsChange = getPercentageChange(uniqueVisitors, previousVisitors);
 
-    const { topCountry, topCountryPercentage } = getTopCountryInfo(currentAnalytics, totalClicks);
-    const countryClicks = currentAnalytics.reduce((acc: Record<string, number>, entry) => {
-        const code = entry.country?.toUpperCase() || 'UN'; // use ISO-like fallback
-        acc[code] = (acc[code] || 0) + 1;
-        return acc;
-    }, {});
+    // --- Stats ---
+    const countryStats = aggregateStats(currentAnalytics, 'country', 'Unknown');
+    const regionStats = aggregateStats(currentAnalytics, 'region', 'Unknown');
+    const cityStats = aggregateStats(currentAnalytics, 'city', 'Unknown');
+    const referrerStats = aggregateStats(currentAnalytics, 'referrer', 'Direct');
+    const deviceStats = aggregateStats(currentAnalytics, 'device', 'Unknown');
+    const browserStats = aggregateStats(currentAnalytics, 'browser', 'Unknown');
+    const osStats = aggregateStats(currentAnalytics, 'os', 'Unknown');
 
-    const analyticsEntries = currentAnalytics.map(a => ({ timestamp: a.timestamp }));
-    const { timelineLabels, timelineData } = generateTimelineData(analyticsEntries, range);
-
-    const referrerStats = getTopValues(currentAnalytics, 'referrer');
-    const deviceStats = getTopValues(currentAnalytics, 'device');
-    const browserStats = getTopValues(currentAnalytics, 'browser');
-    const osStats = getTopValues(currentAnalytics, 'os');
+    // --- Timeline ---
+    const { timelineLabels, timelineData } = generateTimelineData(
+        currentAnalytics.map(a => ({ timestamp: a.timestamp })),
+        range
+    );
 
     return {
         ...url.toObject(),
         clicks: totalClicks,
         uniqueVisitors,
-        topCountry,
-        topCountryPercentage,
         clicksChange,
         visitorsChange,
-        timelineLabels,
-        timelineData,
-        countryClicks,
-        referrerStats,
-        deviceStats,
-        browserStats,
-        osStats
+        topCountries: getTop(countryStats, 5),
+        topRegions: getTop(regionStats, 5),
+        topCities: getTop(cityStats, 5),
+        topReferrers: getTop(referrerStats, 5),
+        topDevices: getTop(deviceStats, 5),
+        topBrowsers: getTop(browserStats, 5),
+        topOS: getTop(osStats, 5),
+        timeline: {
+            labels: timelineLabels,
+            data: timelineData
+        }
     };
 };

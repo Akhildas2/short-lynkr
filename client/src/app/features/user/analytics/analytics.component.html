@@ -21,8 +21,7 @@
             </app-summary-card>
 
             <app-summary-card title="Top Country" [value]="url.topCountry || 'Unknown'" icon="public"
-                [change]="url.topCountryPercentage ?? 0"
-                [changeText]="selectedRange === '1d' ? 'today' : 'selected period'"
+                [change]="url.topCountryPercentage ?? 0" [changeText]="getRangeComparisonText(selectedRange)"
                 iconBgClass="bg-green-100 dark:bg-green-900/30" iconColorClass="text-green-500 dark:text-green-400">
             </app-summary-card>
 
@@ -132,7 +131,8 @@
 
             <ng-container *ngIf="recentActivity.length > 0; else noActivity">
                 <app-activity-table [dataSource]="recentActivity" [displayedColumns]="displayedColumns"
-                    [deviceIconMap]="deviceIconMap" [referrerIconMap]="referrerIconMap">
+                    [deviceIconMap]="deviceIconMap" [referrerIconMap]="referrerIconMap"
+                    deviceIconMapFallbackIcon="fas fa-laptop" referrerIconMapFallbackIcon="fas fa-globe">
                 </app-activity-table>
 
             </ng-container>

@@ -58,11 +58,15 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
         const { shortId } = req.params;
         const clientIp = req.ip || req.headers['x-forwarded-for'] || 'Unknown';
         const geo = geoip.lookup(clientIp.toString());
-        const country = geo?.country || 'Unknown';
+        const countryCode = geo?.country || 'Unknown';
+        const regionCode = geo?.region || 'Unknown';
+        const city = geo?.city || 'Unknown';
+        const timezone = geo?.timezone || 'Unknown';
+        const ll = geo?.ll || [];
         const userAgent = req.get('User-Agent') || 'Unknown';
         const referrer = req.get('Referer') || 'Direct';
 
-        const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp.toString(), country, userAgent, referrer);
+        const urlData = await urlService.getAndUpdateOriginalUrl(shortId, clientIp.toString(), { country: countryCode, region: regionCode, city, timezone, ll }, userAgent, referrer);
         if (!urlData) {
             return res.redirect(302, `${process.env.CLIENT_URL}/error?code=404&message=URL not found`);
         }
@@ -76,7 +80,7 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
         res.redirect(302, urlData.originalUrl);
 
     } catch (error: any) {
-         const status = error.status || error.statusCode || 500;
+        const status = error.status || error.statusCode || 500;
         const message = error.message || 'Something went wrong';
 
         res.redirect(302, `${process.env.CLIENT_URL}/error?code=${status}&message=${encodeURIComponent(message)}`);

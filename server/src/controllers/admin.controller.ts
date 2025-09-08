@@ -77,7 +77,8 @@ export const listUrls = async (req: Request, res: Response, next: NextFunction):
 
 export const blockUrl = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const result = await AdminService.toggleBlockUrl(req.params.id);
+        const { isBlocked } = req.body;
+        const result = await AdminService.toggleBlockUrl(req.params.id, isBlocked);
         res.status(200).json(result);
 
     } catch (error) {
@@ -93,6 +94,19 @@ export const deleteUrl = async (req: Request, res: Response, next: NextFunction)
         } else {
             res.json({ success: true });
         }
+
+    } catch (error) {
+        next(error);
+    };
+};
+
+
+// ===== Analytics  =====
+export const getAdminAnalytics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const range = (req.query.range as string);
+        const urls = await AdminService.getAdminAnalytics(range)
+        res.status(200).json(urls);
 
     } catch (error) {
         next(error);

@@ -32,31 +32,35 @@
     <mat-dialog-actions class="flex flex-wrap justify-center gap-4 px-8 py-3">
       <!-- Cancel Button -->
       <button mat-stroked-button
-        class="group w-full sm:w-auto border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:border-gray-400 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-300 ease-out"
+        class="group w-full sm:w-auto border-2 border-gray-400 dark:border-gray-600 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold transition-all duration-300 ease-out hover:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-105 hover:shadow-lg active:scale-95"
         (click)="close()">
         <span class="flex items-center justify-center gap-2">
-          <span class="group-hover:-translate-x-1 transition-transform">Cancel</span>
-          <mat-icon class="group-hover:scale-110 transition-transform">cancel</mat-icon>
+          <mat-icon
+            class="text-gray-600 dark:text-gray-300 group-hover:scale-110 transition-transform duration-200 ease-in-out">cancel</mat-icon>
+          <span
+            class="text-gray-600 dark:text-gray-300 group-hover:-translate-x-1 transition-transform duration-200 ease-in-out">Cancel</span>
         </span>
       </button>
 
       <!-- Confirm / Action Button -->
       <button *ngIf="data.actionText" mat-raised-button [ngClass]="{
-          'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-red-500/30 hover:shadow-red-500/50': data.actionIcon === 'delete',
-          'from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 shadow-yellow-500/30 hover:shadow-yellow-500/50': data.actionIcon === 'lock',
-          'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/30 hover:shadow-green-500/50': data.actionIcon === 'lock_open',
-          'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/30 hover:shadow-blue-500/50': !['delete', 'block', 'unblock'].includes(data.actionIcon)
+        'from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-red-500/30 hover:shadow-red-500/50': data.actionIcon === 'delete',
+        'from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 shadow-yellow-500/30 hover:shadow-yellow-500/50': ['block', 'lock_person'].includes(data.actionIcon),
+        'from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 shadow-green-500/30 hover:shadow-green-500/50': ['how_to_reg', 'check_circle'].includes(data.actionIcon),
+        'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-blue-500/30 hover:shadow-blue-500/50': !['delete', 'block', 'lock_person', 'how_to_reg', 'check_circle'].includes(data.actionIcon)
         }"
-        class="group w-full sm:w-auto ml-0 rounded-2xl text-white font-semibold bg-gradient-to-r transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg active:scale-95"
+        class="group w-full sm:w-auto ml-0 rounded-2xl font-semibold bg-gradient-to-r transition-all duration-300 ease-out transform hover:scale-105 hover:shadow-lg active:scale-95"
         (click)="performAction()">
+
         <span class="flex items-center justify-center gap-2">
-          <span class="group-hover:-translate-x-1 transition-transform">
-            {{ data.actionText }}
-          </span>
-          <mat-icon *ngIf="data.actionIcon" class="group-hover:scale-110 transition-transform">
+          <mat-icon *ngIf="data.actionIcon" class="text-white group-hover:scale-110 transition-transform">
             {{ data.actionIcon }}
           </mat-icon>
+          <span class="text-white group-hover:-translate-x-1 transition-transform">
+            {{ data.actionText }}
+          </span>
         </span>
+
       </button>
 
     </mat-dialog-actions>
