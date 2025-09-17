@@ -49,12 +49,16 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
             return;
         }
 
+        user.lastLoginAt = new Date();
+        await user.save();
+
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET!,
             { expiresIn: '1d' }
         );
-        res.status(200).json({ user, token });
+        const { password: _, ...userData } = user.toObject();
+        res.status(200).json({ user: userData, token });
 
     } catch (error) {
         next(error);

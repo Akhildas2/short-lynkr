@@ -191,12 +191,20 @@ export const getUrlById = async (id: string, range: string) => {
 
     // --- Stats ---
     const countryStats = aggregateStats(currentAnalytics, 'country', 'Unknown');
-    const regionStats = aggregateStats(currentAnalytics, 'region', 'Unknown');
     const cityStats = aggregateStats(currentAnalytics, 'city', 'Unknown');
     const referrerStats = aggregateStats(currentAnalytics, 'referrer', 'Direct');
     const deviceStats = aggregateStats(currentAnalytics, 'device', 'Unknown');
     const browserStats = aggregateStats(currentAnalytics, 'browser', 'Unknown');
     const osStats = aggregateStats(currentAnalytics, 'os', 'Unknown');
+
+    // --- Region stats ---
+    const regionStats = currentAnalytics.reduce((acc: Record<string, number>, a) => {
+        const country = a.country || 'Unknown';
+        const region = a.region || 'Unknown';
+        const key = `${country}|${region}`; // combine country + region
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+    }, {});
 
     // --- Timeline ---
     const { timelineLabels, timelineData } = generateTimelineData(

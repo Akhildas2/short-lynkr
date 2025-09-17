@@ -18,4 +18,5 @@ export interface UserDocument extends Document {
     blockedAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
+    lastLoginAt: Date;
 }

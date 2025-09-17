@@ -14,7 +14,8 @@ export abstract class BaseAnalyticsComponent implements OnInit {
     protected locationService = inject(LocationService);
     protected rangeService = inject(RangeService);
 
-    displayedColumns: string[] = ['timestamp', 'shortUrl', 'location', 'device', 'referrer'];
+    displayedColumns: string[] = ['timestamp', 'location', 'device', 'referrer'];
+
 
     isLoading = false;
     error: string | null = null;
@@ -148,29 +149,37 @@ export abstract class BaseAnalyticsComponent implements OnInit {
     // Icon color
     getIconClasses(title: string): { bg: string; color: string } {
         if (title.startsWith('Top Country')) {
-            return { bg: 'bg-green-100 dark:bg-green-900/30', color: 'text-green-500 dark:text-green-400' };
+            return { bg: 'bg-green-200 dark:bg-green-800', color: 'text-green-600 dark:text-green-200' };
         }
         if (title.startsWith('Top OS')) {
-            return { bg: 'bg-cyan-100 dark:bg-cyan-900/30', color: 'text-cyan-500 dark:text-cyan-400' };
+            return { bg: 'bg-cyan-200 dark:bg-cyan-800', color: 'text-cyan-600 dark:text-cyan-200' };
         }
         if (title.startsWith('Total Clicks')) {
-            return { bg: 'bg-yellow-100 dark:bg-yellow-900/30', color: 'text-yellow-500 dark:text-yellow-400' };
+            return { bg: 'bg-yellow-200 dark:bg-yellow-800', color: 'text-yellow-600 dark:text-yellow-200' };
         }
         if (title.startsWith('Unique Visitors')) {
-            return { bg: 'bg-pink-100 dark:bg-pink-900/30', color: 'text-pink-500 dark:text-pink-400' };
+            return { bg: 'bg-pink-200 dark:bg-pink-900', color: 'text-pink-600 dark:text-pink-200' };
+        }
+        if (title.startsWith('Top Referrer')) {
+            return { bg: 'bg-teal-200 dark:bg-teal-800', color: 'text-teal-600 dark:text-teal-200' };
+        }
+        if (title.startsWith('Top Device')) {
+            return { bg: 'bg-fuchsia-200 dark:bg-fuchsia-900', color: 'text-fuchsia-600 dark:text-fuchsia-200' };
         }
 
         switch (title) {
             case 'Total Users':
-                return { bg: 'bg-purple-100 dark:bg-purple-900/30', color: 'text-purple-500 dark:text-purple-400' };
+                return { bg: 'bg-purple-200 dark:bg-purple-900', color: 'text-purple-600 dark:text-purple-200' };
             case 'Blocked Users':
-                return { bg: 'bg-red-100 dark:bg-red-900/30', color: 'text-red-500 dark:text-red-400' };
+                return { bg: 'bg-rose-300 dark:bg-rose-800', color: 'text-rose-600 dark:text-rose-200' };
             case 'Total URLs':
-                return { bg: 'bg-blue-100 dark:bg-blue-900/30', color: 'text-blue-500 dark:text-blue-400' };
+                return { bg: 'bg-blue-200 dark:bg-blue-900', color: 'text-blue-600 dark:text-blue-200' };
             case 'Blocked URLs':
-                return { bg: 'bg-orange-100 dark:bg-orange-900/30', color: 'text-orange-500 dark:text-orange-400' };
+                return { bg: 'bg-orange-300 dark:bg-orange-900', color: 'text-orange-600 dark:text-orange-300' };
+            case 'Total QR':
+                return { bg: 'bg-indigo-300 dark:bg-indigo-800', color: 'text-indigo-600 dark:text-indigo-200' };
             default:
-                return { bg: 'bg-gray-100 dark:bg-gray-900/30', color: 'text-gray-500 dark:text-gray-400' };
+                return { bg: 'bg-gray-200 dark:bg-gray-900', color: 'text-gray-600 dark:text-gray-300' };
         }
     }
 

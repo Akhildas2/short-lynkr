@@ -11,7 +11,7 @@
                 [description]="noDataDescription">
             </app-no-data>
         </div>
-        
+
     </div>
 
     <div *ngIf="data.length > 0 && !loading" class="mt-6">
@@ -26,10 +26,10 @@
                 </div>
 
                 <!-- Percentage -->
-                <div class="text-2xl font-bold">{{ item.percentage }}%</div>
+                <div class="text-2xl font-light">{{ item.percentage }}%</div>
 
                 <!-- Label -->
-                <div class="text-sm text-gray-500">
+                <div class="text-sm text-gray-700 dark:text-gray-300">
                     {{ item.name }} ({{ item.value }})
                 </div>
             </div>

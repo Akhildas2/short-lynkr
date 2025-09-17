@@ -18,11 +18,9 @@ export const AuthStore = signalStore(
         },
         setToken(token: string) {
             patchState(store, { token });
-            localStorage.setItem('token', token);
         },
         setAuthData(user: AuthUser, token: string) {
             patchState(store, { user, token, status: 'success', error: null });
-            localStorage.setItem('token', token);
         },
         setLoading() {
             patchState(store, { status: 'loading', error: null });
@@ -35,7 +33,6 @@ export const AuthStore = signalStore(
         },
         clearAuth() {
             patchState(store, { user: null, token: null, status: 'idle', error: null, stats: null });
-            localStorage.removeItem('token');
         }
     }))
 );

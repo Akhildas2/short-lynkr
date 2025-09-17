@@ -1,0 +1,47 @@
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-4">
+    <!-- Title -->
+    <div>
+        <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
+            {{ title }}
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {{ subtitle }}
+            <ng-container *ngIf="url">
+                <a [href]="url"
+                    class="font-semibold text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-800 dark:hover:text-blue-300 hover:font-bold transition-colors duration-200">
+                    {{ url }}
+                </a>
+            </ng-container>
+        </p>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-row flex-wrap w-full sm:w-auto justify-between items-center gap-3">
+        <!-- Time Range Selector -->
+        <div
+            class="border border-gray-300 dark:border-gray-600 rounded-full flex items-center gap-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <button mat-button [matMenuTriggerFor]="timeMenu"
+                class="flex items-center gap-1 text-gray-800 dark:text-gray-200 font-medium focus:outline-none min-w-0">
+                {{ timeRanges[selectedRange] }}
+                <mat-icon class="text-gray-600 dark:text-gray-300">arrow_drop_down</mat-icon>
+            </button>
+
+            <mat-menu #timeMenu="matMenu">
+                <button mat-menu-item (click)="changeRange('1d')">Last 24 hours</button>
+                <button mat-menu-item (click)="changeRange('7d')">Last 7 days</button>
+                <button mat-menu-item (click)="changeRange('30d')">Last 30 days</button>
+                <button mat-menu-item (click)="changeRange('90d')">Last 90 days</button>
+            </mat-menu>
+        </div>
+
+        <!-- Refresh Button -->
+        <button mat-raised-button (click)="refreshData()" [ngClass]="{
+      'bg-primary hover:bg-blue-800 font-semibold flex items-center gap-2 py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out': true,
+      'opacity-50 cursor-not-allowed': isLoading
+      }">
+            <mat-icon class="text-white" [ngClass]="{ 'animate-spin': isLoading }">refresh</mat-icon>
+            <span class="text-white" *ngIf="!isLoading">Refresh</span>
+            <span class="text-white" *ngIf="isLoading">Loading...</span>
+        </button>
+    </div>
+</div>

@@ -50,4 +50,8 @@ export class AdminApiService {
     return this.http.get<AdminAnalytics>(`${this.adminApi}/analytics`, { params: { range } });
   }
 
+  getAdminDashboard(range: string): Observable<any> {
+    return this.http.get<any>(`${this.adminApi}/dashboard`, { params: { range } })
+  }
+
 }

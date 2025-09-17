@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema<UserDocument>({
     role: { type: String, default: 'user' },
     isBlocked: { type: Boolean, default: false },
     blockedAt: { type: Date, default: null },
+    lastLoginAt: { type: Date }
 }, { timestamps: true });
 
 export default mongoose.model<UserDocument>('User', userSchema);

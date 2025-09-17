@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthStore } from '../../../state/auth/auth.store';
 import { jwtDecode } from 'jwt-decode';
+import { clearActiveRole, getActiveRole, getTokenKey } from '../../../shared/utils/auth-storage.util';
 
 interface JwtPayload {
   exp: number;
@@ -14,31 +15,37 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authStore = inject(AuthStore);
   const router = inject(Router);
 
-  const token = localStorage.getItem('token');
+  const activeRole = getActiveRole();
+  if (!activeRole) {
+    return router.createUrlTree(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
+  }
+
+  const token = localStorage.getItem(getTokenKey(activeRole));
   if (!token) {
-    router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return router.createUrlTree(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
   }
 
   try {
     const decoded = jwtDecode<JwtPayload>(token);
-
     const isExpired = decoded.exp * 1000 < Date.now();
     if (isExpired) {
       authStore.clearAuth();
-      localStorage.removeItem('token');
-      router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
-      return false;
+      localStorage.removeItem(getTokenKey(activeRole));
+      clearActiveRole();
+      return router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
     }
 
     if (!authStore.isAuthenticated()) {
       authStore.setUser({ _id: decoded._id, email: decoded.email, role: decoded.role });
+      authStore.setToken(token);
     }
+
     return true;
 
-  } catch (error) {
+  } catch {
     authStore.clearAuth();
-    localStorage.removeItem('token');
+    localStorage.removeItem(getTokenKey(activeRole));
+    clearActiveRole();
     router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
     return false;
   }

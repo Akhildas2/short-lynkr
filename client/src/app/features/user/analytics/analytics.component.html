@@ -1,31 +1,64 @@
 <main class="flex-grow px-8 md:px-12">
-    <div class="container mx-auto max-w-7xl" *ngIf="urlList() as url">
+    <div class="container mx-auto max-w-7xl" *ngIf="urlList as url">
 
-        <div class="mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold mb-2">Analytics Dashboard</h1>
-            <p>Track the performance of your <span class="font-bold hover:text-blue-600">{{ url.shortUrl}}</span>
-            </p>
-        </div>
+        <!-- Header Section -->
+        <app-page-header [title]="'Analytics Dashboard'" [subtitle]="'Track the performance of your'"
+            [url]="url.shortUrl" [timeRanges]="timeRanges" [selectedRange]="selectedRange" [isLoading]="isLoading"
+            (rangeChange)="changeRange($event)" (refresh)="refreshData()">
+        </app-page-header>
 
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 lg:grid-cols-3  md:grid-cols-2  gap-6 mb-10">
 
-            <app-summary-card title="Total Clicks" [value]="url.clicks" icon="trending_up"
-                [change]="url.clicksChange ?? 0" [changeText]="getRangeComparisonText(selectedRange)"
-                iconBgClass="bg-blue-100 dark:bg-blue-900/30" iconColorClass="text-blue-500 dark:text-blue-400">
+            <!-- Total Clicks -->
+            <app-summary-card [title]="'Total Clicks (' + timeRanges[selectedRange] + ')'" [value]="url?.clicks ?? 0"
+                icon="trending_up" [change]="url?.clicksChange ?? 0"
+                [changeText]="getRangeComparisonText(selectedRange)"
+                [iconBgClass]="getIconClasses('Total Clicks ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Total Clicks ' + timeRanges[selectedRange]).color">
             </app-summary-card>
 
-            <app-summary-card title="Unique Visitors" [value]="url.uniqueVisitors ?? 0" icon="people"
-                [change]="url.visitorsChange ?? 0" [changeText]="getRangeComparisonText(selectedRange)"
-                iconBgClass="bg-purple-100 dark:bg-purple-900/30" iconColorClass="text-purple-500 dark:text-purple-400">
+            <!-- Unique Visitors -->
+            <app-summary-card [title]="'Unique Visitors (' + timeRanges[selectedRange] + ')'"
+                [value]="url?.uniqueVisitors ?? 0" icon="people" [change]="url?.visitorsChange ?? 0"
+                [changeText]="getRangeComparisonText(selectedRange)"
+                [iconBgClass]="getIconClasses('Unique Visitors ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Unique Visitors ' + timeRanges[selectedRange]).color">
             </app-summary-card>
 
-            <app-summary-card title="Top Country" [value]="url.topCountry || 'Unknown'" icon="public"
-                [change]="url.topCountryPercentage ?? 0" [changeText]="getRangeComparisonText(selectedRange)"
-                iconBgClass="bg-green-100 dark:bg-green-900/30" iconColorClass="text-green-500 dark:text-green-400">
+            <!-- Top Country -->
+            <app-summary-card [title]="'Top Country (' + timeRanges[selectedRange] + ')'" [value]="topCountryName"
+                icon="public" [change]="0" [flagClass]="topCountryFlag" [changeText]="''" [iconType]="'flag'"
+                [iconBgClass]="getIconClasses('Top Country ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Top Country ' + timeRanges[selectedRange]).color">
+            </app-summary-card>
+
+            <!-- Top OS -->
+            <app-summary-card [title]="'Top OS (' + timeRanges[selectedRange] + ')'" iconType="map"
+                [value]="url?.topOS?.[0]?.name || 'Unknown'" icon="devices" [change]="0" [changeText]="''"
+                [iconMap]="osIconMap" fallbackIcon="fas fa-server"
+                [iconBgClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).color">
+            </app-summary-card>
+
+            <!-- Top Device -->
+            <app-summary-card [title]="'Top Device (' + timeRanges[selectedRange] + ')'" iconType="map"
+                [value]="url?.topDevices?.[0]?.name || 'Unknown'" icon="devices_other" [change]="0" [changeText]="''"
+                [iconMap]="deviceIconMap" fallbackIcon="fas fa-globe"
+                [iconBgClass]="getIconClasses('Top Device ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Top Device ' + timeRanges[selectedRange]).color">
+            </app-summary-card>
+
+            <!-- Top Referrer -->
+            <app-summary-card [title]="'Top Referrer (' + timeRanges[selectedRange] + ')'" iconType="map"
+                [value]="url?.topReferrers?.[0]?.name || 'Unknown'" icon="link" [change]="0" [changeText]="''"
+                [iconMap]="referrerIconMap" fallbackIcon="fas fa-question-circle"
+                [iconBgClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).bg"
+                [iconColorClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).color">
             </app-summary-card>
 
         </div>
+
 
 
         <!-- Charts Section -->
@@ -34,33 +67,16 @@
             <!-- Clicks Over Time -->
             <div
                 class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
-
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-semibold">Clicks Over Time</h2>
-                    <div>
-                        <button mat-button [matMenuTriggerFor]="timeMenu">
-                            {{ timeRanges[selectedRange] }}
-                            <mat-icon>arrow_drop_down</mat-icon>
-                        </button>
-                        <mat-menu #timeMenu="matMenu">
-                            <button mat-menu-item (click)="changeRange('1d')">Last 24 hours</button>
-                            <button mat-menu-item (click)="changeRange('7d')">Last 7 days</button>
-                            <button mat-menu-item (click)="changeRange('30d')">Last 30 days</button>
-                            <button mat-menu-item (click)="changeRange('90d')">Last 90 days</button>
-                        </mat-menu>
-                    </div>
-                </div>
+                <h2 class="text-xl font-semibold">Clicks Over Time</h2>
 
                 <div class="relative flex-grow h-96">
                     <app-analytics-chart *ngIf="isLoading || hasTimelineClicks" chartType="line" [data]="timelineData"
                         [labels]="timelineLabels" [title]="'Clicks'" [loading]="isLoading">
                     </app-analytics-chart>
 
-                    <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn
-                        class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
-                        <p class="text-gray-400 p-2"> No click data available. Interact with a link to see the
-                            chart.
-                        </p>
+                    <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn>
+                        <app-no-data variant="overlay" icon="bar_chart" title="No click timeline data available"
+                            description="Interact with a link to see the chart."></app-no-data>
                     </div>
                 </div>
 
@@ -76,20 +92,9 @@
                         [loading]="isLoading"></app-map-chart>
 
                     <div *ngIf="countryClickData.length === 0 && !isLoading" @zoomIn
-                        class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 rounded-xl">
-                        <p class="text-gray-400 p-2"> No location data available. Click a link to view the map.</p>
-                    </div>
-                </div>
-
-                <div *ngIf="countryClickData.length > 0 && !isLoading" class="mt-6">
-                    <h2 class="text-lg font-semibold mb-4 text-center"> Top {{ countryClickData.length > 3 ? 3 :
-                        countryClickData.length }} Locations</h2>
-
-                    <div [ngClass]="countryGridClass  + ' gap-4 mt-4 text-center'">
-                        <div *ngFor="let item of countryClickData |slice:0:3" class="text-center">
-                            <div class="text-2xl font-bold">{{ item.countryCode }}</div>
-                            <div class="text-sm text-gray-500"> ({{ item.value }})</div>
-                        </div>
+                        class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800/80 rounded-xl p-4">
+                        <app-no-data variant="overlay" icon="public_off" title="No location data available"
+                            description="Click a link to view geographic insights on the map."></app-no-data>
                     </div>
                 </div>
 
@@ -101,27 +106,53 @@
 
             <!-- Referrers -->
             <app-stats-list title="Referrers" [items]="referrerStats" [iconMap]="referrerIconMap"
-                fallbackIcon="travel_explore" [showProgressBar]="true"
-                emptyText="No referrer data available. Click a shortened link to see referrers.">
+                fallbackIcon="fas fa-globe" [showProgressBar]="true" noDataIcon="share" noDataVariant="overlay"
+                noDataTitle="No referrer data available" noDataDescription="Click a shortened link to see referrers.">
             </app-stats-list>
 
             <!-- Browsers -->
             <app-stats-list title="Browsers & Platforms" [items]="browserStats" [iconMap]="browserIconMap"
-                fallbackIcon="public" [showProgressBar]="false"
-                emptyText="No browser/platform data available. Click a shortened link to see this.">
+                fallbackIcon="fas fa-question-circle" [showProgressBar]="false" noDataIcon="important_devices"
+                noDataVariant="overlay" noDataTitle="No browser/platform data available"
+                noDataDescription="Click a shortened link to see this.">
             </app-stats-list>
 
             <!-- Devices -->
             <app-stats-chart title="Devices" chartType="doughnut" [data]="deviceChartData" [labels]="deviceChartLabels"
-                [valueData]="deviceStats" [loading]="isLoading" [gridClass]="deviceGridClass"
-                emptyText="No device data available. Click a shortened link to see device stats.">
+                [iconMap]="deviceIconMap" [valueData]="deviceStats" [loading]="isLoading" [gridClass]="deviceGridClass"
+                fallbackIcon="fas fa-laptop" noDataIcon="devices" noDataVariant="overlay"
+                noDataTitle="No device data available" noDataDescription="Click a shortened link to see device stats.">
             </app-stats-chart>
 
             <!-- OS -->
             <app-stats-chart title="Operating Systems" chartType="pie" [data]="osChartData" [labels]="osChartLabels"
-                [valueData]="osStats" [loading]="isLoading" [gridClass]="osGridClass"
-                emptyText="No OS data available. Click a shortened link to see OS stats.">
+                [iconMap]="osIconMap" [valueData]="osStats" [loading]="isLoading" [gridClass]="osGridClass"
+                fallbackIcon="fas fa-server" noDataIcon="devices_other" noDataVariant="overlay"
+                noDataTitle="No OS data available" noDataDescription="Click a shortened link to see OS stats.">
             </app-stats-chart>
+
+        </div>
+
+        <!-- Stats Grid 3 -->
+        <div class="mt-8 grid gap-8 md:[grid-template-columns:repeat(auto-fit,minmax(17rem,1fr))]">
+            <!-- Top Countries -->
+            <app-stats-list title="Top Countries" [items]="countryStats" [iconMap]="{ default: 'fas fa-flag' }"
+                fallbackIcon="fas fa-flag" [showProgressBar]="true" noDataIcon="flag" noDataVariant="overlay"
+                noDataTitle="No country data available" noDataDescription="Click a shortened link to see country data.">
+            </app-stats-list>
+
+            <!-- Top Regions -->
+            <app-stats-list title="Top Regions" [items]="regionsStats" [iconMap]="{ default: 'fas fa-map-marker-alt' }"
+                fallbackIcon="fas fa-map-marker-alt" [showProgressBar]="true" noDataIcon="map" noDataVariant="overlay"
+                noDataTitle="No regions data available" noDataDescription="Click a shortened link to see region data.">
+            </app-stats-list>
+
+            <!-- Top Cities -->
+            <app-stats-list title="Top Cities" [items]="citiesStats" [iconMap]="{ default: 'fas fa-mountain-city' }"
+                fallbackIcon="fas fa-mountain-city" [showProgressBar]="false" noDataIcon="location_on"
+                noDataVariant="overlay" noDataTitle="No cities data available"
+                noDataDescription="Click a shortened link to see city data.">
+            </app-stats-list>
 
         </div>
 
@@ -131,26 +162,26 @@
 
             <ng-container *ngIf="recentActivity.length > 0; else noActivity">
                 <app-activity-table [dataSource]="recentActivity" [displayedColumns]="displayedColumns"
-                    [deviceIconMap]="deviceIconMap" [referrerIconMap]="referrerIconMap"
+                    [deviceIconMap]="deviceIconMap" [referrerIconMap]="referrerIconMap" fallbackIcon="location_on"
                     deviceIconMapFallbackIcon="fas fa-laptop" referrerIconMapFallbackIcon="fas fa-globe">
                 </app-activity-table>
-
             </ng-container>
 
+
             <ng-template #noActivity>
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-10 text-center space-y-4">
-                    <div class="flex justify-center">
-                        <mat-icon class="scale-150 text-gray-400 dark:text-gray-500">history</mat-icon>
-                    </div>
-                    <div class="text-xl font-semibold text-gray-600 dark:text-gray-300">
-                        No recent activity found.
-                    </div>
-                    <p class="text-sm text-gray-400 dark:text-gray-500">
-                        Once people start interacting with your link, activity will show up here.
-                    </p>
-                </div>
+                <app-no-data variant="card" icon="history" title="No recent activity found."
+                    description="Once you start creating and sharing links, your top URLs will show up here."></app-no-data>
             </ng-template>
         </div>
 
     </div>
+
+    <div *ngIf="isLoading"
+        class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 rounded-2xl">
+        <app-spinner></app-spinner>
+    </div>
+
+    <!-- Scroll Buttons -->
+    <app-scroll-buttons [isLoading]="isLoading"></app-scroll-buttons>
+
 </main>
