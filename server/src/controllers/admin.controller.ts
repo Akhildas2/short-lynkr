@@ -100,7 +100,6 @@ export const deleteUrl = async (req: Request, res: Response, next: NextFunction)
     };
 };
 
-
 // ===== Analytics  =====
 export const getAdminAnalytics = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -108,6 +107,17 @@ export const getAdminAnalytics = async (req: Request, res: Response, next: NextF
         const urls = await AdminService.getAdminAnalytics(range)
         res.status(200).json(urls);
 
+    } catch (error) {
+        next(error);
+    }
+};
+
+// ===== Dashboard Analytics =====
+export const getAdminDashboard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const range = (req.query.range as string);
+        const dashboard = await AdminService.getAdminDashboard(range);
+        res.status(200).json(dashboard);
     } catch (error) {
         next(error);
     }

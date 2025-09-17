@@ -1,28 +1,20 @@
-<div class="px-2 sm:px-4 max-w-screen-2xl">
+<div class="px-2 sm:px-4 max-w-screen-2xl" *ngIf="!error && !isLoading">
 
     <!-- Header Section -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 px-4">
-        <div>
-            <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
-                Analytics Dashboard
-            </h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Overview of key metrics and data
-            </p>
-        </div>
+    <app-page-header [title]="'Analytics Dashboard'" [subtitle]="'Overview of key metrics and data'"
+        [timeRanges]="timeRanges" [selectedRange]="selectedRange" [isLoading]="isLoading"
+        (rangeChange)="changeRange($event)" (refresh)="refreshData()">
+    </app-page-header>
 
-        <button mat-raised-button (click)="!isLoading && refreshData()" [ngClass]="{
-            'bg-primary hover:bg-blue-800 font-semibold py-2 px-4 transition-colors duration-200 ease-in-out': true,
-            'opacity-50 cursor-not-allowed': isLoading }">
-            <mat-icon class="text-white" [ngClass]="{'animate-spin': isLoading}">refresh</mat-icon>
-            <span class="text-white" *ngIf="!isLoading">Refresh</span>
-            <span class="text-white" *ngIf="isLoading">Loading...</span>
-        </button>
-
-    </div>
-
-    <!-- Summary Cards -->
+    <!-- Summary Cards 1-->
     <div class="grid md:[grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))] gap-6 mb-10">
+        <!-- Total QR -->
+        <app-summary-card title="Total QR" [value]="analyticsData?.totalQrs ?? 0" icon="qr_code" [change]="0"
+            [changeText]="''" [iconBgClass]="getIconClasses('Total QR').bg"
+            [iconColorClass]="getIconClasses('Total QR').color">
+        </app-summary-card>
+
+        <!-- Total Users -->
         <app-summary-card title="Total Users" [value]="analyticsData?.totalUsers ?? 0" icon="groups" [change]="0"
             [changeText]="''" [iconBgClass]="getIconClasses('Total Users').bg"
             [iconColorClass]="getIconClasses('Total Users').color">
@@ -46,18 +38,38 @@
             [iconColorClass]="getIconClasses('Blocked URLs').color">
         </app-summary-card>
 
+        <!-- Top Device -->
+        <app-summary-card [title]="'Top Device (' + timeRanges[selectedRange] + ')'" iconType="map"
+            [value]="analyticsData?.topDevices?.[0]?.name || 'Unknown'" icon="devices_other" [change]="0"
+            [changeText]="''" [iconMap]="deviceIconMap" fallbackIcon="fas fa-globe"
+            [iconBgClass]="getIconClasses('Top Device ' + timeRanges[selectedRange]).bg"
+            [iconColorClass]="getIconClasses('Top Device ' + timeRanges[selectedRange]).color">
+        </app-summary-card>
+
+        <!-- Top OS -->
+        <app-summary-card [title]="'Top OS (' + timeRanges[selectedRange] + ')'" [iconType]="'map'"
+            [value]="analyticsData?.topOS?.[0]?.name || 'Unknown'" icon="devices" [change]="0" [changeText]="''"
+            [iconMap]="osIconMap" [iconBgClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).bg"
+            [iconColorClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).color">
+        </app-summary-card>
+
+        <!-- Top Referrer -->
+        <app-summary-card [title]="'Top Referrer (' + timeRanges[selectedRange] + ')'" [iconType]="'map'"
+            [value]="analyticsData?.topReferrers?.[0]?.name || 'Unknown'" icon="share" [change]="0" [changeText]="''"
+            [iconMap]="referrerIconMap" [iconBgClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).bg"
+            [iconColorClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).color">
+        </app-summary-card>
+
+    </div>
+
+    <!-- Summary Cards 2-->
+    <div class="grid gap-6 mb-10 md:[grid-template-columns:repeat(auto-fit,minmax(17rem,1fr))]">
+
         <!-- Top Country -->
         <app-summary-card [title]="'Top Country (' + timeRanges[selectedRange] + ')'" [value]="topCountryName"
             icon="public" [change]="0" [flagClass]="topCountryFlag" [changeText]="''" [iconType]="'flag'"
             [iconBgClass]="getIconClasses('Top Country ' + timeRanges[selectedRange]).bg"
             [iconColorClass]="getIconClasses('Top Country ' + timeRanges[selectedRange]).color">
-        </app-summary-card>
-
-        <!-- Top OS -->
-        <app-summary-card [title]="'Top OS (' + timeRanges[selectedRange] + ')'" [iconType]="'os'"
-            [value]="analyticsData?.topOS?.[0]?.name || 'Unknown'" icon="devices" [change]="0" [changeText]="''"
-            [osIcon]="osIconMap" [iconBgClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).bg"
-            [iconColorClass]="getIconClasses('Top OS ' + timeRanges[selectedRange]).color">
         </app-summary-card>
 
         <!-- Total Clicks -->
@@ -85,21 +97,7 @@
         <div
             class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
 
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-semibold sm:text-lg">Clicks Over Time</h2>
-                <div>
-                    <button mat-button [matMenuTriggerFor]="timeMenu">
-                        {{ timeRanges[selectedRange] }}
-                        <mat-icon>arrow_drop_down</mat-icon>
-                    </button>
-                    <mat-menu #timeMenu="matMenu">
-                        <button mat-menu-item (click)="changeRange('1d')">Last 24 hours</button>
-                        <button mat-menu-item (click)="changeRange('7d')">Last 7 days</button>
-                        <button mat-menu-item (click)="changeRange('30d')">Last 30 days</button>
-                        <button mat-menu-item (click)="changeRange('90d')">Last 90 days</button>
-                    </mat-menu>
-                </div>
-            </div>
+            <h2 class="text-xl font-semibold sm:text-lg">Clicks Over Time</h2>
 
             <div class="relative flex-grow h-96">
                 <app-analytics-chart *ngIf="isLoading || hasTimelineClicks" chartType="line" [data]="timelineData"
@@ -137,7 +135,7 @@
 
     <!-- Top Locations -->
     <div
-        class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
+        class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
         <h2 class="text-xl font-semibold mb-6">Clicks Over Time Locations</h2>
 
         <div class="relative flex-grow h-96">
@@ -211,77 +209,12 @@
 
     <!-- Top URLs -->
     <div class="mt-8">
-        <h2 class="text-2xl font-semibold mb-4">Top URLs</h2>
 
-        <div *ngIf="topUrlsWithClicks.length > 0"
-            class="hidden sm:block overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <table class="min-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-base text-gray-700 bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th class="px-4 py-2">Short URL</th>
-                        <th class="px-4 py-2">Original URL</th>
-                        <th class="px-4 py-2">Clicks</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm">
-                    <tr *ngFor="let url of topUrlsWithClicks"
-                        class="border-b dark:border-gray-700 odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-150">
-                        <td class="px-4 py-4 text-md truncate font-bold text-blue-500">
-                            <a href="{{ url.shortUrl }}" target="_blank" class="hover:underline">
-                                {{ url.shortUrl }}
-                            </a>
-                        </td>
-                        <td class="px-4 py-4 truncate max-w-xs text-md font-medium">
-                            <a href="{{ url.originalUrl }}" target="_blank" class="hover:underline text-blue-500">
-                                {{ url.originalUrl }}
-                            </a>
-                        </td>
-                        <td class="px-4 py-4 text-md font-medium">
-                            {{ url.clicks }}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div *ngIf="topUrlsWithClicks.length > 0" class="sm:hidden space-y-4">
-            <div *ngFor="let url of topUrlsWithClicks" class="p-4 rounded-2xl shadow-md border border-gray-200 dark:border-gray-700 
-              bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-200">
-
-                <!-- URL Header: Short URL -->
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-semibold text-gray-600 dark:text-gray-400">Short URL:</span>
-                    <a href="{{ url.shortUrl }}" target="_blank"
-                        class="text-blue-500 hover:underline truncate max-w-[60%] block">
-                        {{ url.shortUrl }}
-                    </a>
-                </div>
-
-                <!-- Original URL -->
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-semibold text-gray-600 dark:text-gray-400">Original URL:</span>
-                    <a href="{{ url.originalUrl }}" target="_blank"
-                        class="text-blue-500 hover:underline truncate max-w-[60%] block">
-                        {{ url.originalUrl }}
-                    </a>
-                </div>
-
-                <!-- Clicks -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <mat-icon class="text-gray-500 dark:text-gray-400 text-base">mouse</mat-icon>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Clicks:</span>
-                    </div>
-                    <span class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ url.clicks }}</span>
-                </div>
-            </div>
-        </div>
-
-
-        <ng-container *ngIf="topUrlsWithClicks.length === 0">
-            <app-no-data variant="card" icon="link_off" title="No URL data available"
-                description="Once people start interacting with your link, activity will show up here."></app-no-data>
-        </ng-container>
+        <!-- Top URLs -->
+        <app-top-card title="Top Performing URLs" [items]="topUrlsWithClicks" noDataIcon="link_off"
+            noDataVariant="overlay" noDataTitle="No URL data available"
+            noDataDescription="Top performing URLs will appear here.">
+        </app-top-card>
 
     </div>
 
@@ -304,12 +237,17 @@
 
     </div>
 
-    <div *ngIf="isLoading"
-        class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 rounded-2xl">
-        <app-spinner></app-spinner>
-    </div>
-
-    <!-- Scroll Buttons -->
-    <app-scroll-buttons [isLoading]="isLoading"></app-scroll-buttons>
-
 </div>
+
+<div *ngIf="isLoading"
+    class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 rounded-2xl">
+    <app-spinner></app-spinner>
+</div>
+
+<!-- Scroll Buttons -->
+<app-scroll-buttons *ngIf="!error" [isLoading]="isLoading"></app-scroll-buttons>
+
+<!-- Error State -->
+<app-error-message *ngIf="error && !isLoading" [title]="'Error loading Analytics'" [message]="error"
+    [retryText]="'Reload Analytics'" [isLoading]="isLoading" [variant]="'error'" (retry)="refreshData()">
+</app-error-message>

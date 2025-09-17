@@ -16,8 +16,9 @@ export class SummaryCardComponent {
   @Input() iconBgClass: string = '';
   @Input() iconColorClass: string = '';
   @Input() flagClass?: string;
-  @Input() osIcon: Record<string, string> = {};
-  @Input() iconType: 'flag' | 'os' | 'none' = 'none';
 
+  @Input() iconMap: Record<string, string> = {};
+  @Input() fallbackIcon: string = 'fas fa-question-circle';
+  @Input() iconType: 'flag' | 'map' | 'none' = 'none';
 
 }

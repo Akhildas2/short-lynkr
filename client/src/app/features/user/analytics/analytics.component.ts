@@ -13,10 +13,14 @@ import { UrlEntry } from '../../../models/url/url.model';
 import { BaseAnalyticsComponent } from '../../../shared/utils/base-analytics.component';
 import { TimeRangeKey } from '../../../models/analytic/adminAnalytics.interface';
 import { RangeContext } from '../../../shared/services/range/range.service';
+import { NoDataComponent } from '../../../shared/components/ui/no-data/no-data.component';
+import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
+import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
+import { PageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 
 @Component({
   selector: 'app-analytics',
-  imports: [SharedModule, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent, SummaryCardComponent, ActivityTableComponent],
+  imports: [SpinnerComponent, ScrollButtonsComponent, SharedModule, AnalyticsChartComponent, MapChartComponent, StatsChartComponent, StatsListComponent, SummaryCardComponent, ActivityTableComponent, NoDataComponent, PageHeaderComponent],
   templateUrl: './analytics.component.html',
   styleUrl: './analytics.component.scss',
   animations: [zoomInAnimation]
@@ -25,13 +29,12 @@ export class AnalyticsComponent extends BaseAnalyticsComponent implements OnInit
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
 
-  urlList = this.urlStore.selectedUrl;
+  get urlList() {
+    return this.urlStore.selectedUrl();
+  }
 
-  override ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadData(id, this.selectedRange);
-    }
+  override async ngOnInit(): Promise<void> {
+    super.ngOnInit();
   }
 
   getContext(): RangeContext {
@@ -39,14 +42,14 @@ export class AnalyticsComponent extends BaseAnalyticsComponent implements OnInit
   }
 
   getAnalyticsData(): UrlEntry | null {
-    return this.urlList();
+    return this.urlList;
   }
 
   loadAnalytics(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadData(id, this.selectedRange);
-    }
+    if (!id) return;
+
+    this.loadData(id, this.selectedRange);
   }
 
   private async loadData(id: string, range: TimeRangeKey) {

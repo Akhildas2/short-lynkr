@@ -5,13 +5,13 @@ import { NoDataComponent } from '../../ui/no-data/no-data.component';
 
 @Component({
   selector: 'app-stats-list',
-  imports: [SharedModule,NoDataComponent],
+  imports: [SharedModule, NoDataComponent],
   templateUrl: './stats-list.component.html',
   styleUrl: './stats-list.component.scss'
 })
 export class StatsListComponent {
   @Input() title = '';
-  @Input() items: { name: string; value?: number; percentage: number }[] = [];
+  @Input() items: { name: string; value?: number; percentage: number; subtitle?: string }[] = [];
   @Input() iconMap: Record<string, string> = {};
   @Input() fallbackIcon: string = '';
   @Input() showProgressBar = true;

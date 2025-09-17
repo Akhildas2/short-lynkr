@@ -1,0 +1,27 @@
+<div class="mx-4" [ngClass]="containerClasses">
+    <mat-icon [ngClass]="iconColor + ' mt-0.5'">{{ icon }}</mat-icon>
+
+    <div class="ml-3">
+        <h3 class="text-sm font-medium" [ngClass]="titleColor">
+            {{ title }}
+        </h3>
+
+        <div class="mt-2 text-sm" [ngClass]="messageColor">
+            <p>{{ message }}</p>
+        </div>
+
+        <!-- Retry Button -->
+        <div class="mt-4" *ngIf="showRetry">
+            <button mat-raised-button (click)="onRetry()" [disabled]="isLoading"
+                class="bg-primary text-white hover:bg-blue-800 font-semibold flex items-center gap-2 py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out"
+                [ngClass]="{ 'opacity-50 cursor-not-allowed': isLoading }">
+
+                <mat-icon class="text-white" [ngClass]="{ 'animate-spin': isLoading }">
+                    refresh
+                </mat-icon>
+                <span *ngIf="!isLoading">{{ retryText }}</span>
+                <span *ngIf="isLoading">Loading...</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+<!-- Top URLs -->
+<div
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 h-full flex flex-col border border-gray-200 dark:border-gray-700">
+    <!-- Title -->
+    <h3 class="px-4 text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ title }}</h3>
+
+    <!-- Items List -->
+    <div *ngIf="items && items.length; else noDataBlock" class="space-y-4 px-4">
+        <div *ngFor="let url of items"
+            class="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-md hover:shadow-lg hover:scale-105">
+            <div class="flex-1 min-w-0">
+                <!-- Short URL -->
+                <a [href]="url.shortUrl" target="_blank"
+                    class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-900 hover:dark:text-blue-600 hover:underline truncate block">
+                    {{ url.shortUrl }}
+                </a>
+                <!-- Original URL -->
+                <a [href]="url.originalUrl" target="_blank"
+                    class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-gray-200 hover:underline truncate block">
+                    {{ url.originalUrl }}
+                </a>
+            </div>
+            <!-- Clicks -->
+            <span class="text-sm font-bold text-gray-900 dark:text-gray-100 ml-4">
+                {{ url.clicks }} clicks
+            </span>
+        </div>
+    </div>
+
+    <!-- No Data -->
+    <ng-template #noDataBlock>
+        <div class="relative flex-grow h-96">
+            <app-no-data [variant]="noDataVariant" [icon]="noDataIcon" [title]="noDataTitle"
+                [description]="noDataDescription">
+            </app-no-data>
+        </div>
+    </ng-template>
+</div>

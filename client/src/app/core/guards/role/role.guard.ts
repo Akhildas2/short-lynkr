@@ -7,14 +7,12 @@ export function roleGuard(allowedRoles: string[]): CanActivateFn {
     const authStore = inject(AuthStore);
     const router = inject(Router);
 
-    const isAuthenticated = authStore.isAuthenticated();
-    const userRole = authStore.userRole();
-
-    if (!isAuthenticated || !allowedRoles.includes(userRole)) {
+    const activeRole = authStore.userRole();
+    if (!activeRole || !allowedRoles.includes(activeRole)) {
       router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: state.url } });
       return false;
     }
-
     return true;
   };
+
 }

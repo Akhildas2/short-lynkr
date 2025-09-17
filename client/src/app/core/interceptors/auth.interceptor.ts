@@ -1,7 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { getActiveRole, getTokenKey } from '../../shared/utils/auth-storage.util';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-    const token = localStorage.getItem('token');
+    const activeRole = getActiveRole();
+    const token = activeRole ? localStorage.getItem(getTokenKey(activeRole)) : null;
 
     if (token) {
         const cloned = req.clone({
@@ -11,4 +13,5 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     return next(req);
+    
 };

@@ -5,8 +5,10 @@ import { ApiError } from '../utils/ApiError';
 import { Types } from 'mongoose';
 import { hashPassword } from '../utils/password';
 import { aggregateStats, filterAnalyticsByRange, getPercentageChange, getTop } from '../utils/analytics.utils';
-import { generateTimelineData, Range } from '../utils/generateTimelineData.utils';
+import { generateTimelineData } from '../utils/generateTimelineData.utils';
 import { getDateRange } from '../utils/getDateRange.utils';
+import { getAverageResponseTime, getDbStorageUsed, getErrorRate } from '../middleware/metrics';
+import { formatBytes } from '../utils/formatBytes';
 
 type UserId = string | Types.ObjectId;
 type UrlId = string | Types.ObjectId;
@@ -149,7 +151,7 @@ const AdminService = {
         const browserStats = aggregateStats(currentAnalytics, 'browser', 'Unknown');
         const osStats = aggregateStats(currentAnalytics, 'os', 'Unknown');
 
-        // --- Region stats: must include both country + region ---
+        // --- Region stats ---
         const regionStats = currentAnalytics.reduce((acc: Record<string, number>, a) => {
             const country = a.country || 'Unknown';
             const region = a.region || 'Unknown';
@@ -227,8 +229,204 @@ const AdminService = {
             },
             analytics: currentAnalytics
         }
+    },
+
+    // ===== Dashboard Analytics  =====
+    async getAdminDashboard(range: string) {
+        const now = new Date();
+        const { currentFromDate, currentToDate, previousFromDate, previousToDate } = getDateRange(range, now);
+
+        // Get all data
+        const urls = await Urls.find().lean();
+        const users = await Users.find().lean();
+
+        // === CORE METRICS ===
+        const totalUrls = urls.length;
+        const totalUsers = users.length;
+        const totalQrs = await Urls.countDocuments();
+
+        // Active vs Inactive
+        const activeUrls = urls.filter(u => !u.isBlocked).length;
+        const blockedUrls = urls.filter(u => u.isBlocked).length;
+        const activeUsers = users.filter(u => !u.isBlocked).length;
+        const blockedUsers = users.filter(u => u.isBlocked).length;
+
+        // === GROWTH METRICS ===
+        const currentUsers = users.filter(u => u.createdAt >= currentFromDate && u.createdAt < currentToDate);
+        const previousUsers = users.filter(u => u.createdAt >= previousFromDate && u.createdAt < previousToDate);
+        const userGrowth = getPercentageChange(currentUsers.length, previousUsers.length);
+
+        const currentUrls = urls.filter(u => u.createdAt >= currentFromDate && u.createdAt < currentToDate);
+        const previousUrls = urls.filter(u => u.createdAt >= previousFromDate && u.createdAt < previousToDate);
+        const urlGrowth = getPercentageChange(currentUrls.length, previousUrls.length);
+
+        // === ENGAGEMENT METRICS ===
+        let currentAnalytics: any[] = [];
+        let previousAnalytics: any[] = [];
+
+        for (const url of urls) {
+            const analytics = url.analytics || [];
+            const currentFiltered = filterAnalyticsByRange(analytics, currentFromDate, currentToDate);
+            const previousFiltered = filterAnalyticsByRange(analytics, previousFromDate, previousToDate);
+
+            currentAnalytics.push(...currentFiltered);
+            previousAnalytics.push(...previousFiltered);
+        }
+
+        const totalClicks = currentAnalytics.length;
+        const prevClicks = previousAnalytics.length;
+        const clicksGrowth = getPercentageChange(totalClicks, prevClicks);
+
+        const uniqueVisitors = new Set(currentAnalytics.map(a => a.ip)).size;
+        const prevVisitors = new Set(previousAnalytics.map(a => a.ip)).size;
+        const visitorsGrowth = getPercentageChange(uniqueVisitors, prevVisitors);
+
+        // Average clicks per URL
+        const avgClicksPerUrl = activeUrls > 0 ? (totalClicks / activeUrls).toFixed(1) : 0;
+        const avgClicksPerUser = activeUsers > 0 ? (totalClicks / activeUsers).toFixed(1) : 0;
+
+        // === TOP PERFORMERS ===
+        const topUrls = urls.map(u => {
+            const filtered = filterAnalyticsByRange(u.analytics || [], currentFromDate, currentToDate);
+            return {
+                shortUrl: u.shortUrl,
+                originalUrl: u.originalUrl,
+                clicks: filtered.length,
+                createdAt: u.createdAt,
+                userId: u.userId
+            };
+        }).sort((a, b) => b.clicks - a.clicks).slice(0, 5);
+
+        // Top Users by URL count and activity
+        const userActivity = users.filter(user => user.role !== "admin").map(user => {
+            const userUrls = urls.filter(u => u.userId?.toString() === user._id.toString());
+            const userClicks = userUrls.reduce((sum, url) => {
+                const clicks = filterAnalyticsByRange(url.analytics || [], currentFromDate, currentToDate);
+                return sum + clicks.length;
+            }, 0);
+
+            return {
+                id: user._id,
+                email: user.email,
+                name: user.username,
+                urlCount: userUrls.length,
+                totalClicks: userClicks,
+                isActive: !user.isBlocked,
+                joinDate: user.createdAt,
+                lastActive: user.lastLoginAt || user.updatedAt
+            };
+        }).sort((a, b) => b.totalClicks - a.totalClicks).slice(0, 5);
+
+        const storageSize = await getDbStorageUsed();
+
+        // === SYSTEM HEALTH ===
+        const systemHealth = {
+            uptime: process.uptime(),
+            errorRate: getErrorRate().toFixed(2),
+            responseTime: getAverageResponseTime().toFixed(2),
+            storageUsed: formatBytes(storageSize)
+        };
+
+        // === RECENT ACTIVITY SUMMARY ===
+        const recentActivity = {
+            newUsers: currentUsers.length,
+            newUrls: currentUrls.length,
+            totalInteractions: totalClicks,
+            blockedItems: blockedUsers + blockedUrls
+        };
+
+        // === TIMELINE DATA FOR CHARTS ===
+        const { timelineLabels, timelineData: clicksTimeline } = generateTimelineData(
+            currentAnalytics.map(a => ({ timestamp: a.timestamp })), range
+        );
+
+        const { timelineData: usersTimeline } = generateTimelineData(
+            currentUsers.map(u => ({ timestamp: u.createdAt })), range
+        );
+
+        const { timelineData: urlsTimeline } = generateTimelineData(
+            currentUrls.map(u => ({ timestamp: u.createdAt })), range
+        );
+
+        // === GEOGRAPHICAL INSIGHTS ===
+        const countryStats = aggregateStats(currentAnalytics, 'country', 'Unknown');
+        const topCountries = getTop(countryStats, 5);
+
+        return {
+            // === OVERVIEW METRICS ===
+            overview: {
+                totalUsers,
+                activeUsers,
+                blockedUsers,
+                totalUrls,
+                activeUrls,
+                blockedUrls,
+                totalQrs,
+                totalClicks,
+                uniqueVisitors
+            },
+
+            // === GROWTH INDICATORS ===
+            growth: {
+                userGrowth,
+                urlGrowth,
+                clicksGrowth,
+                visitorsGrowth,
+                newUsersThisPeriod: currentUsers.length,
+                newUrlsThisPeriod: currentUrls.length
+            },
+
+            // === ENGAGEMENT METRICS ===
+            engagement: {
+                avgClicksPerUrl,
+                avgClicksPerUser,
+
+                clickThroughRate: activeUrls > 0 ? ((totalClicks / activeUrls) * 100).toFixed(2) : "0",
+                userEngagementRate: totalUsers > 0 ? ((uniqueVisitors / totalUsers) * 100).toFixed(2) : "0"
+            },
+
+            // === TOP PERFORMERS ===
+            topPerformers: {
+                urls: topUrls,
+                users: userActivity
+            },
+
+            // === TIMELINE CHARTS ===
+            timeline: {
+                labels: timelineLabels,
+                datasets: [
+                    { label: 'Clicks', data: clicksTimeline, borderColor: '#3b82f6' },
+                    { label: 'New Users', data: usersTimeline, borderColor: '#10b981' },
+                    { label: 'New URLs', data: urlsTimeline, borderColor: '#f59e0b' }
+                ]
+            },
+
+            // === GEOGRAPHICAL DATA ===
+            geography: {
+                topCountries,
+                totalCountries: Object.keys(countryStats).length
+            },
+
+            // === SYSTEM HEALTH ===
+            systemHealth,
+
+            // === RECENT ACTIVITY ===
+            recentActivity,
+
+            // === RETENTION DATA ===
+            retention: {
+                activeUsersLast30Days: users.filter(u => {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                    return u.lastLoginAt && u.lastLoginAt >= thirtyDaysAgo;
+                }).length,
+                returningUsers: users.filter(u => u.lastLoginAt && u.lastLoginAt !== u.createdAt).length
+            }
+        };
     }
 
 };
+
+
 
 export default AdminService;

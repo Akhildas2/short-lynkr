@@ -13,10 +13,13 @@ import { ActivityTableComponent } from '../../../shared/components/dashboard-wid
 import { NoDataComponent } from '../../../shared/components/ui/no-data/no-data.component';
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 import { RangeContext } from '../../../shared/services/range/range.service';
+import { PageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
+import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
+import { TopCardComponent } from '../../../shared/components/ui/top-card/top-card.component';
 
 @Component({
   selector: 'app-admin-analytics',
-  imports: [SharedModule, StatsListComponent, StatsChartComponent, SpinnerComponent, MapChartComponent, AnalyticsChartComponent, SummaryCardComponent, ActivityTableComponent, NoDataComponent, ScrollButtonsComponent],
+  imports: [SharedModule, StatsListComponent, StatsChartComponent, SpinnerComponent, MapChartComponent, AnalyticsChartComponent, SummaryCardComponent, ActivityTableComponent, NoDataComponent, ScrollButtonsComponent, PageHeaderComponent, ErrorMessageComponent, TopCardComponent],
   templateUrl: './admin-analytics.component.html',
   styleUrl: './admin-analytics.component.scss'
 })
@@ -24,7 +27,9 @@ export class AdminAnalyticsComponent extends BaseAnalyticsComponent implements O
   private adminApiService = inject(AdminApiService);
   analyticsData: AdminAnalytics | null = null;
 
-  override ngOnInit(): void {
+  override displayedColumns: string[] = ['timestamp', 'shortUrl', 'location', 'device', 'referrer'];
+
+  override async ngOnInit(): Promise<void> {
     super.ngOnInit();
   }
 
@@ -80,7 +85,5 @@ export class AdminAnalyticsComponent extends BaseAnalyticsComponent implements O
       Array.isArray(dataset.data) && dataset.data.some(value => value > 0)
     );
   }
-
-
 
 }

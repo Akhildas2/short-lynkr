@@ -4,19 +4,20 @@
         <div>
             <p class="text-gray-500 dark:text-gray-400">{{ title }}</p>
             <p class="mt-2 text-2xl font-bold flex items-center gap-2">
-                <!-- Show flag only for flag cards -->
+                <!-- Show flag only -->
                 <ng-container *ngIf="iconType === 'flag' && flagClass">
                     <span [ngClass]="flagClass || 'fi fi-un'" class="text-4xl hover:scale-125"></span>
                 </ng-container>
 
-                <!-- Show OS icon only for OS cards -->
-                <ng-container *ngIf="iconType === 'os' && osIcon && value as osName">
-                    <i [ngClass]="osIcon[osName] || 'fas fa-server'" class="text-4xl hover:scale-125"></i>
+                <!-- Show mapped icon -->
+                <ng-container *ngIf="iconType === 'map'">
+                    <i [ngClass]="iconMap[value] || fallbackIcon"></i>
                 </ng-container>
+
                 {{ value }}
             </p>
         </div>
-        <div class="p-3 rounded-xl" [ngClass]="iconBgClass">
+        <div class="p-3 rounded-xl flex justify-center items-center" [ngClass]="iconBgClass">
             <mat-icon [ngClass]="iconColorClass">{{ icon }}</mat-icon>
         </div>
     </div>

@@ -65,3 +65,14 @@ body {
   --mdc-snackbar-supporting-text-color: var(--text-color);
   --mat-mdc-snack-bar-button-color: var(--text-color);
 }
+
+:root {
+  @include mat.progress-bar-overrides(
+    (
+      active-indicator-color: var(--primary-color),
+      track-color: #e5e7eb,
+      active-indicator-height: 12px,
+      track-height: 10px,
+    )
+  );
+}

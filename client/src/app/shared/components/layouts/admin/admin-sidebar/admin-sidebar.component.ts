@@ -21,7 +21,7 @@ export class AdminSidebarComponent {
 
   items: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', routeLink: '/admin/dashboard' },
-    { icon: 'people', label: 'Users', routeLink: '/admin/users' },
+    { icon: 'groups', label: 'Users', routeLink: '/admin/users' },
     { icon: 'link', label: 'Urls', routeLink: '/admin/urls' },
     { icon: 'analytics', label: 'Analytics', routeLink: '/admin/analytics' },
     //{ icon: 'folder', label: 'Categories', routeLink: '/admin/categories' },

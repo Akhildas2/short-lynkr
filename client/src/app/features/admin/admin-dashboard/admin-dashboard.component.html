@@ -1,0 +1,376 @@
+<div class="px-4 max-w-screen-2xl" *ngIf="!error && !isLoading">
+
+  <!-- Header Section -->
+  <app-page-header [title]="'Executive Dashboard'" [subtitle]="'Real-time insights and key performance indicators'"
+    [timeRanges]="timeRanges" [selectedRange]="selectedRange" [isLoading]="isLoading"
+    (rangeChange)="changeRange($event)" (refresh)="refreshData()">
+  </app-page-header>
+
+
+  <!-- Summary Cards 1-->
+  <div class="grid md:[grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))] gap-6 mb-10">
+
+    <!-- Total Users -->
+    <app-summary-card title="Total Users" [value]="dashboardData?.overview?.totalUsers ?? 0" icon="groups"
+      [change]="dashboardData?.growth?.userGrowth ?? 0" [changeText]="'vs last period'"
+      [iconBgClass]="getIconClasses('Total Users').bg" [iconColorClass]="getIconClasses('Total Users').color">
+    </app-summary-card>
+
+    <!-- Total URLs -->
+    <app-summary-card title="Total URLs" [value]="dashboardData?.overview?.totalUrls ?? 0" icon="link"
+      [change]="dashboardData?.growth?.urlGrowth ?? 0" [changeText]="'vs last period'"
+      [iconBgClass]="getIconClasses('Total URLs').bg" [iconColorClass]="getIconClasses('Total URLs').color">
+    </app-summary-card>
+
+    <!-- Total Clicks -->
+    <app-summary-card [title]="'Total Clicks (' + timeRanges[selectedRange] + ')'"
+      [value]="dashboardData?.overview?.totalClicks ?? 0" icon="trending_up"
+      [change]="dashboardData?.growth?.clicksGrowth ?? 0" [changeText]="'vs last period'"
+      [iconBgClass]="getIconClasses('Total Clicks').bg" [iconColorClass]="getIconClasses('Total Clicks').color">
+    </app-summary-card>
+
+    <!-- Unique Visitors -->
+    <app-summary-card [title]="'Unique Visitors (' + timeRanges[selectedRange] + ')'"
+      [value]="dashboardData?.overview?.uniqueVisitors ?? 0" icon="public"
+      [change]="dashboardData?.growth?.visitorsGrowth ?? 0" [changeText]="'vs last period'"
+      [iconBgClass]="getIconClasses('Unique Visitors').bg" [iconColorClass]="getIconClasses('Unique Visitors').color">
+    </app-summary-card>
+
+    <!-- Active Users -->
+    <app-summary-card title="Active Users" [value]="dashboardData?.overview?.activeUsers ?? 0" icon="person"
+      [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Active Users').bg"
+      [iconColorClass]="getIconClasses('Active Users').color">
+    </app-summary-card>
+
+    <!-- Blocked Users -->
+    <app-summary-card title="Blocked Users" [value]="dashboardData?.overview?.blockedUsers ?? 0" icon="person_off"
+      [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Blocked Users').bg"
+      [iconColorClass]="getIconClasses('Blocked Users').color">
+    </app-summary-card>
+
+    <!-- Active URLs -->
+    <app-summary-card title="Active URLs" [value]="dashboardData?.overview?.activeUrls ?? 0" icon="link" [change]="0"
+      [changeText]="''" [iconBgClass]="getIconClasses('Active URLs').bg"
+      [iconColorClass]="getIconClasses('Active URLs').color">
+    </app-summary-card>
+
+    <!-- Blocked URLs -->
+    <app-summary-card title="Blocked URLs" [value]="dashboardData?.overview?.blockedUrls ?? 0" icon="link_off"
+      [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Blocked URLs').bg"
+      [iconColorClass]="getIconClasses('Blocked URLs').color">
+    </app-summary-card>
+
+    <!-- Total QRs -->
+    <app-summary-card title="Total QRs" [value]="dashboardData?.overview?.totalQrs ?? 0" icon="qr_code" [change]="0"
+      [changeText]="''" [iconBgClass]="getIconClasses('Total QRs').bg"
+      [iconColorClass]="getIconClasses('Total QRs').color">
+    </app-summary-card>
+
+    <!-- System Health -->
+    <app-summary-card title="System Health" [value]="getHealthStatus()" icon="favorite" [change]="0"
+      [changeText]="'Uptime: ' + formatUptime(dashboardData?.systemHealth?.uptime ?? 0)"
+      [iconBgClass]="getIconClasses('System Health').bg" [iconColorClass]="getIconClasses('System Health').color">
+    </app-summary-card>
+
+  </div>
+
+
+  <!-- Engagement Metrics -->
+  <div class="grid md:[grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))] gap-6 mb-10">
+
+    <!-- New Users This Period -->
+    <app-summary-card [title]="'New Users (' + timeRanges[selectedRange] + ')'"
+      [value]="dashboardData?.growth?.newUsersThisPeriod ?? 0" icon="person_add" [change]="0" [changeText]="''"
+      [iconBgClass]="getIconClasses('New Users').bg" [iconColorClass]="getIconClasses('New Users').color">
+    </app-summary-card>
+
+    <!-- New URLs This Period -->
+    <app-summary-card title="New URLs" [value]="dashboardData?.growth?.newUrlsThisPeriod ?? 0" icon="add_link"
+      [change]="0" [changeText]="''" [iconBgClass]="'bg-teal-100 dark:bg-teal-900'"
+      [iconColorClass]="'text-teal-600 dark:text-teal-300'">
+    </app-summary-card>
+
+    <!-- Avg Clicks per URL -->
+    <app-summary-card title="Avg Clicks/URL" [value]="dashboardData?.engagement?.avgClicksPerUrl ?? 0" icon="analytics"
+      [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Avg Clicks/URL').bg"
+      [iconColorClass]="getIconClasses('Avg Clicks/URL').color">
+    </app-summary-card>
+
+    <!-- Avg Clicks/User -->
+    <app-summary-card title="Avg Clicks/User" [value]="dashboardData?.engagement?.avgClicksPerUser ?? 0" icon="person"
+      [change]="0" [changeText]="''" [iconBgClass]="'bg-orange-100 dark:bg-orange-900'"
+      [iconColorClass]="'text-orange-600 dark:text-orange-300'">
+    </app-summary-card>
+
+    <!-- Click Through Rate -->
+    <app-summary-card title="Click Through Rate" [value]="(dashboardData?.engagement?.clickThroughRate ?? 0) + '%'"
+      icon="percent" [change]="0" [changeText]="''" [iconBgClass]="'bg-indigo-100 dark:bg-indigo-900'"
+      [iconColorClass]="'text-indigo-600 dark:text-indigo-300'">
+    </app-summary-card>
+
+    <!-- User Engagement Rate -->
+    <app-summary-card title="User Engagement Rate" [value]="(dashboardData?.engagement?.userEngagementRate ?? 0) + '%'"
+      icon="psychology" [change]="0" [changeText]="''" [iconBgClass]="'bg-pink-100 dark:bg-pink-900'"
+      [iconColorClass]="'text-pink-600 dark:text-pink-300'">
+    </app-summary-card>
+
+  </div>
+
+
+  <!-- Charts -->
+  <div class="mb-10 gap-8 items-stretch grid md:[grid-template-columns:repeat(auto-fit,minmax(22rem,1fr))]">
+
+    <!-- Clicks Over Time -->
+    <div
+      class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 hover:scale-105 border border-gray-200 dark:border-gray-700">
+
+      <h2 class="text-xl font-semibold sm:text-lg">Clicks Over Time</h2>
+
+      <div class="relative flex-grow h-96">
+        <app-analytics-chart *ngIf="isLoading || hasTimelineData" chartType="line"
+          [data]="dashboardData?.timeline?.datasets ?? []" [labels]="dashboardData?.timeline?.labels ?? []"
+          [title]="'Activity Timeline'" [loading]="isLoading">
+        </app-analytics-chart>
+
+        <div *ngIf="!hasTimelineData && !isLoading" class="absolute inset-0 flex items-center justify-center">
+          <app-no-data variant="overlay" icon="timeline" title="No activity data available"
+            description="Data will appear here once users start creating and using links.">
+          </app-no-data>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Top Locations -->
+    <div
+      class="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 hover:scale-105">
+      <div class="relative flex-grow h-96">
+        <app-map-chart *ngIf="isLoading || countryStats.length > 0" [data]="countryStats"
+          [loading]="isLoading"></app-map-chart>
+
+        <div *ngIf="countryStats.length === 0 && !isLoading" @zoomIn
+          class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800/80 rounded-xl p-4">
+          <app-no-data variant="overlay" icon="public_off" title="No location data available"
+            description="Click a link to view geographic insights on the map."></app-no-data>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Top Performers Section -->
+  <div
+    class="mb-10 gap-8 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:repeat(auto-fit,minmax(22rem,1fr))] items-stretch">
+
+    <!-- Top URLs -->
+    <app-top-card class="hover:scale-105" title="Top Performing URLs" [items]="dashboardData?.topPerformers?.urls ?? []"
+      noDataIcon="link_off" noDataVariant="overlay" noDataTitle="No URL data available"
+      noDataDescription="Top performing URLs will appear here.">
+    </app-top-card>
+
+    <!-- Top Users -->
+    <app-stats-list title="Most Active Users" [items]="topUsersStats" [iconMap]="{}" fallbackIcon="person"
+      [showProgressBar]="false" noDataIcon="people_alt" noDataVariant="overlay"
+      noDataTitle="No user activity data available" noDataDescription="Most active users will appear here.">
+    </app-stats-list>
+
+  </div>
+
+
+  <!-- Recent Activity Summary -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
+      Recent Activity Summary
+    </h3>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+      <!-- Card Item -->
+      <div
+        class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 p-5 rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition-all duration-200">
+        <div
+          class="w-14 h-14 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-400 mb-2">
+          <i class="fas fa-user-plus text-xl"></i>
+        </div>
+        <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          {{ dashboardData?.recentActivity?.newUsers ?? 0 }}
+        </p>
+        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">New Users</p>
+      </div>
+
+      <!-- Card Item -->
+      <div
+        class="flex flex-col items-center justify-center bg-green-50 dark:bg-green-900/30 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
+        <div
+          class="w-14 h-14 flex items-center justify-center rounded-full bg-green-100 dark:bg-green-800 text-green-600 dark:text-green-400 mb-2">
+          <i class="fas fa-link text-xl"></i>
+        </div>
+        <p class="text-2xl font-bold text-green-600 dark:text-green-400">
+          {{ dashboardData?.recentActivity?.newUrls ?? 0 }}
+        </p>
+        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">New URLs</p>
+      </div>
+
+      <!-- Card Item -->
+      <div
+        class="flex flex-col items-center justify-center bg-yellow-50 dark:bg-yellow-900/30 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
+        <div
+          class="w-14 h-14 flex items-center justify-center rounded-full bg-yellow-100 dark:bg-yellow-800 text-yellow-600 dark:text-yellow-400 mb-2">
+          <i class="fas fa-mouse-pointer text-xl"></i>
+        </div>
+        <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
+          {{ dashboardData?.recentActivity?.totalInteractions ?? 0 }}
+        </p>
+        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Total Clicks</p>
+      </div>
+
+      <!-- Card Item -->
+      <div
+        class="flex flex-col items-center justify-center bg-red-50 dark:bg-red-900/30 p-5 rounded-xl shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200">
+        <div
+          class="w-14 h-14 flex items-center justify-center rounded-full bg-red-100 dark:bg-red-800 text-red-600 dark:text-red-400 mb-2">
+          <i class="fas fa-ban text-xl"></i>
+        </div>
+        <p class="text-2xl font-bold text-red-600 dark:text-red-400">
+          {{ dashboardData?.recentActivity?.blockedItems ?? 0 }}
+        </p>
+        <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Blocked Items</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- System Status & Retention Data -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+
+    <!-- System Status -->
+    <div
+      class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:scale-105">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">System Status</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Response Time</span>
+          <span class="text-sm font-medium text-yellow-600 dark:text-yellow-400">
+            {{ dashboardData?.systemHealth?.responseTime ?? 0 }} ms
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Storage Used</span>
+          <span class="text-sm font-medium text-purple-600 dark:text-purple-400">
+            {{ dashboardData?.systemHealth?.storageUsed ?? 0 }} MB
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Error Rate</span>
+          <span class="text-sm font-medium" [ngClass]="getHealthColor()">
+            {{ dashboardData?.systemHealth?.errorRate ?? 0 }}%
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Active Users (30d)</span>
+          <span class="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {{ dashboardData?.retention?.activeUsersLast30Days ?? 0 }}
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Returning Users</span>
+          <span class="text-sm font-medium text-blue-600 dark:text-blue-400">
+            {{ dashboardData?.retention?.returningUsers ?? 0 }}
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Uptime</span>
+          <span class="text-sm font-medium text-green-600 dark:text-green-400">
+            {{ formatUptime(dashboardData?.systemHealth?.uptime ?? 0) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Retention Data -->
+    <div
+      class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:scale-105">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">User Retention</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Active Users (30d)</span>
+          <span class="text-sm font-medium text-green-600 dark:text-green-400">
+            {{ dashboardData?.retention?.activeUsersLast30Days ?? 0 }}
+          </span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-600 dark:text-gray-400">Returning Users</span>
+          <span class="text-sm font-medium text-blue-600 dark:text-blue-400">
+            {{ dashboardData?.retention?.returningUsers ?? 0 }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Quick Actions</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <!-- Manage Users -->
+      <a routerLink="/admin/users"
+        class="flex flex-col items-center justify-center gap-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-700 rounded-xl shadow hover:shadow-lg hover:bg-blue-100 dark:hover:bg-blue-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-blue-600 dark:text-blue-400 scale-125">groups</mat-icon>
+        <span class="font-medium">Manage Users</span>
+      </a>
+
+      <!-- View URLs -->
+      <a routerLink="/admin/urls"
+        class="flex flex-col items-center justify-center gap-2 bg-green-50 dark:bg-green-900/30 border border-green-100 dark:border-green-700 rounded-xl shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-green-600 dark:text-green-400 scale-125">link</mat-icon>
+        <span class="font-medium">View All URLs</span>
+      </a>
+
+      <!-- Analytics -->
+      <a routerLink="/admin/analytics"
+        class="flex flex-col items-center justify-center gap-2 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-100 dark:border-yellow-700 rounded-xl shadow hover:shadow-lg hover:bg-yellow-100 dark:hover:bg-yellow-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-yellow-600 dark:text-yellow-400 scale-125">analytics</mat-icon>
+        <span class="font-medium">Detailed Analytics</span>
+      </a>
+
+      <!-- Reports -->
+      <a routerLink="/admin/reports"
+        class="flex flex-col items-center justify-center gap-2 bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-700 rounded-xl shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-purple-600 dark:text-purple-400 scale-125">assessment</mat-icon>
+        <span class="font-medium">Export Reports</span>
+      </a>
+
+      <!-- My Profile -->
+      <a routerLink="/admin/"
+        class="flex flex-col items-center justify-center gap-2 bg-pink-50 dark:bg-pink-900/30 border border-pink-100 dark:border-pink-700 rounded-xl shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-pink-600 dark:text-pink-400 scale-125">person</mat-icon>
+        <span class="font-medium">My Profile</span>
+      </a>
+
+      <!-- Settings -->
+      <a routerLink="/admin/settings"
+        class="flex flex-col items-center justify-center gap-2 bg-red-50 dark:bg-red-900/30 border border-red-100 dark:border-red-700 rounded-xl shadow hover:shadow-lg hover:bg-red-100 dark:hover:bg-red-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
+        <mat-icon class="text-red-600 dark:text-red-400 scale-125">settings</mat-icon>
+        <span class="font-medium">System Settings</span>
+      </a>
+    </div>
+
+  </div>
+
+
+</div>
+
+<!-- Loader -->
+<div *ngIf="isLoading "
+  class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/50 rounded-xl">
+  <app-spinner></app-spinner>
+</div>
+
+<!-- Scroll Buttons -->
+<app-scroll-buttons *ngIf="!error" [isLoading]="isLoading"></app-scroll-buttons>
+
+<!-- Error State -->
+<app-error-message *ngIf="error && !isLoading" [title]="'Error loading dashboard'" [message]="error"
+  [retryText]="'Reload Dashboard'" [isLoading]="isLoading" [variant]="'error'" (retry)="refreshData()">
+</app-error-message>

@@ -18,4 +18,7 @@ router.delete('/urls/:id', authenticate, AdminController.deleteUrl);
 // ===== Analytics =====
 router.get('/analytics', authenticate, AdminController.getAdminAnalytics);
 
+// ===== Dashboard Analytics =====
+router.get('/dashboard', authenticate, AdminController.getAdminDashboard);
+
 export default router;

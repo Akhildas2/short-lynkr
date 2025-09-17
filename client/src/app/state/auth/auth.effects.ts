@@ -5,7 +5,7 @@ import { AuthStore } from "./auth.store";
 import { Router } from "@angular/router";
 import { SnackbarService } from "../../shared/services/snackbar/snackbar.service";
 import { firstValueFrom } from "rxjs";
-
+import { clearActiveRole, getActiveRole, getTokenKey, setActiveRole } from "../../shared/utils/auth-storage.util";
 
 @Injectable({ providedIn: 'root' })
 
@@ -21,20 +21,16 @@ export class AuthEffects {
 
         try {
             const response = await firstValueFrom(this.authApiService.login({ email, password }));
+            const { user, token } = response;
+            const role = user.role;
 
-            this.authStore.setAuthData(response.user, response.token);
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('role', response.user.role);
+            // Save token per role
+            localStorage.setItem(getTokenKey(role), token);
+            setActiveRole(role);
+
+            this.authStore.setAuthData(user, token);
             this.snackbar.showSuccess(`Welcome back,${response.user.username || 'User'}!`);
-
-            const role = response.user.role;
-            if (role === 'admin') {
-                this.router.navigate(['/admin']);
-            } else if (role === 'user') {
-                this.router.navigate(['/']);
-            } else {
-                this.router.navigate(['/auth/sign-in']);
-            }
+            this.redirectBasedOnRole(role)
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Login failed. Please check your credentials.';
@@ -47,21 +43,16 @@ export class AuthEffects {
         this.authStore.setLoading();
         try {
             const response = await firstValueFrom(this.authApiService.register({ username, email, password }));
+            const { user, token } = response;
+            const role = user.role;
 
-            this.authStore.setAuthData(response.user, response.token);
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('role', response.user.role);
+            // Save token per role
+            localStorage.setItem(getTokenKey(role), token);
+            setActiveRole(role);
+
+            this.authStore.setAuthData(user, token);
             this.snackbar.showSuccess(`Account created successfully! Welcome, ${response.user.username || 'User'}.`);
-
-            const role = response.user.role;
-            if (role === 'admin') {
-                this.router.navigate(['/admin']);
-            } else if (role === 'user') {
-                this.router.navigate(['/']);
-            } else {
-                this.router.navigate(['/auth/sign-in']);
-            }
-
+            this.redirectBasedOnRole(role)
 
         } catch (error: any) {
             const errorMessage = error?.error?.message || 'Registration failed. Please try again.';
@@ -71,29 +62,45 @@ export class AuthEffects {
     }
 
     async checkAuthStatus(): Promise<boolean> {
-        const token = localStorage.getItem('token');
+        const role = getActiveRole();
+
+        if (!role) {
+            this.authStore.clearAuth();
+            return false;
+        }
+
+        const token = localStorage.getItem(getTokenKey(role));
         if (!token) {
             this.authStore.clearAuth();
             return false;
         }
 
         this.authStore.setToken(token);
-
         try {
             const response = await firstValueFrom(this.userApiService.getProfile());
             this.authStore.setUser(response.user);
             if (response.stats) {
                 this.authStore.setStats(response.stats);
             }
+            // Ensure the role from the validated profile matches the one in storage
+            if (response.user.role !== role) {
+                await this.logout();
+                return false;
+            }
             return true;
 
         } catch (error) {
-            this.logout();
+            await this.logout();
             return false;
         }
     }
 
     async logout() {
+        const activeRole = getActiveRole();
+        if (activeRole) {
+            localStorage.removeItem(getTokenKey(activeRole));
+            clearActiveRole();
+        }
         this.authStore.clearAuth();
         this.snackbar.showInfo('You have been logged out.');
         this.router.navigate(['/auth/sign-in'])
@@ -128,14 +135,20 @@ export class AuthEffects {
         try {
             const response = await firstValueFrom(this.userApiService.deleteAccount());
             this.snackbar.showSuccess(response.message);
-            this.authStore.clearAuth();
-            this.router.navigate(['/auth/sign-in']);
+            await this.logout();
 
         } catch (error: any) {
             const errorMessage = error?.error.message || 'Account deletion failed.';
             this.authStore.setError(errorMessage)
             this.snackbar.showError(errorMessage);
         }
+    }
+
+
+    private redirectBasedOnRole(role: string) {
+        if (role === 'admin') this.router.navigate(['/admin']);
+        else if (role === 'user') this.router.navigate(['/']);
+        else this.router.navigate(['/auth/sign-in']);
     }
 
 }

@@ -1,0 +1,135 @@
+<div
+  class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+  <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Admin Settings</h3>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Profile & Security -->
+    <a routerLink="/admin/settings/profile"
+      class="flex flex-col items-center justify-center gap-3 bg-blue-50 dark:bg-blue-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-blue-500 text-4xl">person</mat-icon>
+      <span class="font-medium">Profile & Security</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Manage profile, password & login activity</p>
+    </a>
+
+    <!-- User & Role Management -->
+    <a routerLink="/admin/settings/users"
+      class="flex flex-col items-center justify-center gap-3 bg-green-50 dark:bg-green-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-green-500 text-4xl">groups</mat-icon>
+      <span class="font-medium">User Management</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Roles, access control, registration rules</p>
+    </a>
+
+    <!-- URL & Content Settings -->
+    <a routerLink="/admin/settings/urls"
+      class="flex flex-col items-center justify-center gap-3 bg-yellow-50 dark:bg-yellow-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-yellow-500 text-4xl">link</mat-icon>
+      <span class="font-medium">URL Settings</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Expiration, blocked domains, reports</p>
+    </a>
+
+    <!-- Analytics & Logs -->
+    <a routerLink="/admin/settings/analytics"
+      class="flex flex-col items-center justify-center gap-3 bg-purple-50 dark:bg-purple-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-purple-500 text-4xl">analytics</mat-icon>
+      <span class="font-medium">Analytics & Logs</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Track clicks, errors, and activity</p>
+    </a>
+
+    <!-- System Health -->
+    <a routerLink="/admin/settings/system"
+      class="flex flex-col items-center justify-center gap-3 bg-red-50 dark:bg-red-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-red-500 text-4xl">health_and_safety</mat-icon>
+      <span class="font-medium">System Health</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Uptime, storage usage, response time</p>
+    </a>
+
+    <!-- Appearance & Theme -->
+    <a routerLink="/admin/settings/appearance"
+      class="flex flex-col items-center justify-center gap-3 bg-pink-50 dark:bg-pink-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-pink-500 text-4xl">palette</mat-icon>
+      <span class="font-medium">Appearance</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Themes, branding & dashboard layout</p>
+    </a>
+
+    <!-- Integrations & API -->
+    <a routerLink="/admin/settings/integrations"
+      class="flex flex-col items-center justify-center gap-3 bg-indigo-50 dark:bg-indigo-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-indigo-500 text-4xl">key</mat-icon>
+      <span class="font-medium">Integrations & API</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">API keys, email, third-party services</p>
+    </a>
+
+    <!-- Backup & Restore -->
+    <a routerLink="/admin/settings/backup"
+      class="flex flex-col items-center justify-center gap-3 bg-teal-50 dark:bg-teal-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
+      <mat-icon class="text-teal-500 text-4xl">backup</mat-icon>
+      <span class="font-medium">Backup & Restore</span>
+      <p class="text-xs text-gray-500 dark:text-gray-400">Database backup and restore options</p>
+    </a>
+
+  </div>
+</div>
+
+<div class="px-4 py-6 max-w-screen-xl mx-auto">
+  <!-- Page Header -->
+  <app-page-header 
+    [title]="'Admin Settings'" 
+    [subtitle]="'Manage your profile, system preferences, and application settings'">
+  </app-page-header>
+
+  <!-- Grid Layout -->
+  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-8">
+
+    <!-- Profile Settings -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold mb-4">Profile</h2>
+      <form>
+        <mat-form-field class="w-full">
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="settings.name" name="name">
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="settings.email" name="email">
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="mt-3 w-full">Update Profile</button>
+      </form>
+    </div>
+
+    <!-- Security Settings -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold mb-4">Security</h2>
+      <button mat-stroked-button color="accent" class="w-full mb-3">Change Password</button>
+      <mat-slide-toggle [(ngModel)]="settings.twoFA">Enable 2FA</mat-slide-toggle>
+    </div>
+
+    <!-- System Preferences -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold mb-4">System</h2>
+      <mat-form-field class="w-full">
+        <mat-label>Default Time Range</mat-label>
+        <mat-select [(ngModel)]="settings.defaultRange" name="defaultRange">
+          <mat-option *ngFor="let range of timeRanges" [value]="range">{{ range }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-slide-toggle [(ngModel)]="settings.darkMode">Dark Mode</mat-slide-toggle>
+    </div>
+
+    <!-- Notifications -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 md:col-span-2">
+      <h2 class="text-lg font-semibold mb-4">Notifications</h2>
+      <mat-slide-toggle [(ngModel)]="settings.emailNotifications">Email Notifications</mat-slide-toggle>
+      <br>
+      <mat-slide-toggle [(ngModel)]="settings.activityAlerts">Activity Alerts</mat-slide-toggle>
+    </div>
+  </div>
+
+  <!-- Save Button -->
+  <div class="mt-8 flex justify-end">
+    <button mat-raised-button color="primary" (click)="saveSettings()">Save Changes</button>
+  </div>
+</div>
