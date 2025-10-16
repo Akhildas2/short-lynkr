@@ -19,7 +19,7 @@
         <form [formGroup]="urlForm" (ngSubmit)="onSubmit()">
           <div class="relative group">
             <div
-              class="absolute -inset-0.5 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] rounded-full blur opacity-20 group-hover:opacity-30 transition duration-300">
+              class="absolute -inset-2 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] rounded-full blur opacity-40 group-hover:opacity-60 transition duration-300">
             </div>
 
             <div class="relative flex flex-col sm:block">
@@ -27,9 +27,9 @@
                 <input type="url" id="urlInput" placeholder=" " formControlName="originalUrl" [ngClass]="{'border-red-500 focus:border-red-500 focus:ring-red-500/30':
                 (submitted && urlForm.get('originalUrl')?.hasError('required')) ||(urlForm.get('originalUrl')?.hasError('pattern') && urlForm.get('originalUrl')?.touched) ||
                 (submitted && urlForm.errors?.['alreadyShort']),'border-green-500 focus:border-green-500 focus:ring-green-500/30':urlForm.get('originalUrl')?.valid && !urlForm.errors?.['alreadyShort']
-                }" (blur)="urlForm.get('originalUrl')?.markAsTouched()" class="peer w-full px-4 sm:px-6 py-3 sm:py-5 pr-28 sm:pr-32 rounded-full 
+                }" (blur)="urlForm.get('originalUrl')?.markAsTouched()" class="peer w-full p-4 pr-28 sm:pr-32 rounded-full 
                 bg-[var(--background-color)] text-[var(--text-color)] border-2 border-[var(--text-color)] focus:outline-none focus:ring-0 focus:ring-[var(--primary-color)]/30 focus:border-[var(--primary-color)] 
-                placeholder-transparent transition-all duration-200 text-sm sm:text-base" />
+                placeholder-transparent transition-all duration-200 text-sm sm:text-base truncate" />
 
                 <label for="urlInput" [ngClass]="{'text-red-500':(submitted && urlForm.get('originalUrl')?.hasError('required')) 
                   ||(urlForm.get('originalUrl')?.hasError('pattern') && urlForm.get('originalUrl')?.touched) ||(submitted && urlForm.errors?.['alreadyShort']),
@@ -42,7 +42,7 @@
                 </label>
 
                 <button type="submit" [disabled]="urlForm.pristine || urlForm.invalid || isLoading"
-                  class="absolute top-1/2 right-2 -translate-y-1/2 px-3 py-2 sm:px-5 sm:py-4 rounded-full 
+                  class="absolute top-1/2 right-2 -translate-y-1/2 p-3 rounded-full 
                      bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] 
                      text-white font-bold transition-all duration-200 hover:shadow-lg hover:from-blue-600 hover:to-purple-700
                      text-sm sm:text-base hover:scale-105 active:scale-95 w-24 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
@@ -58,11 +58,85 @@
 
           <div *ngIf="urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.hasError('pattern')"
             class="mt-2 text-sm text-red-500">
-            Please enter a valid URL starting with http:// or https://
+            Please enter a valid URL starting with http://www.google.com or https://www.google.com
           </div>
 
           <div *ngIf="submitted && urlForm.errors?.['alreadyShort']" class="mt-2 text-sm text-red-500">
             This URL is already short and does not need to be shortened again.
+          </div>
+
+          <!-- Customize URL Section -->
+          <div class="flex justify-end mt-4 mr-2 items-center ms-4" *ngIf="settings?.urlSettings?.urlCustomization"
+            [formGroup]="urlForm">
+            <mat-slide-toggle formControlName="customizeEnabled" labelPosition="before">
+              <span class="mr-2 font-extrabold text-lg text-black dark:text-white">Customize Now</span>
+            </mat-slide-toggle>
+          </div>
+
+          <!-- Custom Options (Only if toggle is ON) -->
+          <div *ngIf="urlForm.get('customizeEnabled')?.value" class="mt-6 space-y-4">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+              <!-- Custom Short Code -->
+              <mat-form-field appearance="outline" class="w-full" *ngIf="settings?.urlSettings?.allowCustomSlugs">
+                <mat-label>Custom Short Code</mat-label>
+                <mat-icon matPrefix>link</mat-icon>
+                <input matInput formControlName="customCode" placeholder="e.g. my-custom-link" [minlength]="4"
+                  [maxlength]="settings?.urlSettings?.defaultLength || 8" />
+                <mat-error *ngIf="urlForm.get('customCode')?.hasError('minlength')">
+                  Minimum 4 characters required.
+                </mat-error>
+                <mat-error *ngIf="urlForm.get('customCode')?.hasError('maxlength')">
+                  Maximum {{settings?.urlSettings?.defaultLength || 8}} characters allowed.
+                </mat-error>
+              </mat-form-field>
+
+              <!-- Expiry in Days -->
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Expiry in Days</mat-label>
+                <mat-icon matPrefix>schedule</mat-icon>
+                <input matInput type="number" formControlName="expiryDays" [min]="0"
+                  [max]="settings?.urlSettings?.expirationDaysLimit || 100"
+                  placeholder="Enter a number from 0 to {{settings?.urlSettings?.expirationDaysLimit || 365}}" />
+                <mat-hint>Enter 0 for no expiration, max {{settings?.urlSettings?.expirationDaysLimit || 365}}
+                  days</mat-hint>
+                <mat-error *ngIf="urlForm.get('expiryDays')?.hasError('min')">Minimum is 0</mat-error>
+                <mat-error *ngIf="urlForm.get('expiryDays')?.hasError('max')">Maximum is
+                  {{settings?.urlSettings?.expirationDaysLimit || 100}}</mat-error>
+              </mat-form-field>
+
+              <!-- Expiry Date (read-only) -->
+              <mat-form-field appearance="outline" class="w-full" *ngIf="urlForm.value.expiryDays > 0">
+                <mat-label>Expiry Date</mat-label>
+                <mat-icon matPrefix>event</mat-icon>
+                <input matInput [value]="todayPlusDays(urlForm.value.expiryDays) | date:'dd-MM-yyyy'" readonly />
+              </mat-form-field>
+
+              <!-- Click Limit -->
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Click Limit</mat-label>
+                <mat-icon matPrefix>mouse</mat-icon>
+                <input matInput type="number" formControlName="clickLimit" [min]="0"
+                  [max]="settings?.urlSettings?.maxClickPerUrl || 1000"
+                  placeholder="Enter a number from 0 to {{settings?.urlSettings?.maxClickPerUrl || 1000}}" />
+                <mat-hint>Enter 0 for unlimited clicks, max {{settings?.urlSettings?.maxClickPerUrl || 1000}}</mat-hint>
+
+                <mat-error *ngIf="urlForm.get('clickLimit')?.hasError('min')">Minimum is 0</mat-error>
+                <mat-error *ngIf="urlForm.get('clickLimit')?.hasError('max')">Maximum is
+                  {{settings?.urlSettings?.maxClickPerUrl || 1000}}</mat-error>
+              </mat-form-field>
+
+              <!-- Tags -->
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Tags</mat-label>
+                <mat-icon matPrefix>label</mat-icon>
+                <mat-select formControlName="tags" multiple placeholder="Select tags">
+                  <mat-option *ngFor="let tag of tags" [value]="tag">{{ tag }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            </div>
           </div>
 
 

@@ -1,7 +1,10 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { UrlEntry } from '../../../../models/url/url.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '../../../shared.module';
+import { AdminSettings } from '../../../../models/settings/adminSettings.interface';
+import { AdminSettingsEffects } from '../../../../state/settings/settings.effects';
+import { SnackbarService } from '../../../services/snackbar/snackbar.service';
 
 @Component({
   selector: 'app-customize-url-dialog',
@@ -9,17 +12,28 @@ import { SharedModule } from '../../../shared.module';
   templateUrl: './customize-url-dialog.component.html',
   styleUrl: './customize-url-dialog.component.scss'
 })
-export class CustomizeUrlDialogComponent {
+export class CustomizeUrlDialogComponent implements OnInit {
   updatedUrl: Partial<UrlEntry>;
   expiryDays: number = 0;
-  tags: string[] = ['work', 'project', 'important', 'personal', 'temporary'];
+  tags: string[] = ['Personal', 'Work', 'Project', 'Marketing', 'important', 'Other'];
+  settings: AdminSettings | null = null;
 
   constructor(
     private dialogRef: MatDialogRef<CustomizeUrlDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UrlEntry
+    @Inject(MAT_DIALOG_DATA) public data: UrlEntry,
+    private settingsEffects: AdminSettingsEffects,
+    private snackbar: SnackbarService
   ) {
     this.updatedUrl = { ...data };
     this.setInitialExpiryDays();
+  }
+
+  async ngOnInit(): Promise<void> {
+    try {
+      this.settings = await this.settingsEffects.loadSettings();
+    } catch (e: any) {
+      this.snackbar.showError(e)
+    }
   }
 
   private setInitialExpiryDays(): void {
@@ -39,14 +53,25 @@ export class CustomizeUrlDialogComponent {
 
   save(): void {
     const result = { ...this.updatedUrl };
+
     if (this.expiryDays > 0) {
-      result.expiresAt = this.todayPlusDays(this.expiryDays);
+      const maxExpiry = this.settings?.urlSettings?.expirationDaysLimit || 100;
+      result.expiresAt = this.todayPlusDays(Math.min(this.expiryDays, maxExpiry));
     } else {
       result.expiresAt = undefined;
     }
 
     if (!result.clickLimit && result.clickLimit !== 0) {
       result.clickLimit = undefined;
+    }
+
+    if (result.clickLimit !== undefined) {
+      const maxClick = this.settings?.urlSettings?.maxClickPerUrl || 1000;
+      result.clickLimit = Math.min(result.clickLimit, maxClick);
+    }
+
+    if (!this.settings?.urlSettings?.allowCustomSlugs) {
+      result.shortId = undefined;
     }
 
     this.dialogRef.close(result);

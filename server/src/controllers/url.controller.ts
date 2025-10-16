@@ -5,7 +5,7 @@ import geoip from 'geoip-lite';
 
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { originalUrl } = req.body;
+        const { originalUrl, customCode, expiryDays, clickLimit, tags } = req.body;
         const userId = req.user?.id;
 
         if (!originalUrl) {
@@ -13,7 +13,7 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
             return;
         }
 
-        const urlData = await urlService.createShortUrl(originalUrl, userId);
+        const urlData = await urlService.createShortUrl(originalUrl, userId, customCode, expiryDays, clickLimit, tags);
         const io = req['io'];
         io?.emit('urlCreated', urlData)
         res.status(201).json(urlData);
@@ -29,12 +29,6 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
         const { customCode, expiryDays, clickLimit, tags } = req.body;
         const userId = req.user?.id;
 
-        // Input validation
-        if (!customCode) {
-            res.status(400).json({ message: 'Custom short code is required.' });
-            return;
-        }
-
         if (customCode && customCode.length > 8) {
             res.status(400).json({ message: 'Custom short code must be 8 characters or fewer.' });
             return;
@@ -46,6 +40,7 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
             clickLimit,
             tags
         }, userId);
+        
         res.status(200).json({ url: updatedUrl });
 
     } catch (error) {

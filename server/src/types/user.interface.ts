@@ -8,7 +8,6 @@ export interface IUser {
     isBlocked?: boolean;
 }
 
-
 export interface UserDocument extends Document {
     username: string;
     email: string;

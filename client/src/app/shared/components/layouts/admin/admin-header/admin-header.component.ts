@@ -4,10 +4,12 @@ import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.comp
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { GlobalSearchService } from '../../../../services/global-search/global-search.service';
+import { RouterModule } from '@angular/router';
+import { AuthEffects } from '../../../../../state/auth/auth.effects';
 
 @Component({
   selector: 'app-admin-header',
-  imports: [SharedModule, ThemeToggleComponent, ReactiveFormsModule],
+  imports: [SharedModule, ThemeToggleComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './admin-header.component.html',
   styleUrl: './admin-header.component.scss'
 })
@@ -23,7 +25,7 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
   searchControl = new FormControl(''); // FormControl for the search input
   private destroy$ = new Subject<void>(); // Subject to manage subscriptions
 
-  constructor(private globalSearchService: GlobalSearchService) { }
+  constructor(private globalSearchService: GlobalSearchService, private authEffects: AuthEffects) { }
   ngOnInit(): void {
     this.checkScreenSize();
 
@@ -64,22 +66,27 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
   }
 
   toggleMobileSearch(): boolean {
-    return this.showMobileSearch = !this.showMobileSearch
+    this.showMobileSearch = !this.showMobileSearch;
     if (!this.showMobileSearch) {
       this.clearSearch();
     }
+    return this.showMobileSearch;
   }
 
   get toggleIcon(): string {
     if (this.isMobile) {
       return this.sidebarState === 0 ? 'menu' : 'close';
     }
-    return ['menu', 'chevron_right', 'close'][this.sidebarState];
+    return ['menu', 'chevron_right', 'close'][this.sidebarState] || 'menu';
   }
 
   clearSearch(): void {
     this.searchControl.setValue('');
     this.globalSearchService.clearSearchTerm();
+  }
+
+  logout(): void {
+    this.authEffects.logout();
   }
 
 }

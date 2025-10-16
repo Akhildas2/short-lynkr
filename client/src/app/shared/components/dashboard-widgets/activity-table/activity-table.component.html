@@ -20,7 +20,7 @@
                 <div class="flex items-center">
                     <mat-icon class="mr-2">link</mat-icon>
                     <a href="{{ element.shortUrl }}" target="_blank" class="text-blue-500 hover:underline">
-                        {{ capitalize(element.shortUrl) }}
+                        {{ element.shortUrl | capitalize}}
                     </a>
                 </div>
             </td>
@@ -31,13 +31,11 @@
             <th mat-header-cell *matHeaderCellDef class="px-4 py-2 whitespace-nowrap">Location</th>
             <td mat-cell *matCellDef="let element" class="px-4 py-2 whitespace-nowrap">
                 <div class="flex items-center gap-2">
-                    <ng-container *ngIf="element.country && element.country !== 'Unknown'; else normalIcon">
-                        <span class="fi fi-{{ element.country | lowercase }}"></span>
-                    </ng-container>
+                    <span *ngIf="element.country; else normalIcon" [class]="getFlagClass(element.country)"></span>
                     <ng-template #normalIcon>
-                        <mat-icon>{{fallbackIcon}}</mat-icon>
+                        <mat-icon>{{ fallbackIcon }}</mat-icon>
                     </ng-template>
-                    {{ capitalize(getCountryName(element.country)) }}
+                    {{ getCountryName(element.country) | capitalize}}
                 </div>
             </td>
         </ng-container>
@@ -50,7 +48,7 @@
                     <i class="mr-2"
                         [ngClass]="deviceIconMap[element.device?.charAt(0).toUpperCase() + element.device?.slice(1)] || deviceIconMapFallbackIcon">
                     </i>
-                    {{ capitalize(element.device) }}
+                    {{element.device | capitalize }}
                 </div>
             </td>
         </ng-container>
@@ -63,7 +61,7 @@
                     <i class="mr-2"
                         [ngClass]="referrerIconMap[getReferrerKey(element.referrer)] || referrerIconMapFallbackIcon">
                     </i>
-                    {{ capitalize(element.referrer) }}
+                    {{ element.referrer | capitalize }}
                 </div>
             </td>
         </ng-container>
@@ -89,7 +87,7 @@
                 <span class="font-semibold text-gray-600 dark:text-gray-400">Short URL:</span>
                 <a href="{{ element.shortUrl }}" target="_blank"
                     class="text-blue-500 hover:underline truncate max-w-[60%] block">
-                    {{ capitalize(element.shortUrl) }}
+                    {{ element.shortUrl | capitalize }}
                 </a>
             </div>
 
@@ -103,7 +101,7 @@
                     <ng-template #normalIcon>
                         <mat-icon>{{fallbackIcon}}</mat-icon>
                     </ng-template>
-                    {{ capitalize(getCountryName(element.country)) }}
+                    {{ getCountryName(element.country) | capitalize }}
                 </span>
             </div>
 
@@ -113,7 +111,7 @@
                 <div class="flex items-center gap-1 truncate max-w-[60%]">
                     <i
                         [ngClass]="deviceIconMap[element.device?.charAt(0).toUpperCase() + element.device?.slice(1)] || deviceIconMapFallbackIcon"></i>
-                    <span class="truncate">{{ capitalize(element.device) }}</span>
+                    <span class="truncate">{{element.device | capitalize }}</span>
                 </div>
             </div>
 
@@ -122,7 +120,7 @@
                 <span class="font-semibold text-gray-600 dark:text-gray-400">Referrer:</span>
                 <div class="flex items-center gap-1 truncate max-w-[60%]">
                     <i [ngClass]="referrerIconMap[getReferrerKey(element.referrer)] || referrerIconMapFallbackIcon"></i>
-                    <span class="truncate">{{ capitalize(element.referrer) }}</span>
+                    <span class="truncate">{{ element.referrer | capitalize }}</span>
                 </div>
             </div>
 

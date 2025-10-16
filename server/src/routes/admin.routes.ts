@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/auth";
 import * as AdminController from '../controllers/admin.controller';
+import * as SettingsController from "../controllers/settings.controller";
 const router = Router();
 
 // ===== User Management =====
@@ -20,5 +21,10 @@ router.get('/analytics', authenticate, AdminController.getAdminAnalytics);
 
 // ===== Dashboard Analytics =====
 router.get('/dashboard', authenticate, AdminController.getAdminDashboard);
+
+// ===== Settings routes =====
+router.get('/settings', SettingsController.getSettings);
+router.patch('/settings', SettingsController.updateSettings);
+router.post('/settings/reset', SettingsController.resetSettings);
 
 export default router;

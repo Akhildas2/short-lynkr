@@ -7,12 +7,12 @@ import { AuthStore } from '../../../../../state/auth/auth.store';
 
 @Component({
   selector: 'app-user-header',
-  imports: [SharedModule,RouterLink,ThemeToggleComponent],
+  imports: [SharedModule, RouterLink, ThemeToggleComponent],
   templateUrl: './user-header.component.html',
   styleUrl: './user-header.component.scss'
 })
-export class UserHeaderComponent implements OnInit,OnDestroy{
-private authEffects = inject(AuthEffects);
+export class UserHeaderComponent implements OnInit, OnDestroy {
+  private authEffects = inject(AuthEffects);
   private authStore = inject(AuthStore);
   mobileMenuOpen: boolean = false;
   mobileDropdownOpen: boolean = false;

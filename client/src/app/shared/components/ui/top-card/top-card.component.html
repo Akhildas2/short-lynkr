@@ -12,12 +12,12 @@
                 <!-- Short URL -->
                 <a [href]="url.shortUrl" target="_blank"
                     class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-900 hover:dark:text-blue-600 hover:underline truncate block">
-                    {{ url.shortUrl }}
+                    {{ url.shortUrl | capitalize }}
                 </a>
                 <!-- Original URL -->
                 <a [href]="url.originalUrl" target="_blank"
                     class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 hover:dark:text-gray-200 hover:underline truncate block">
-                    {{ url.originalUrl }}
+                    {{ url.originalUrl | capitalize}}
                 </a>
             </div>
             <!-- Clicks -->

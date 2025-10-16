@@ -183,13 +183,6 @@ export abstract class BaseAnalyticsComponent implements OnInit {
         }
     }
 
-    // Capitalize
-    capitalize(str: string | undefined): string {
-        if (!str) return '';
-        str = str.toLowerCase();
-        return str[0].toUpperCase() + str.slice(1);
-    }
-
     // Returns the full country name 
     getCountryName(countryCode?: string): string {
         if (!countryCode || countryCode.toLowerCase() === 'unknown') return 'Unknown';

@@ -7,12 +7,11 @@ import { UrlEntry } from '../../../../models/url/url.model';
 @Injectable({ providedIn: 'root' })
 export class UrlService {
   private urlApiUrl = environment.urlApiUrl;
-  private baseApiUrl = environment.baseApiUrl;
 
   constructor(private http: HttpClient) { }
 
-  createUrl(originalUrl: string): Observable<any> {
-    return this.http.post(`${this.urlApiUrl}/create`, { originalUrl });
+  createUrl(data: { originalUrl: string; expiryDays: number; customCode: string; clickLimit: number; tags: string[] }): Observable<any> {
+    return this.http.post(`${this.urlApiUrl}/create`, data);
   }
 
   updateUrl(id: string, data: { expiryDays?: number; customCode?: string; clickLimit?: number, tags?: string[] }): Observable<{ url: UrlEntry }> {
@@ -29,6 +28,12 @@ export class UrlService {
 
   deleteUrl(id: string): Observable<void> {
     return this.http.delete<void>(`${this.urlApiUrl}/${id}`)
+  }
+
+  getQrUrl(id: string, size: number, format: string): Observable<Blob> {
+    return this.http.get(`${this.urlApiUrl}/qr/${id}?size=${size}&format=${format}`, {
+      responseType: 'blob'
+    });
   }
 
 }

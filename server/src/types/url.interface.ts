@@ -19,8 +19,8 @@ export interface UrlDocument extends Document {
   originalUrl: string;
   shortId: string;
   shortUrl: string;
-  qrCodeUrl?: string;
   userId?: Types.ObjectId;
+  qrCode?: Types.ObjectId;
   clicks: number;
   clickLimit?: number;
   tags?: string[];

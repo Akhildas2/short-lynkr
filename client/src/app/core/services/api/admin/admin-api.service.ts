@@ -5,6 +5,7 @@ import { User } from '../../../../models/user/user.model';
 import { Observable } from 'rxjs';
 import { UrlEntry } from '../../../../models/url/url.model';
 import { AdminAnalytics } from '../../../../models/analytic/adminAnalytics.interface';
+import { AdminSettings } from '../../../../models/settings/adminSettings.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -52,6 +53,20 @@ export class AdminApiService {
 
   getAdminDashboard(range: string): Observable<any> {
     return this.http.get<any>(`${this.adminApi}/dashboard`, { params: { range } })
+  }
+
+  // Settings methods
+  getSettings(): Observable<AdminSettings> {
+    return this.http.get<AdminSettings>(`${this.adminApi}/settings`);
+  }
+
+  updateSettings(settings: Partial<AdminSettings>): Observable<AdminSettings> {
+    return this.http.patch<AdminSettings>(`${this.adminApi}/settings`, settings);
+  }
+
+  resetSettings(section?: string): Observable<AdminSettings> {
+    const body = section ? { section } : {};
+    return this.http.post<AdminSettings>(`${this.adminApi}/settings/reset`, body);
   }
 
 }

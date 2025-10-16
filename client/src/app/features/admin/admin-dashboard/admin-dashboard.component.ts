@@ -79,21 +79,21 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   // Helper methods for UI
-  getHealthStatus(): 'healthy' | 'warning' | 'critical' {
-    if (!this.dashboardData) return 'healthy';
+  getHealthStatus(): 'Healthy' | 'Warning' | 'Critical' {
+    if (!this.dashboardData) return 'Healthy';
 
     const { systemHealth } = this.dashboardData;
-    if (systemHealth.errorRate > 5) return 'critical';
-    if (systemHealth.errorRate > 2) return 'warning';
-    return 'healthy';
+    if (systemHealth.errorRate > 5) return 'Critical';
+    if (systemHealth.errorRate > 2) return 'Warning';
+    return 'Healthy';
   }
 
   getHealthColor(): string {
     const status = this.getHealthStatus();
     switch (status) {
-      case 'healthy': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'critical': return 'text-red-600';
+      case 'Healthy': return 'text-green-600';
+      case 'Warning': return 'text-yellow-600';
+      case 'Critical': return 'text-red-600';
       default: return 'text-gray-600';
     }
   }

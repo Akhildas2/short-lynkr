@@ -28,9 +28,26 @@
   }
 
   // Buttons and icons
+  .mat-mdc-mini-fab,
   .mat-mdc-icon-button,
-  .mat-mdc-button {
-    color: var(--text-color);
+  .mat-mdc-button,
+  .mat-mdc-raised-button,
+  .mat-mdc-stroked-button,
+  .mat-mdc-outlined-button {
+    color: var(--text-color) !important;
+  }
+
+  .mat-mdc-mini-fab.white-text,
+  .mat-mdc-button.white-text,
+  .mat-mdc-raised-button.white-text,
+  .mat-mdc-icon-button.white-text,
+  .mat-mdc-stroked-button.white-text,
+  .mat-mdc-outlined-button.white-text {
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+    }
   }
 
   // Placeholder
@@ -136,5 +153,38 @@
       width: 20px;
       height: 20px;
     }
+  }
+
+  .mat-mdc-checkbox .mdc-label {
+    color: var(--text-color) !important;
+    transition: color 0.3s ease;
+  }
+
+  // Checkbox box border (when unchecked)
+  .mat-mdc-checkbox .mdc-checkbox__background {
+    border-color: var(--primary-color) !important;
+  }
+
+  // Checkmark color (when checked)
+  .mat-mdc-checkbox .mdc-checkbox__checkmark {
+    color: var(--primary-color) !important;
+    stroke: var(--primary-color) !important;
+  }
+
+  // Ripple override
+  .mat-mdc-checkbox .mat-mdc-focus-indicator,
+  .mat-mdc-checkbox .mat-mdc-checkbox-ripple {
+    background-color: var(--primary-color) !important;
+    opacity: 0;
+  }
+
+  // Tick path to text-color
+  .mat-mdc-checkbox .mdc-checkbox__checkmark-path {
+    stroke: white !important;
+  }
+
+  // Fix for right notch border
+  .mat-mdc-form-field .mdc-notched-outline__notch {
+    border-right-style: hidden;
   }
 }

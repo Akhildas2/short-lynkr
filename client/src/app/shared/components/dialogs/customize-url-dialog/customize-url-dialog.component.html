@@ -3,25 +3,28 @@
 <mat-dialog-content class="space-y-4 py-4">
 
     <!-- Custom Short Code -->
-    <mat-form-field appearance="outline" class="w-full">
+    <mat-form-field appearance="outline" class="w-full" *ngIf="settings?.urlSettings?.allowCustomSlugs">
         <mat-label>Custom Short Code</mat-label>
         <mat-icon matPrefix>link</mat-icon>
-        <input matInput [(ngModel)]="updatedUrl.shortId" #shortId="ngModel" required minlength="4" maxlength="8"
-            placeholder="e.g. my-custom-link" />
-        <mat-error *ngIf="shortId.errors?.['required']">Short code is required.</mat-error>
+        <input matInput [(ngModel)]="updatedUrl.shortId" #shortId="ngModel" minlength="4"
+            [maxlength]="settings?.urlSettings?.defaultLength || 8" placeholder="e.g. my-custom-link" />
         <mat-error *ngIf="shortId.errors?.['minlength']">Minimum 4 characters required.</mat-error>
-        <mat-error *ngIf="shortId.errors?.['maxlength']">Maximum 8 characters allowed.</mat-error>
+        <mat-error *ngIf="shortId.errors?.['maxlength']">Maximum {{settings?.urlSettings?.defaultLength || 8}}
+            characters allowed.</mat-error>
     </mat-form-field>
 
     <!-- Expiry in Days -->
     <mat-form-field appearance="outline" class="w-full">
         <mat-label>Expiry in Days</mat-label>
         <mat-icon matPrefix>schedule</mat-icon>
-        <input matInput type="number" [(ngModel)]="expiryDays" #expiryDaysModel="ngModel" min="0" max="100"
-            placeholder="Enter a number from 0 to 100" />
-        <mat-hint>Enter 0 for no expiration</mat-hint>
+        <input matInput type="number" [(ngModel)]="expiryDays" #expiryDaysModel="ngModel" min="0"
+            [max]="settings?.urlSettings?.expirationDaysLimit || 100"
+            placeholder="Enter a number from 0 to {{settings?.urlSettings?.expirationDaysLimit || 365}}" />
+        <mat-hint>Enter 0 for no expiration, max {{settings?.urlSettings?.expirationDaysLimit || 365}}</mat-hint>
         <mat-error *ngIf="expiryDaysModel.errors?.['min']">Minimum value is 0.</mat-error>
-        <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is 100.</mat-error>
+        <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is {{settings?.urlSettings?.expirationDaysLimit
+            ||
+            100}}.</mat-error>
     </mat-form-field>
 
     <!-- Expiry Date (read-only) -->
@@ -36,11 +39,14 @@
         <mat-label>Click Limit</mat-label>
         <mat-icon matPrefix>mouse</mat-icon>
         <input matInput type="number" name="clickLimit" [(ngModel)]="updatedUrl.clickLimit"
-            [ngModelOptions]="{ updateOn: 'change' }" #clickLimit="ngModel" min="0" max="1000"
-            placeholder="Enter a number from 0 to 1000" [validateClickLimit]="data.clicks">
-        <mat-hint>Enter 0 for unlimited clicks</mat-hint>
+            [ngModelOptions]="{ updateOn: 'change' }" #clickLimit="ngModel" min="0"
+            [max]="settings?.urlSettings?.maxClickPerUrl || 1000"
+            placeholder="Enter a number from 0 to {{settings?.urlSettings?.maxClickPerUrl || 1000}}"
+            [validateClickLimit]="data.clicks">
+        <mat-hint>Enter 0 for unlimited clicks, max {{settings?.urlSettings?.maxClickPerUrl || 1000}}</mat-hint>
         <mat-error *ngIf="clickLimit.errors?.['min']">Minimum value is 0.</mat-error>
-        <mat-error *ngIf="clickLimit.errors?.['max']">Maximum value is 1000.</mat-error>
+        <mat-error *ngIf="clickLimit.errors?.['max']">Maximum value is {{settings?.urlSettings?.maxClickPerUrl ||
+            1000}}.</mat-error>
         <mat-error
             *ngIf="!clickLimit.errors?.['min'] && !clickLimit.errors?.['max'] && clickLimit.errors?.['clickLimitInvalid']">
             Click limit must be greater than total click count ({{ data.clicks }})
@@ -69,8 +75,9 @@
         <mat-icon class="ml-2 text-[var(--secondary-color)]">cancel</mat-icon>
     </button>
     <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
-        (click)="save()" [disabled]="!shortId.valid||!clickLimit.valid|| !expiryDaysModel.valid">
+        (click)="save()">
         <span class="text-lg font-medium text-[var(--primary-color)]">Save</span>
         <mat-icon class="ml-2 text-[var(--primary-color)]">save</mat-icon>
     </button>
+
 </mat-dialog-actions>

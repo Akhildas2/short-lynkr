@@ -13,10 +13,10 @@
         <!-- Retry Button -->
         <div class="mt-4" *ngIf="showRetry">
             <button mat-raised-button (click)="onRetry()" [disabled]="isLoading"
-                class="bg-primary text-white hover:bg-blue-800 font-semibold flex items-center gap-2 py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out"
+                class="bg-primary white-text hover:bg-blue-800 hover:scale-105 font-semibold flex items-center gap-2 py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out"
                 [ngClass]="{ 'opacity-50 cursor-not-allowed': isLoading }">
 
-                <mat-icon class="text-white" [ngClass]="{ 'animate-spin': isLoading }">
+                <mat-icon class="white-text" [ngClass]="{ 'animate-spin': isLoading }">
                     refresh
                 </mat-icon>
                 <span *ngIf="!isLoading">{{ retryText }}</span>
