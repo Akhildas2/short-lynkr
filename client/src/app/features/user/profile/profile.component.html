@@ -11,10 +11,10 @@
                     class="w-28 h-28 md:w-36 md:h-36 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-lg transition-transform duration-300 hover:scale-105 ring-4 ring-blue-200 dark:ring-blue-900" />
                 <div>
                     <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">
-                        {{ u.username }}</h2>
+                        {{ u.username | titlecase }}</h2>
                     <p
                         class="text-gray-600 dark:text-gray-300 text-sm sm:text-base flex items-center justify-center sm:justify-start mt-2">
-                        <mat-icon class="mr-2 text-base">email</mat-icon>{{ u.email }}
+                        <mat-icon class="mr-2 text-base">email</mat-icon>{{ u.email | capitalize }}
                     </p>
                 </div>
             </div>

@@ -1,135 +1,133 @@
-<div
-  class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-  <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">Admin Settings</h3>
+<div class="px-2 sm:px-4 max-w-screen-2xl">
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="flex gap-6 mx-auto">
 
-    <!-- Profile & Security -->
-    <a routerLink="/admin/settings/profile"
-      class="flex flex-col items-center justify-center gap-3 bg-blue-50 dark:bg-blue-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-blue-500 text-4xl">person</mat-icon>
-      <span class="font-medium">Profile & Security</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Manage profile, password & login activity</p>
-    </a>
+        <!-- Sidebar Navigation -->
+        <div class="w-64 h-full bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-2 shadow-lg">
+            <ul class="flex flex-col gap-2">
+                <li *ngFor="let tab of tabs">
+                    <button mat-stroked-button (click)="setActiveTab(tab.id)"
+                        class="group flex items-center gap-3 w-full px-4 py-2 rounded-lg transition truncate" [ngClass]="{
+                        'bg-blue-600 text-white': activeTab === tab.id,
+                        'hover:bg-blue-600 hover:text-white': activeTab !== tab.id
+                        }">
+                        <mat-icon class="transition-colors duration-300 group-hover:text-white"
+                            [ngClass]="{ 'text-white': activeTab === tab.id }">
+                            {{ tab.icon }}
+                        </mat-icon>
+                        <span class="transition-colors duration-300 group-hover:text-white"
+                            [ngClass]="{ 'text-white': activeTab === tab.id }">
+                            {{ tab.label }}
+                        </span>
+                    </button>
+                </li>
+            </ul>
+        </div>
 
-    <!-- User & Role Management -->
-    <a routerLink="/admin/settings/users"
-      class="flex flex-col items-center justify-center gap-3 bg-green-50 dark:bg-green-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-green-500 text-4xl">groups</mat-icon>
-      <span class="font-medium">User Management</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Roles, access control, registration rules</p>
-    </a>
+        <!-- Main Content Area -->
+        <div class="h-full w-full bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl">
 
-    <!-- URL & Content Settings -->
-    <a routerLink="/admin/settings/urls"
-      class="flex flex-col items-center justify-center gap-3 bg-yellow-50 dark:bg-yellow-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-yellow-500 text-4xl">link</mat-icon>
-      <span class="font-medium">URL Settings</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Expiration, blocked domains, reports</p>
-    </a>
+            <!-- Profile & Security Tab -->
+            <ng-container *ngIf="activeTab==='profile'">
+                <h2 class="text-2xl font-semibold mb-2">Profile & Security</h2>
+                <p class="text-sm text-gray-700 dark:text-gray-300 mb-6">Manage your profile information and account
+                    security</p>
 
-    <!-- Analytics & Logs -->
-    <a routerLink="/admin/settings/analytics"
-      class="flex flex-col items-center justify-center gap-3 bg-purple-50 dark:bg-purple-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-purple-500 text-4xl">analytics</mat-icon>
-      <span class="font-medium">Analytics & Logs</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Track clicks, errors, and activity</p>
-    </a>
+                <main class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+                    <mat-card *ngIf="isAdmin() && admin() as u;"
+                        class="w-full bg-white dark:bg-gray-800 shadow-lg rounded-3xl p-6 sm:p-8 space-y-8 border border-gray-200 dark:border-gray-700">
 
-    <!-- System Health -->
-    <a routerLink="/admin/settings/system"
-      class="flex flex-col items-center justify-center gap-3 bg-red-50 dark:bg-red-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-red-500 text-4xl">health_and_safety</mat-icon>
-      <span class="font-medium">System Health</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Uptime, storage usage, response time</p>
-    </a>
+                        <div
+                            class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                            <div
+                                class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 text-center sm:text-left">
+                                <img mat-card-avatar
+                                    [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.username"
+                                    alt="{{ u.username }}"
+                                    class="w-28 h-28 md:w-36 md:h-36 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-lg transition-transform duration-300 hover:scale-105 ring-4 ring-blue-200 dark:ring-blue-900" />
+                                <div>
+                                    <h2
+                                        class="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">
+                                        {{ u.username | titlecase }}</h2>
+                                    <p
+                                        class="text-gray-600 dark:text-gray-300 text-sm sm:text-base flex items-center justify-center sm:justify-start mt-2">
+                                        <mat-icon class="mr-2 text-base">email</mat-icon>{{ u.email | capitalize }}
+                                    </p>
+                                </div>
+                            </div>
 
-    <!-- Appearance & Theme -->
-    <a routerLink="/admin/settings/appearance"
-      class="flex flex-col items-center justify-center gap-3 bg-pink-50 dark:bg-pink-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-pink-500 text-4xl">palette</mat-icon>
-      <span class="font-medium">Appearance</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Themes, branding & dashboard layout</p>
-    </a>
+                            <button mat-mini-fab
+                                class="bg-red-500 hover:bg-red-600/95 dark:bg-red-500 dark:hover:bg-red-600/95 white-text
+                                transition-all duration-300 ease-out transform hover:scale-125 hover:shadow-xl active:scale-100"
+                                matTooltip="Logout Now" (click)="logout()">
+                                <mat-icon>logout</mat-icon>
+                            </button>
+                        </div>
 
-    <!-- Integrations & API -->
-    <a routerLink="/admin/settings/integrations"
-      class="flex flex-col items-center justify-center gap-3 bg-indigo-50 dark:bg-indigo-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-indigo-500 text-4xl">key</mat-icon>
-      <span class="font-medium">Integrations & API</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">API keys, email, third-party services</p>
-    </a>
 
-    <!-- Backup & Restore -->
-    <a routerLink="/admin/settings/backup"
-      class="flex flex-col items-center justify-center gap-3 bg-teal-50 dark:bg-teal-900/20 border border-gray-200 dark:border-gray-600 rounded-xl shadow hover:shadow-lg hover:scale-105 transition-all duration-200 p-6 text-gray-900 dark:text-gray-100 text-center">
-      <mat-icon class="text-teal-500 text-4xl">backup</mat-icon>
-      <span class="font-medium">Backup & Restore</span>
-      <p class="text-xs text-gray-500 dark:text-gray-400">Database backup and restore options</p>
-    </a>
+                        <div class="flex flex-col sm:flex-row justify-end gap-6 pt-6">
+                            <!-- Edit Profile -->
+                            <button mat-stroked-button (click)="openEditDialog()"
+                                class="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-gray-600 dark:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
+                                <mat-icon class="group-hover:scale-110  transition-transform">edit</mat-icon>
+                                Edit Profile
+                            </button>
 
-  </div>
-</div>
+                            <!-- Change Password -->
+                            <button mat-button (click)="openPasswordDialog()"
+                                class="white-text flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-blue-500 hover:bg-blue-700 rounded-lg transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
+                                <mat-icon class="group-hover:scale-110 transition-transform">lock_reset</mat-icon>
+                                Change Password
+                            </button>
+                        </div>
 
-<div class="px-4 py-6 max-w-screen-xl mx-auto">
-  <!-- Page Header -->
-  <app-page-header 
-    [title]="'Admin Settings'" 
-    [subtitle]="'Manage your profile, system preferences, and application settings'">
-  </app-page-header>
+                    </mat-card>
 
-  <!-- Grid Layout -->
-  <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mt-8">
+                </main>
+            </ng-container>
 
-    <!-- Profile Settings -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <h2 class="text-lg font-semibold mb-4">Profile</h2>
-      <form>
-        <mat-form-field class="w-full">
-          <mat-label>Name</mat-label>
-          <input matInput [(ngModel)]="settings.name" name="name">
-        </mat-form-field>
+            <!-- Url Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'url-settings'" [title]="'URL Settings'" [sectionKey]="'urlSettings'"
+                [description]="'Configure URL shortening preferences and policies'" [settings]="urlSettings"
+                [fields]="urlFields" (save)="saveSettings($event)" (reset)="resetSettings($event)"></app-settings-tab>
 
-        <mat-form-field class="w-full">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" [(ngModel)]="settings.email" name="email">
-        </mat-form-field>
+            <!-- Qr Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'qr-settings'" [title]="'QR Code Settings'"
+                [sectionKey]="'qrSettings'" [description]="'Customize QR code generation and appearance'"
+                [settings]="qrSettings" [fields]="qrFieldsWithSettings" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)"></app-settings-tab>
 
-        <button mat-flat-button color="primary" class="mt-3 w-full">Update Profile</button>
-      </form>
+            <!-- Analytics Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'analytics-settings'" [title]="'Analytics Settings'"
+                [sectionKey]="'analyticsSettings'" [description]="'Manage user registration and permissions'"
+                [settings]="analyticsSettings" [fields]="analyticsFields" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)"></app-settings-tab>
+
+            <!-- Users Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'users-settings'" [title]="'User Management Settings'"
+                [sectionKey]="'userSettings'" [description]="'Configure data collection and reporting preferences'"
+                [settings]="userSettings" [fields]="userFields" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)"></app-settings-tab>
+
+            <!-- Notifications Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'notifications-settings'" [title]="'Notifications Settings'"
+                [sectionKey]="'notificationSettings'" [description]="'Configure notification preferences and alerts'"
+                [settings]="notificationSettings" [fields]="notificationFields" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)"></app-settings-tab>
+
+            <!-- security Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'security-settings'" [title]="'Security & Privacy'"
+                [sectionKey]="'securitySettings'" [description]="'Configure security settings and privacy options'"
+                [settings]="securitySettings" [fields]="securityFields" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)"></app-settings-tab>
+
+            <!-- System Settings Tab -->
+            <app-settings-tab *ngIf="activeTab === 'system-settings'" [title]="'System Settings'"
+                [sectionKey]="'systemSettings'" [description]="'Configure system-wide settings and maintenance'"
+                [settings]="systemSettings" [fields]="systemFields" [showResetAll]="true" (save)="saveSettings($event)"
+                (reset)="resetSettings($event)" (resetAll)="resetAllSettings()"></app-settings-tab>
+
+        </div>
     </div>
 
-    <!-- Security Settings -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <h2 class="text-lg font-semibold mb-4">Security</h2>
-      <button mat-stroked-button color="accent" class="w-full mb-3">Change Password</button>
-      <mat-slide-toggle [(ngModel)]="settings.twoFA">Enable 2FA</mat-slide-toggle>
-    </div>
-
-    <!-- System Preferences -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
-      <h2 class="text-lg font-semibold mb-4">System</h2>
-      <mat-form-field class="w-full">
-        <mat-label>Default Time Range</mat-label>
-        <mat-select [(ngModel)]="settings.defaultRange" name="defaultRange">
-          <mat-option *ngFor="let range of timeRanges" [value]="range">{{ range }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-slide-toggle [(ngModel)]="settings.darkMode">Dark Mode</mat-slide-toggle>
-    </div>
-
-    <!-- Notifications -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 md:col-span-2">
-      <h2 class="text-lg font-semibold mb-4">Notifications</h2>
-      <mat-slide-toggle [(ngModel)]="settings.emailNotifications">Email Notifications</mat-slide-toggle>
-      <br>
-      <mat-slide-toggle [(ngModel)]="settings.activityAlerts">Activity Alerts</mat-slide-toggle>
-    </div>
-  </div>
-
-  <!-- Save Button -->
-  <div class="mt-8 flex justify-end">
-    <button mat-raised-button color="primary" (click)="saveSettings()">Save Changes</button>
-  </div>
 </div>

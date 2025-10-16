@@ -1,0 +1,166 @@
+<h2 class="text-2xl font-semibold mb-2">{{ title }}</h2>
+<p class="text-sm text-gray-700 dark:text-gray-300 mb-6">{{ description }}</p>
+
+<form #form="ngForm" (ngSubmit)="onSave()">
+    <div class="space-y-6">
+        <mat-card *ngFor="let card of fields"
+            class="bg-white dark:bg-gray-800 p-6 shadow-xl rounded-3xl border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold mb-4">{{ card.title }}</h3>
+
+            <div class="grid gap-6 md:[grid-template-columns:repeat(auto-fit,minmax(22rem,1fr))] items-center">
+                <ng-container *ngFor="let field of card.items">
+                    <ng-container [ngSwitch]="field.type">
+
+                        <!-- Input -->
+                        <ng-container *ngIf="field.inputType !== 'number'">
+
+                            <mat-form-field *ngSwitchCase="'input'" class="w-full" appearance="outline">
+                                <mat-label>{{ field.label }}</mat-label>
+                                <mat-icon *ngIf="field.icon" matPrefix>{{ field.icon }}</mat-icon>
+
+                                <!-- Text/Email Input -->
+                                <input matInput [(ngModel)]="settings[field.key]" [name]="field.key"
+                                    [type]="field.inputType || 'text'" [placeholder]="field.placeholder"
+                                    [required]="field.validators?.required" [minlength]="field.validators?.minLength"
+                                    [maxlength]="field.validators?.maxLength" [pattern]="field.validators?.pattern"
+                                    [email]="field.inputType === 'email'" #ctrl="ngModel">
+
+                                <mat-error *ngIf="ctrl.invalid && (ctrl.dirty || ctrl.touched)">
+                                    <ng-container *ngIf="ctrl.errors?.['required']">
+                                        {{ field.label }} is required.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['minlength']">
+                                        Minimum length is {{ field.validators.minLength }} characters.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['maxlength']">
+                                        Maximum length is {{ field.validators.maxLength }} characters.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['pattern']">
+                                        Invalid format.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['email']">
+                                        Please enter a valid email address.
+                                    </ng-container>
+                                </mat-error>
+
+                            </mat-form-field>
+                        </ng-container>
+
+                        <!-- Number Input -->
+                        <ng-container *ngIf="field.inputType === 'number'">
+
+                            <mat-form-field *ngSwitchCase="'input'" class="w-full" appearance="outline">
+                                <mat-label>{{ field.label }}</mat-label>
+                                <mat-icon *ngIf="field.icon" matPrefix>{{ field.icon }}</mat-icon>
+
+                                <input matInput [(ngModel)]="settings[field.key]" [name]="field.key" type="number"
+                                    [placeholder]="field.placeholder" [required]="field.validators?.required"
+                                    [min]="field.validators?.min" [max]="field.validators?.max" #ctrl="ngModel">
+
+                                <mat-hint *ngIf="field.label==='URL Expiration (days)'">Zero means unlimited
+                                    expiry</mat-hint>
+
+                                <mat-error *ngIf="ctrl.invalid && (ctrl.dirty || ctrl.touched)">
+                                    <ng-container *ngIf="ctrl.errors?.['required']">
+                                        {{ field.label }} is required.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['min']">
+                                        Minimum value is {{ field.validators.min }}.
+                                    </ng-container>
+                                    <ng-container *ngIf="ctrl.errors?.['max']">
+                                        Maximum value is {{ field.validators.max }}.
+                                    </ng-container>
+
+                                </mat-error>
+
+                            </mat-form-field>
+                        </ng-container>
+
+
+                        <!-- Select -->
+                        <mat-form-field *ngSwitchCase="'select'" class="w-full" appearance="outline">
+                            <mat-label>{{ field.label }}</mat-label>
+                            <mat-icon *ngIf="field.icon" matPrefix>{{ field.icon }}</mat-icon>
+
+                            <mat-icon matPrefix *ngIf="settings[field.key] === 'light'">
+                                light_mode
+                            </mat-icon>
+                            <mat-icon matPrefix *ngIf="settings[field.key] === 'dark'">
+                                dark_mode
+                            </mat-icon>
+
+                            <mat-select [(ngModel)]="settings[field.key]" [name]="field.key" #ctrl="ngModel"
+                                [required]="field.validators?.required">
+                                <mat-option *ngFor="let option of field.options" [value]="option.value">
+                                    {{ option.label }}
+                                </mat-option>
+                            </mat-select>
+
+                            <mat-error *ngIf="ctrl.invalid && (ctrl.dirty || ctrl.touched)">
+                                {{ field.label }} is required.
+                            </mat-error>
+
+                        </mat-form-field>
+
+                        <!-- Checkbox -->
+                        <mat-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="settings[field.key]" [name]="field.key"
+                            class="flex items-center gap-1">
+                            <mat-icon *ngIf="field.icon" class="align-middle mr-3">{{ field.icon }}</mat-icon>
+                            <span class="align-middle">{{ field.label }}</span>
+                        </mat-checkbox>
+
+                        <!-- Color Picker Field -->
+                        <div *ngSwitchCase="'color'" class="w-full">
+                            <mat-form-field appearance="outline" class="w-full flex items-center" floatLabel="always">
+                                <mat-label>{{ field.label }}</mat-label>
+                                <mat-icon *ngIf="field.icon" matPrefix>{{ field.icon }}</mat-icon>
+
+                                <div class="flex items-center w-full gap-2">
+                                    <!-- Color Box (clickable) -->
+                                    <div class="relative w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 cursor-pointer"
+                                        [style.background]="settings[field.key]">
+                                        <input type="color" [(ngModel)]="settings[field.key]" [name]="field.key"
+                                            #ctrl="ngModel" [required]="field.validators?.required"
+                                            [pattern]="field.validators?.pattern"
+                                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    </div>
+
+                                    <!-- Hex Code Input -->
+                                    <input matInput type="text" [(ngModel)]="settings[field.key]" [name]="field.key"
+                                        placeholder="#000000" #ctrlHex="ngModel" [required]="field.validators?.required"
+                                        [pattern]="field.validators?.pattern" class="flex-1" />
+                                </div>
+
+                                <mat-error *ngIf="ctrlHex.invalid && (ctrlHex.dirty || ctrlHex.touched)">
+                                    <ng-container *ngIf="ctrlHex.errors?.['required']">{{ field.label }} is
+                                        required.</ng-container>
+                                    <ng-container *ngIf="ctrlHex.errors?.['pattern']">Must be a valid hex color
+                                        (e.g., #FFFFFF).</ng-container>
+                                </mat-error>
+
+                            </mat-form-field>
+                        </div>
+
+                    </ng-container>
+                </ng-container>
+            </div>
+        </mat-card>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+        <button mat-button type="button" (click)="onReset()"
+            class="bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 white-text rounded-lg px-6 py-3">
+            <mat-icon>restart_alt</mat-icon> Reset
+        </button>
+
+        <button *ngIf="showResetAll" mat-button type="button" (click)="onResetAll()"
+            class="bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 white-text rounded-lg px-6 py-3">
+            <mat-icon>delete_sweep</mat-icon> Reset All
+        </button>
+
+        <button mat-raised-button type="submit" [disabled]="form.invalid" [ngClass]="{ 'opacity-50': form.invalid }"
+            class="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 white-text rounded-lg px-6 py-3">
+            <mat-icon>save</mat-icon> Save
+        </button>
+    </div>
+</form>

@@ -56,7 +56,8 @@
         <!-- Top Referrer -->
         <app-summary-card [title]="'Top Referrer (' + timeRanges[selectedRange] + ')'" [iconType]="'map'"
             [value]="analyticsData?.topReferrers?.[0]?.name || 'Unknown'" icon="share" [change]="0" [changeText]="''"
-            [iconMap]="referrerIconMap" [iconBgClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).bg"
+            fallbackIcon="fas fa-question-circle" [iconMap]="referrerIconMap"
+            [iconBgClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).bg"
             [iconColorClass]="getIconClasses('Top Referrer ' + timeRanges[selectedRange]).color">
         </app-summary-card>
 

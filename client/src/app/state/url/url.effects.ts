@@ -14,10 +14,10 @@ export class UrlEffects {
     private api = inject(UrlService);
     private snackbar = inject(SnackbarService);
 
-    async createUrl(originalUrl: string): Promise<UrlEntry | null> {
+    async createUrl(originalUrl: string, expiryDays: number, customCode: string, clickLimit: number, tags: string[]): Promise<UrlEntry | null> {
         this.store.setLoading();
         try {
-            const url = await firstValueFrom(this.api.createUrl(originalUrl));
+            const url = await firstValueFrom(this.api.createUrl({ originalUrl, expiryDays, customCode, clickLimit, tags }));
             this.store.addUrl(url);
 
             this.snackbar.showSuccess('Short URL created successfully.');

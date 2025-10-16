@@ -17,7 +17,7 @@ export class ActivityTableComponent {
   @Input() deviceIconMapFallbackIcon: string = '';
   @Input() iconMap: Record<string, string> = {};
   @Input() fallbackIcon: string = '';
-  
+
   private locationService = inject(LocationService);
 
   getReferrerKey(referrer: string): string {
@@ -43,14 +43,13 @@ export class ActivityTableComponent {
   }
 
   getCountryName(code: string): string {
-    if (!code) return 'Unknown';
+    if (!code || code.toLowerCase() === 'unknown') return 'Unknown';
     return this.locationService.getCountryName(code.toUpperCase());
   }
 
-  capitalize(str: string | undefined): string {
-    if (!str) return '';
-    str = str.toLowerCase();
-    return str[0].toUpperCase() + str.slice(1);
+  getFlagClass(code?: string): string {
+    if (!code || code.toLowerCase() === 'unknown') return 'fi fi-un'; 
+    return 'fi fi-' + code.toLowerCase();
   }
 
 }

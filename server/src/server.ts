@@ -41,7 +41,6 @@ app.use((req, res, next) => {
     if (!io) {
         console.error("Socket.io instance not found on request.");
     }
-
     next();
 });
 
@@ -52,8 +51,6 @@ app.use('/api/url', urlRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/', redirectRouter);
-
-// Error handling middleware
 app.use(errorHandler);
 
 // Socket.IO

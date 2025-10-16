@@ -12,13 +12,22 @@ export interface AnalyticsEntry {
     timestamp: Date;
 }
 
+export interface QrCode {
+    _id: string;
+    urlId: string;
+    qrCodeUrl: string;
+    format: "PNG" | "SVG" | "JPEG";
+    size: number;
+    foregroundColor: string;
+    backgroundColor: string;
+    createdAt: Date;
+}
 
 export interface UrlEntry extends BaseAnalyticsData {
     _id: string;
     originalUrl: string;
     shortId: string;
     shortUrl: string;
-    qrCodeUrl: string;
     userId: User;
     clicks: number;
     expiryDays: number;
@@ -30,6 +39,7 @@ export interface UrlEntry extends BaseAnalyticsData {
     isActive: boolean;
     isBlocked: boolean;
 
+    qrCode?: QrCode;
     uniqueVisitors?: number;
     topCountry?: string;
     topCountryPercentage?: number;

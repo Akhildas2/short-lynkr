@@ -1,5 +1,6 @@
 import Urls from '../models/url.model';
 import Users from '../models/user.model';
+import SettingsModel from '../models/settings.model';
 import { IUser } from '../types/user.interface';
 import { ApiError } from '../utils/ApiError';
 import { Types } from 'mongoose';
@@ -9,6 +10,7 @@ import { generateTimelineData } from '../utils/generateTimelineData.utils';
 import { getDateRange } from '../utils/getDateRange.utils';
 import { getAverageResponseTime, getDbStorageUsed, getErrorRate } from '../middleware/metrics';
 import { formatBytes } from '../utils/formatBytes';
+import { applyRetention } from '../utils/applyRetention.utils';
 
 type UserId = string | Types.ObjectId;
 type UrlId = string | Types.ObjectId;
@@ -69,14 +71,14 @@ const AdminService = {
 
     // ===== URLS =====
     async getAllUrls() {
-        const urls = await Urls.find().populate('userId', 'username email').lean();
+        const urls = await Urls.find().populate('userId', 'username email').populate('qrCode').lean();
 
         return urls.map(url => {
             const analytics = url.analytics || [];
 
             const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
             const countryStats = aggregateStats(analytics, 'country', 'Unknown');
-            const topCountryEntry = getTop(countryStats, 1)[0];  // returns [{ name, count }]
+            const topCountryEntry = getTop(countryStats, 1)[0];  
             const topCountry = topCountryEntry ? topCountryEntry.name : 'N/A';
 
             return {
@@ -105,10 +107,21 @@ const AdminService = {
 
     // ===== Analytics =====
     async getAdminAnalytics(range: string) {
+        const settings = await SettingsModel.findOne();
+        if (!settings) throw new ApiError("Settings not found", 500);
+        const { analyticsSettings } = settings;
+        const retentionDays = analyticsSettings.dataRetention ?? 0;
+
         const urls = await Urls.find().lean();
+        if (!urls) throw new ApiError("URL not found", 500);
+
+        // Apply retention to each URL's analytics
+        for (const url of urls) {
+            url.analytics = applyRetention(url.analytics || [], retentionDays);
+        }
+
         const totalUrls = urls.length;
         const blockedUrls = urls.filter(u => u.isBlocked).length;
-
         const totalQrs = await Urls.countDocuments();
 
         const users = await Users.find().lean();
@@ -123,13 +136,15 @@ const AdminService = {
 
         for (const url of urls) {
             const analytics = url.analytics || [];
-            const filtered = filterAnalyticsByRange(analytics, currentFromDate, currentToDate);
 
-            // Attach shortUrl
-            filtered.forEach(a => a.shortUrl = url.shortUrl);
+            const filteredCurrent = filterAnalyticsByRange(analytics, currentFromDate, currentToDate);
+            const filteredPrevious = filterAnalyticsByRange(analytics, previousFromDate, previousToDate);
 
-            currentAnalytics.push(...filtered);
-            previousAnalytics.push(...filterAnalyticsByRange(analytics, previousFromDate, previousToDate));
+            // attach shortUrl to current analytics
+            filteredCurrent.forEach(a => a.shortUrl = url.shortUrl);
+
+            currentAnalytics.push(...filteredCurrent);
+            previousAnalytics.push(...filteredPrevious);
         }
 
         // --- Current period stats ---
@@ -233,12 +248,22 @@ const AdminService = {
 
     // ===== Dashboard Analytics  =====
     async getAdminDashboard(range: string) {
+        const settings = await SettingsModel.findOne();
+        if (!settings) throw new ApiError("Settings not found", 500);
+        const { analyticsSettings } = settings;
+        const retentionDays = analyticsSettings.dataRetention ?? 0;
+
         const now = new Date();
         const { currentFromDate, currentToDate, previousFromDate, previousToDate } = getDateRange(range, now);
 
         // Get all data
         const urls = await Urls.find().lean();
         const users = await Users.find().lean();
+
+        // Apply retention to analytics
+        for (const url of urls) {
+            url.analytics = applyRetention(url.analytics || [], retentionDays);
+        }
 
         // === CORE METRICS ===
         const totalUrls = urls.length;

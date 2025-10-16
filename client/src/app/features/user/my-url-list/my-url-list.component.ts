@@ -12,6 +12,8 @@ import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-d
 import { SocketService } from '../../../core/services/socket/socket.service';
 import { SharedModule } from '../../../shared/shared.module';
 import { openUrl } from '../../../shared/utils/url.utils';
+import { AdminSettings } from '../../../models/settings/adminSettings.interface';
+import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 
 @Component({
   selector: 'app-my-url-list',
@@ -25,6 +27,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
 
   activeDropdownId: string | null = null;
   showFirstLastButtons = true;
+  adminSettings: AdminSettings | null = null;
 
   urlList = computed(() => this.urlStore.urls());
 
@@ -50,7 +53,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
     openUrl(url, newTab);
   }
 
-  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService) {
+  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private dialog: MatDialog, private socketService: SocketService, private settingsEffects: AdminSettingsEffects) {
     effect(() => {
       const filteredCount = this.filteredUrls().length;
       const currentPageStart = this.pageIndex() * this.pageSize();
@@ -62,6 +65,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
+    this.adminSettings = await this.settingsEffects.loadSettings();
     this.socketService.connect();
     await this.urlEffects.fetchUserUrls();
   }

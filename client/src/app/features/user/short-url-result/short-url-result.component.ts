@@ -1,5 +1,5 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { UrlEntry } from '../../../models/url/url.model';
+import { QrCode, UrlEntry } from '../../../models/url/url.model';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
@@ -9,6 +9,9 @@ import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 import { SocketService } from '../../../core/services/socket/socket.service';
 import { SharedModule } from '../../../shared/shared.module';
+import { AdminSettings } from '../../../models/settings/adminSettings.interface';
+import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
+import { UrlService } from '../../../core/services/api/url/url.service';
 
 @Component({
   selector: 'app-short-url-result',
@@ -21,14 +24,31 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   private urlEffects = inject(UrlEffects);
   private urlStore = inject(UrlStore);
 
-  showQrSizes = false;
-  selectedUrl = this.urlStore.selectedUrl;
-  QR_SIZES = [300, 500, 750, 1024];
+  showQrOptions = false;
+  selectedSize: number | null = null;
+  selectedFormat: 'PNG' | 'SVG' | 'JPEG' | null = null;
 
-  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService) { }
+  QR_SIZES: number[] = [];
+  QR_FORMATS: ('PNG' | 'SVG' | 'JPEG')[] = [];
+  adminSettings: AdminSettings | null = null;
+  selectedUrl = this.urlStore.selectedUrl;
+
+  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService, private settingsEffects: AdminSettingsEffects, private urlService: UrlService) { }
 
   async ngOnInit(): Promise<void> {
     this.socketService.connect();
+
+    try {
+      this.adminSettings = await this.settingsEffects.loadSettings();
+      this.QR_SIZES = this.adminSettings?.qrSettings.allowedSizes ?? [300, 500, 750, 1024];
+      this.QR_FORMATS = this.adminSettings?.qrSettings.allowedFormat ?? ['PNG', 'SVG', 'JPEG'];
+
+    } catch (error) {
+      this.QR_SIZES = [300, 500, 750, 1024];
+      this.QR_FORMATS = ['PNG', 'SVG', 'JPEG'];
+      this.selectedFormat = 'PNG';
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       await this.urlEffects.fetchUrlById(id);
@@ -43,36 +63,19 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     this.clipboardService.copyToClipboard(url);
   }
 
-  toggleQrSizeOptions(): void {
-    this.showQrSizes = !this.showQrSizes;
+  toggleQrOptions(): void {
+    this.showQrOptions = !this.showQrOptions;
   }
 
-  downloadQrImage(imageUrl: string, size: number): void {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = imageUrl;
-
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(img, 0, 0, size, size);
-
-        const link = document.createElement('a');
-        link.href = canvas.toDataURL('image/png');
-        link.download = `qr-code-${size}x${size}.png`;
-        link.click();
-
-        this.showQrSizes = false;
-      }
-    }
-
-    img.onerror = () => {
-      this.snackbar.showError('Failed to load QR image.');
-    };
+  downloadQrImage(id: string, size: number, format: string, shortId: string) {
+    this.urlService.getQrUrl(id, size, format).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${shortId}-${size}x${size}.${format.toLowerCase()}`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   calculateDaysRemaining(expiryDate: string | Date): number {

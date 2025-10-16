@@ -6,6 +6,7 @@ import { ClickLimitValidatorDirective } from './directives/click-limit.validator
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { getCustomPaginatorIntl } from './utils/custom-paginator-intl';
 import { ClickOutsideDirective } from './directives/click-outside.directive';
+import { CapitalizePipe } from './pipes/capitalize.pipe';
 
 
 
@@ -19,14 +20,16 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
     FormsModule,
     MaterialModule,
     ClickLimitValidatorDirective,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    CapitalizePipe
   ],
   exports: [
     CommonModule,
     FormsModule,
     MaterialModule,
     ClickLimitValidatorDirective,
-    ClickOutsideDirective
+    ClickOutsideDirective,
+    CapitalizePipe
   ]
 
 })

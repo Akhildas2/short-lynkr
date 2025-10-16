@@ -19,6 +19,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSortModule } from '@angular/material/sort';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
     exports: [
@@ -41,7 +43,9 @@ import { MatSortModule } from '@angular/material/sort';
         MatPaginatorModule,
         MatSidenavModule,
         MatDividerModule,
-        MatSortModule
+        MatSortModule,
+        MatCheckboxModule,
+        MatSlideToggleModule
     ]
 
 })

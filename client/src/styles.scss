@@ -18,18 +18,6 @@ body {
   color: var(--text-color);
 }
 
-// Global button override
-.mat-mdc-button,
-.mat-mdc-raised-button,
-.mat-mdc-outlined-button {
-  color: var(--text-color) !important;
-}
-
-// Fix for right notch border
-.mat-mdc-form-field .mdc-notched-outline__notch {
-  border-right-style: hidden;
-}
-
 // Optional Tailwind layer example
 @layer base {
   body {
@@ -73,6 +61,15 @@ body {
       track-color: #e5e7eb,
       active-indicator-height: 12px,
       track-height: 10px,
+    )
+  );
+
+  @include mat.slide-toggle-overrides(
+    (
+      label-text-color: var(--text-color),
+      unselected-handle-color: var(--text-color),
+      disabled-unselected-track-color: rgba(0, 0, 0, 0.4),
+      unselected-focus-handle-color: var(--text-color),
     )
   );
 }
