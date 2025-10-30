@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import * as settingsService from '../services/settings.service';
 import { AuthRequest } from "../types/auth";
+import { emitMaintenanceStatus } from '../services/maintenance.service';
+import { startMaintenanceCronJob, stopMaintenanceCronJob } from '../cron-jobs/maintenances';
 
 
 export const getSettings = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -27,6 +29,19 @@ export const updateSettings = async (req: AuthRequest, res: Response, next: Next
 
         const io = req['io'];
         io?.emit('settingsUpdated', updatedSettings);
+        await emitMaintenanceStatus(io);
+
+
+        const { maintenanceMode, maintenanceStart, maintenanceEnd } = updatedSettings.systemSettings || {};
+
+        if (maintenanceMode && maintenanceStart && maintenanceEnd) {
+            const now = new Date();
+            const end = new Date(maintenanceEnd);
+
+            if (now <= end) startMaintenanceCronJob(io);
+        } else {
+            stopMaintenanceCronJob();
+        }
 
         res.status(200).json(updatedSettings);
     } catch (error) {
@@ -38,7 +53,7 @@ export const updateSettings = async (req: AuthRequest, res: Response, next: Next
 export const resetSettings = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { section } = req.body as { section?: string };
-        
+
         let result;
         if (section) {
             result = await settingsService.resetSectionToDefault(section);
@@ -48,6 +63,7 @@ export const resetSettings = async (req: AuthRequest, res: Response, next: NextF
 
         const io = req['io'];
         io?.emit('settingsReset', { section: section || 'all', settings: result });
+        await emitMaintenanceStatus(io);
 
         res.status(200).json(result);
 

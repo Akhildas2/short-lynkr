@@ -76,7 +76,6 @@
                             </mat-form-field>
                         </ng-container>
 
-
                         <!-- Select -->
                         <mat-form-field *ngSwitchCase="'select'" class="w-full" appearance="outline">
                             <mat-label>{{ field.label }}</mat-label>
@@ -101,6 +100,57 @@
                             </mat-error>
 
                         </mat-form-field>
+
+                        <!-- Date & Time Picker -->
+                        <ng-container *ngIf="!field.key.includes('maintenance') || settings['maintenanceMode']">
+                            <ng-container *ngSwitchCase="'datetime'">
+
+                                <!-- Date -->
+                                <mat-form-field class="w-full" appearance="outline">
+                                    <mat-label>{{ field.label }} (Date)</mat-label>
+                                    <mat-icon *ngIf="field.icon" matPrefix>{{ field.icon }}</mat-icon>
+
+                                    <input matInput [matDatepicker]="datePicker" [(ngModel)]="settings[field.key]"
+                                        (dateChange)="onDateChange()" [name]="sectionKey + '_' + field.key + 'Date'"
+                                        placeholder="dd/MM/yyyy" [required]="field.validators?.required" [min]="minDate"
+                                        [max]="maxDate" #dateCtrl="ngModel">
+
+                                    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #datePicker></mat-datepicker>
+
+                                    <mat-error *ngIf="dateCtrl.invalid">
+                                        <ng-container *ngIf="dateCtrl.errors?.['required']">Date is
+                                            required.</ng-container>
+                                        <ng-container *ngIf="dateCtrl.errors?.['matDatepickerParse']">Invalid date
+                                            format.</ng-container>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <!-- Time -->
+                                <mat-form-field class="w-full" appearance="outline">
+                                    <mat-label>{{ field.label }} (Time)</mat-label>
+                                    <mat-icon matPrefix
+                                        *ngIf="field.label === 'Maintenance Start'">hourglass_top</mat-icon>
+                                    <mat-icon matPrefix
+                                        *ngIf="field.label === 'Maintenance End'">hourglass_bottom</mat-icon>
+
+                                    <input matInput [ngxMatTimepicker]="timePicker"
+                                        [(ngModel)]="settings[field.key + 'Time']" [disabled]="!settings[field.key]"
+                                        placeholder="HH:mm" [required]="field.validators?.required"
+                                        [name]="sectionKey + '_' + field.key + 'Time'" #timeCtrl="ngModel">
+
+                                    <ngx-mat-timepicker-toggle [for]="timePicker" matSuffix></ngx-mat-timepicker-toggle>
+                                    <ngx-mat-timepicker #timePicker [format]="24"></ngx-mat-timepicker>
+
+                                    <mat-error *ngIf="timeCtrl.invalid">
+                                        <ng-container *ngIf="timeCtrl.errors?.['required']">Time is
+                                            required.</ng-container>
+                                    </mat-error>
+                                </mat-form-field>
+
+                            </ng-container>
+                        </ng-container>
+
 
                         <!-- Checkbox -->
                         <mat-checkbox *ngSwitchCase="'checkbox'" [(ngModel)]="settings[field.key]" [name]="field.key"

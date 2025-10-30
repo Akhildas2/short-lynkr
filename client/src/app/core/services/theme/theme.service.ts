@@ -6,23 +6,21 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ThemeService {
-  private isDark = new BehaviorSubject<boolean>(false);
-  isDarkTheme$ = this.isDark.asObservable();
+  private isDarkSubject = new BehaviorSubject<boolean>(false);
+  isDarkTheme$ = this.isDarkSubject.asObservable();
 
   constructor(@Inject(DOCUMENT) private document: Document) {
     const saved = localStorage.getItem('theme');
     this.setDarkTheme(saved === 'dark');
   }
 
-  setDarkTheme(isDark: boolean): void {
-    this.isDark.next(isDark);
-    const classList = this.document.body.classList;
-    classList.toggle('dark', isDark);
+  setDarkTheme(isDark: boolean) {
+    this.isDarkSubject.next(isDark);
+    this.document.body.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
   }
 
   toggleTheme(): void {
-    this.setDarkTheme(!this.isDark.value);
+    this.setDarkTheme(!this.isDarkSubject.value);
   }
-
 }

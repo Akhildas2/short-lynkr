@@ -104,7 +104,7 @@
                 <app-analytics-chart *ngIf="isLoading || hasTimelineClicks" chartType="line" [data]="timelineData"
                     [labels]="timelineLabels" [title]="'Clicks'" [loading]="isLoading">
                 </app-analytics-chart>
-                <div *ngIf="!hasTimelineClicks && !isLoading" @zoomIn>
+                <div @zoomIn *ngIf="!hasTimelineClicks && !isLoading">
                     <app-no-data variant="overlay" icon="bar_chart" title="No click timeline data available"
                         description="Interact with a link to see the chart."></app-no-data>
                 </div>
@@ -124,7 +124,7 @@
                     [loading]="isLoading">
                 </app-analytics-chart>
 
-                <div *ngIf="!hasCombinedTimelineData && !isLoading" @zoomIn>
+                <div @zoomIn *ngIf="!hasCombinedTimelineData && !isLoading">
                     <app-no-data variant="overlay" icon="timeline" title="No user or URL timeline data available"
                         description=" Interact with a link to see the chart."></app-no-data>
                 </div>
@@ -143,7 +143,7 @@
             <app-map-chart *ngIf="isLoading || countryClickData.length > 0" [data]="countryClickData"
                 [loading]="isLoading"></app-map-chart>
 
-            <div *ngIf="countryClickData.length === 0 && !isLoading" @zoomIn
+            <div @zoomIn *ngIf="countryClickData.length === 0 && !isLoading"
                 class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800/80 rounded-xl p-4">
                 <app-no-data variant="overlay" icon="public_off" title="No location data available"
                     description="Click a link to view geographic insights on the map."></app-no-data>

@@ -171,15 +171,10 @@ export const systemFields = [
             { type: 'input', label: 'Support Email', key: 'supportEmail', inputType: 'email', icon: 'email', validators: { required: true, email: true } },
             { type: 'checkbox', label: 'Enable maintenance mode', key: 'maintenanceMode', icon: 'build' },
             { type: 'checkbox', label: 'Enable API access', key: 'enableApiAccess', icon: 'api' },
-        ],
-    },
-    {
-        title: 'Performance',
-        items: [
-            {
-                type: 'input', label: 'Cache Duration (minutes)', key: 'cacheDuration', inputType: 'number', icon: 'hourglass_empty', validators: { required: true, min: 1, max: 1440 }
-            },
-            { type: 'input', label: 'Rate Limit (requests/minute)', key: 'rateLimit', inputType: 'number', icon: 'speed', validators: { required: true, min: 10, max: 100000 } },
+            { type: 'checkbox', label: 'Enable Auto Cleanup', key: 'enableAutoCleanup', icon: 'auto_delete' },
+            { type: 'toggle', label: 'Multi-day maintenance', key: 'maintenanceIsMultiDay', icon: 'date_range' },
+            { type: 'datetime', label: 'Maintenance Start', key: 'maintenanceStart', icon: 'calendar_today', validators: { required: true } },
+            { type: 'datetime', label: 'Maintenance End', key: 'maintenanceEnd', icon: 'calendar_month', validators: { required: true } },
         ],
     },
     {
@@ -196,4 +191,4 @@ export const systemFields = [
             }
         ],
     }
-];
+]

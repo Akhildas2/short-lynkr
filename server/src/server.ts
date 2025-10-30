@@ -10,7 +10,8 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import adminRoutes from './routes/admin.routes';
 import { errorHandler } from "./middleware/errorHandler";
-import { startCleanupJob } from "./cron-jobs/cleanup";
+import { apiAccessMiddleware } from "./middleware/api-access";
+import { startMaintenanceStatusBroadcast } from "./services/maintenance.service";
 
 // Extend Express Request interface
 declare global {
@@ -29,11 +30,9 @@ app.use(cors());
 app.use(express.json());
 
 const io = new Server(httpServer, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+    cors: { origin: "*", methods: ["GET", "POST"] }
 });
+app.set("io", io);
 
 // Attach io to req 
 app.use((req, res, next) => {
@@ -44,11 +43,15 @@ app.use((req, res, next) => {
     next();
 });
 
-app.set('trust proxy', true)
+startMaintenanceStatusBroadcast(io);
+
+app.set('trust proxy', true);
+app.use(apiAccessMiddleware);
+
 // Route handling
 app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/', redirectRouter);
 app.use(errorHandler);
@@ -67,6 +70,5 @@ const PORT: number = parseInt(process.env.PORT || "3000", 10);
 
 // Connect to the database and start the server
 connectDB().then(() => {
-    startCleanupJob();
     httpServer.listen(PORT, () => console.log(`🚀 Server running with WebSocket on port ${PORT}`));
 });

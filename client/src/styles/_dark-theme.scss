@@ -1,11 +1,13 @@
 .dark {
-  --background-color: #111827;
+  --background-color: #111827;  /* Tailwind gray-900 */
   --text-color: #ffffff;
-  --primary-color: #2161e0;
-  --accent-color: #fe4e3e;
-  --highlight-color: #ffa114;
-  --success-color: #0e8160;
-  --error-color: #ff0000;
+
+  --primary-color: #3b82f6;     /* Slightly lighter blue for dark backgrounds */
+  --accent-color: #fe4e3e;      /* Same red accent works well */
+  --highlight-color: #f59e0b;   /* Amber tone for warnings */
+  --success-color: #10b981;     /* Tailwind green-500 for visibility */
+  --error-color: #ef4444;       /* Softer red for dark mode */
+
   --row-bg-odd: rgba(255, 255, 255, 0.05);
   --row-hover-bg: rgba(255, 255, 255, 0.1);
 }

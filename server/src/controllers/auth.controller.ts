@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/user.model';
-import settingsModel from '../models/settings.model';
+import SettingsModel from '../models/settings.model';
 import { comparePassword, hashPassword } from '../utils/password';
 import jwt from 'jsonwebtoken';
 import { ApiError } from '../utils/ApiError';
@@ -8,7 +8,7 @@ import { ApiError } from '../utils/ApiError';
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         // Fetch settings
-        const settings = await settingsModel.findOne();
+        const settings = await SettingsModel.findOne();
         if (!settings) throw new ApiError('Settings not found', 500);
 
         const { userSettings } = settings;

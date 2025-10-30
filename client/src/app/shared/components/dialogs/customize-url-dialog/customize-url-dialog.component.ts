@@ -50,6 +50,13 @@ export class CustomizeUrlDialogComponent implements OnInit {
     return result;
   }
 
+  get clickLimitInvalid(): boolean {
+    return typeof this.updatedUrl.clickLimit === 'number'
+      && this.data
+      && this.updatedUrl.clickLimit > 0
+      && this.updatedUrl.clickLimit <= this.data.clicks;
+  }
+
 
   save(): void {
     const result = { ...this.updatedUrl };

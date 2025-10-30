@@ -38,16 +38,6 @@ const settingsSchema = new Schema<ISettings>({
         monthlyUrlLimit: { type: Number, default: 1000, min: 1, max: 1000 }
     },
 
-    systemSettings: {
-        appName: { type: String, default: 'Short-Lynkr' },
-        supportEmail: { type: String, default: 'shortLynkrSupport@example.com' },
-        maintenanceMode: { type: Boolean, default: false },
-        enableApiAccess: { type: Boolean, default: true },
-        cacheDuration: { type: Number, default: 60 },
-        rateLimit: { type: Number, default: 100 },
-        themeMode: { type: String, default: "light" }
-    },
-
     notificationSettings: {
         emailAlerts: { type: Boolean, default: true },
         dailyReports: { type: Boolean, default: false },
@@ -60,7 +50,19 @@ const settingsSchema = new Schema<ISettings>({
         blockMaliciousUrls: { type: Boolean, default: true },
         enableGdprCompliance: { type: Boolean, default: false },
         cookieConsent: { type: Boolean, default: false }
-    }
+    },
+
+    systemSettings: {
+        appName: { type: String, default: 'Short-Lynkr' },
+        supportEmail: { type: String, default: 'shortLynkrSupport@example.com' },
+        maintenanceMode: { type: Boolean, default: false },
+        maintenanceStart: { type: Date, default: null },
+        maintenanceEnd: { type: Date, default: null },
+        enableApiAccess: { type: Boolean, default: true },
+        enableAutoCleanup: { type: Boolean, default: true },
+        themeMode: { type: String, default: "light" },
+    },
+
 }, {
     timestamps: true
 });

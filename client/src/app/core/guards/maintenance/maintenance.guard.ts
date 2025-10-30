@@ -1,26 +1,24 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { getActiveRole } from '../../../shared/utils/auth-storage.util';
 import { MaintenanceService } from '../../services/maintenance/maintenance.service';
 
-export const homeGuard: CanActivateFn = async (route, state) => {
-  const router = inject(Router);
+export const maintenanceGuard: CanActivateFn = async (route, state) => {
   const maintenanceService = inject(MaintenanceService);
-  const activeRole = getActiveRole();
+  const router = inject(Router);
+  const url = state.url;
+
 
   // Wait for maintenance service initialization
   await maintenanceService.waitForInit();
 
-  // Maintenance mode → redirect
+  // Always allow admin/auth
+  if (url.startsWith('/admin') || url.startsWith('/auth')) return true;
+
+  // Redirect to maintenance page if needed
   if (maintenanceService.isMaintenanceSignal()) {
     return router.createUrlTree(['/maintenance']);
   }
 
-  // Admin → dashboard
-  if (activeRole === 'admin') {
-    return router.createUrlTree(['/admin']);
-  }
-
-  return true; // normal users or guests
+  return true;
 
 };

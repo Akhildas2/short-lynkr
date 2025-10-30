@@ -16,12 +16,14 @@ import { RangeContext } from '../../../shared/services/range/range.service';
 import { PageHeaderComponent } from '../../../shared/components/ui/page-header/page-header.component';
 import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
 import { TopCardComponent } from '../../../shared/components/ui/top-card/top-card.component';
+import { zoomInAnimation } from '../../../shared/utils/animations.util';
 
 @Component({
   selector: 'app-admin-analytics',
   imports: [SharedModule, StatsListComponent, StatsChartComponent, SpinnerComponent, MapChartComponent, AnalyticsChartComponent, SummaryCardComponent, ActivityTableComponent, NoDataComponent, ScrollButtonsComponent, PageHeaderComponent, ErrorMessageComponent, TopCardComponent],
   templateUrl: './admin-analytics.component.html',
-  styleUrl: './admin-analytics.component.scss'
+  styleUrl: './admin-analytics.component.scss',
+  animations: [zoomInAnimation]
 })
 export class AdminAnalyticsComponent extends BaseAnalyticsComponent implements OnInit {
   private adminApiService = inject(AdminApiService);
