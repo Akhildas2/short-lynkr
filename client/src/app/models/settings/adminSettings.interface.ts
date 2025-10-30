@@ -47,9 +47,10 @@ export interface AdminSettings {
         appName: string;
         supportEmail: string;
         maintenanceMode: boolean;
+        maintenanceStart?: Date | null;
+        maintenanceEnd?: Date | null;
         enableApiAccess: boolean;
-        cacheDuration: number;
-        rateLimit: number;
+        enableAutoCleanup: boolean;
         themeMode: string;
     };
 }

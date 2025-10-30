@@ -165,12 +165,11 @@
             [ngClass]="{ '-translate-x-full': isActive }">
 
             <div class="max-w-sm">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to Short Lynkr!' : 'Join
-                    Short Lynkr
-                    Today!' }}</h2>
+                <h2 class="text-3xl sm:text-4xl font-bold mb-4"> {{ isActive ? 'Welcome Back to ' + appName() + '!' :
+                    'Join ' + appName() + ' Today!' }}</h2>
                 <p class="mb-8 text-lg font-light">
-                    {{ isActive ? 'Manage your links and track QR code scans effortlessly.': 'Simplify your links and
-                    generate dynamic QR codes in seconds.'}}
+                    {{ isActive ? 'Manage your links and track QR code scans effortlessly.':
+                    'Simplify your links and generate dynamic QR codes in seconds.'}}
                 </p>
                 <button mat-stroked-button (click)="toggleForm()"
                     class="rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">

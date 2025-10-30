@@ -21,6 +21,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
 
 @NgModule({
     exports: [
@@ -45,7 +47,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatDividerModule,
         MatSortModule,
         MatCheckboxModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatTimepickerModule,
+        NgxMatTimepickerModule
     ]
 
 })

@@ -55,9 +55,10 @@ export const defaultAdminSettings: AdminSettings = {
         appName: 'Short-Lynkr',
         supportEmail: 'shortLynkrSupport@example.com',
         maintenanceMode: false,
+        maintenanceStart: null,
+        maintenanceEnd: null,
         enableApiAccess: true,
-        cacheDuration: 60,
-        rateLimit: 100,
+        enableAutoCleanup: true,
         themeMode: 'light'
     },
 

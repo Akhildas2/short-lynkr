@@ -1,11 +1,13 @@
 :root {
   --background-color: #ffffff;
   --text-color: #000000;
-  --primary-color: #2161e0;
-  --accent-color: #fe4e3e;
-  --highlight-color: #ffa114;
-  --success-color: #0e8160;
-  --error-color: #ff0000;
+
+  --primary-color: #2161e0;     /* Bright blue for primary actions */
+  --accent-color: #fe4e3e;      /* Vibrant red/orange for accents */
+  --highlight-color: #ffa114;   /* Amber tone for warnings */
+  --success-color: #0e8160;     /* Green for success */
+  --error-color: #ff0000;       /* Red for errors */
+
   --row-bg-odd: rgba(0, 0, 0, 0.03);
   --row-hover-bg: rgba(0, 0, 0, 0.08);
 }

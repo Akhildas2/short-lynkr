@@ -30,28 +30,104 @@ body {
   color: var(--text-color) !important;
 }
 
+/* ============================
+    Snackbar Styling
+   ============================ */
+.success-snackbar,
+.error-snackbar,
+.warning-snackbar,
+.info-snackbar {
+  --mdc-snackbar-supporting-text-color: #fff;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.3px;
+  font-weight: 500;
+}
+
+.success-snackbar .mat-mdc-snack-bar-action:hover,
+.error-snackbar .mat-mdc-snack-bar-action:hover,
+.warning-snackbar .mat-mdc-snack-bar-action:hover,
+.info-snackbar .mat-mdc-snack-bar-action:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+// Success Snackbar
 .success-snackbar {
   --mdc-snackbar-container-color: var(--success-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
+  background: linear-gradient(135deg, var(--success-color), #22c55e);
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.45);
+    }
+  }
 }
 
+// Error Snackbar
 .error-snackbar {
-  --mdc-snackbar-container-color: var(--accent-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
+  --mdc-snackbar-container-color: var(--error-color);
+  background: linear-gradient(135deg, var(--error-color), #ef4444);
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+    }
+  }
 }
 
+// Warning Snackbar
 .warning-snackbar {
   --mdc-snackbar-container-color: var(--highlight-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
+  background: linear-gradient(135deg, var(--highlight-color), #fbbf24);
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.45);
+    }
+  }
 }
 
+// Info Snackbar
 .info-snackbar {
   --mdc-snackbar-container-color: var(--primary-color);
-  --mdc-snackbar-supporting-text-color: var(--text-color);
-  --mat-mdc-snack-bar-button-color: var(--text-color);
+  background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+  .mat-mdc-button.mat-mdc-snack-bar-action {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+}
+
+/* -----------------------------
+   Optional Animation
+   ----------------------------- */
+.mat-mdc-snack-bar-container {
+  animation: snackbarFadeIn 0.3s ease;
+}
+
+@keyframes snackbarFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 :root {

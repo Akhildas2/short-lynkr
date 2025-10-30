@@ -22,7 +22,8 @@
             placeholder="Enter a number from 0 to {{settings?.urlSettings?.expirationDaysLimit || 365}}" />
         <mat-hint>Enter 0 for no expiration, max {{settings?.urlSettings?.expirationDaysLimit || 365}}</mat-hint>
         <mat-error *ngIf="expiryDaysModel.errors?.['min']">Minimum value is 0.</mat-error>
-        <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is {{settings?.urlSettings?.expirationDaysLimit
+        <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is
+            {{settings?.urlSettings?.expirationDaysLimit
             ||
             100}}.</mat-error>
     </mat-form-field>
@@ -75,7 +76,7 @@
         <mat-icon class="ml-2 text-[var(--secondary-color)]">cancel</mat-icon>
     </button>
     <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
-        (click)="save()">
+        (click)="save()" [disabled]="clickLimitInvalid">
         <span class="text-lg font-medium text-[var(--primary-color)]">Save</span>
         <mat-icon class="ml-2 text-[var(--primary-color)]">save</mat-icon>
     </button>

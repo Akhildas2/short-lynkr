@@ -1,9 +1,10 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { SharedModule } from '../../../../shared.module';
 import { RouterLink } from '@angular/router';
 import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.component';
 import { AuthEffects } from '../../../../../state/auth/auth.effects';
 import { AuthStore } from '../../../../../state/auth/auth.store';
+import { AdminSettingsEffects } from '../../../../../state/settings/settings.effects';
 
 @Component({
   selector: 'app-user-header',
@@ -14,12 +15,20 @@ import { AuthStore } from '../../../../../state/auth/auth.store';
 export class UserHeaderComponent implements OnInit, OnDestroy {
   private authEffects = inject(AuthEffects);
   private authStore = inject(AuthStore);
+  private settingsEffect = inject(AdminSettingsEffects);
+
   mobileMenuOpen: boolean = false;
   mobileDropdownOpen: boolean = false;
   isMobile: boolean = false;
 
+  appName: string = 'Short Lynkr';
+
   constructor() {
     this.authEffects.checkAuthStatus();
+    effect(() => {
+      const settings = this.settingsEffect['store'].settings();
+      this.appName = settings?.systemSettings?.appName || 'Short Lynkr';
+    })
   }
 
   get user(): boolean {

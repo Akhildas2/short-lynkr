@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { UserHeaderComponent } from '../../../shared/components/layouts/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../shared/components/layouts/user/user-footer/user-footer.component';
 import { MaterialModule } from '../../../../Material.Module';
@@ -8,6 +8,7 @@ import { AuthEffects } from '../../../state/auth/auth.effects';
 import { ValidationErrorComponent } from '../../../shared/components/forms/validation-error/validation-error.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
+import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 
 @Component({
   selector: 'app-auth-form',
@@ -16,6 +17,9 @@ import { LoaderComponent } from '../../../shared/components/ui/loader/loader.com
   styleUrl: './auth-form.component.scss'
 })
 export class AuthFormComponent {
+  private settingsEffect = inject(AdminSettingsEffects);
+  appName = signal('Short Lynkr');
+
   loginForm: FormGroup;
   registerForm: FormGroup;
   isActive = false;
@@ -37,7 +41,13 @@ export class AuthFormComponent {
     this.route.params.subscribe(params => {
       const mode = params['mode'];
       this.isActive = mode === 'sign-up';
-    })
+    });
+
+    effect(() => {
+      const settings = this.settingsEffect['store'].settings();
+      this.appName.set(settings?.systemSettings?.appName || 'Short Lynkr');
+    });
+
   }
 
   toggleForm() {

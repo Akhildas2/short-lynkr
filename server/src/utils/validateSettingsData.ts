@@ -128,20 +128,38 @@ export const validateSettingsData = (settingsData: Partial<ISettings>): void => 
     // System Settings
     // -------------------
     if (settingsData.systemSettings) {
-        const { supportEmail, cacheDuration, rateLimit } = settingsData.systemSettings;
+        const { supportEmail } = settingsData.systemSettings;
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (supportEmail && !emailRegex.test(supportEmail)) {
             throw new ApiError('Invalid support email format', 400);
         }
 
-        if (cacheDuration !== undefined && (cacheDuration < 1 || cacheDuration > 1440)) {
-            throw new ApiError('Cache duration must be between 1 and 1440 minutes (24 hours)', 400);
+    }
+
+    if (settingsData.systemSettings?.maintenanceMode) {
+        const start = settingsData.systemSettings.maintenanceStart;
+        const end = settingsData.systemSettings.maintenanceEnd;
+
+        if (!start || !end) {
+            throw new ApiError('Maintenance start and end dates are required.', 400);
         }
 
-        if (rateLimit !== undefined && (rateLimit < 1 || rateLimit > 10000)) {
-            throw new ApiError('Rate limit must be between 1 and 10,000 requests per minute', 400);
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        const now = new Date();
+
+        // Check if either date+time is in the past
+        if (startDate.getTime() < now.getTime()) {
+            throw new ApiError('Maintenance start time cannot be in the past.', 400);
         }
+
+        // Check that end date+time is after start date+time
+        if (endDate.getTime() <= startDate.getTime()) {
+            throw new ApiError('Maintenance end time must be after start time.', 400);
+        }
+
     }
 
 

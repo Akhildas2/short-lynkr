@@ -29,7 +29,7 @@ export class SnackbarService {
   }
 
   showError(message: string) {
-    this.show(message, 'error-snackbar', 5000, 'top', 'center');
+    this.show(message, 'error-snackbar', 6000, 'top', 'center');
   }
 
   showWarning(message: string) {

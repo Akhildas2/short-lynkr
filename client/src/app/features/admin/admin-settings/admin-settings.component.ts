@@ -10,6 +10,7 @@ import { analyticsFields, notificationFields, qrFields, securityFields, systemFi
 import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 import { defaultAdminSettings } from '../../../models/settings/adminSettings-defaults';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ThemeService } from '../../../core/services/theme/theme.service';
 
 @Component({
   selector: 'app-admin-settings',
@@ -30,6 +31,7 @@ export class AdminSettingsComponent implements OnInit {
   ];
 
   activeTab = this.tabs[0].id; // default
+  isDark = false;
 
   public adminSettings: AdminSettings | null = null;
   private authStore = inject(AuthStore);
@@ -58,7 +60,15 @@ export class AdminSettingsComponent implements OnInit {
   systemFields = systemFields;
   qrFieldsWithSettings = qrFields(this.qrSettings);
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, private router: Router, private themeService: ThemeService) {
+    this.themeService.isDarkTheme$.subscribe(dark => {
+      this.isDark = dark;
+
+      if (this.systemSettings) {
+        this.systemSettings.themeMode = dark ? 'dark' : 'light';
+      }
+    });
+
     effect(() => {
       const settings = this.settingsEffect['store'].settings();
       if (!settings) return;
@@ -70,6 +80,8 @@ export class AdminSettingsComponent implements OnInit {
       this.notificationSettings = { ...defaultAdminSettings.notificationSettings, ...settings.notificationSettings };
       this.securitySettings = { ...defaultAdminSettings.securitySettings, ...settings.securitySettings };
       this.systemSettings = { ...defaultAdminSettings.systemSettings, ...settings.systemSettings };
+
+      this.themeService.setDarkTheme(this.systemSettings.themeMode === 'dark');
     });
   }
 
@@ -92,7 +104,6 @@ export class AdminSettingsComponent implements OnInit {
       }
     });
   }
-
 
   setActiveTab(tabId: string): void {
     this.activeTab = tabId;
@@ -119,7 +130,6 @@ export class AdminSettingsComponent implements OnInit {
     });
   }
 
-
   // Save URL settings
   saveSettings(section?: string): void {
 
@@ -135,12 +145,16 @@ export class AdminSettingsComponent implements OnInit {
 
     this.settingsEffect.saveSettings(allSettings, section)
       .then(() => {
+        if (section === 'system-settings' || !section) {
+          const themeMode = this.systemSettings.themeMode || 'light';
+          this.themeService.setDarkTheme(themeMode === 'dark');
+        }
+
         this.settingsEffect.loadSettings(); // reload after save
       })
       .catch((err: any) => console.error(err));
 
   }
-
 
   // Reset URL settings
   resetSettings(section?: string): void {

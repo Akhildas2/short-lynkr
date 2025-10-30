@@ -15,7 +15,8 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
 
         const urlData = await urlService.createShortUrl(originalUrl, userId, customCode, expiryDays, clickLimit, tags);
         const io = req['io'];
-        io?.emit('urlCreated', urlData)
+        io?.emit('urlCreated', urlData);
+
         res.status(201).json(urlData);
 
     } catch (error) {
@@ -40,7 +41,10 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
             clickLimit,
             tags
         }, userId);
-        
+
+        const io = req['io'];
+        io?.emit('urlUpdated', updatedUrl)
+
         res.status(200).json({ url: updatedUrl });
 
     } catch (error) {
@@ -67,10 +71,7 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
         }
 
         const io = req['io'];
-        io?.emit("urlUpdated", {
-            id: urlData._id,
-            clicks: urlData.clicks
-        })
+        io?.emit("urlUpdated", urlData)
 
         res.redirect(302, urlData.originalUrl);
 

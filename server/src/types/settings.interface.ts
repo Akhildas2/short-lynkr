@@ -40,17 +40,6 @@ export interface ISettings extends Document {
         monthlyUrlLimit: number;
     };
 
-    // System Settings
-    systemSettings: {
-        appName: string;
-        supportEmail: string;
-        maintenanceMode: boolean;
-        enableApiAccess: boolean;
-        cacheDuration: number;
-        rateLimit: number;
-        themeMode: string;
-    };
-
     // Notification Settings
     notificationSettings: {
         emailAlerts: boolean;
@@ -65,6 +54,18 @@ export interface ISettings extends Document {
         blockMaliciousUrls: boolean;
         enableGdprCompliance: boolean;
         cookieConsent: boolean;
+    };
+
+    // System Settings
+    systemSettings: {
+        appName: string;
+        supportEmail: string;
+        maintenanceMode: boolean;
+        enableApiAccess: boolean;
+        enableAutoCleanup: boolean;
+        themeMode: string;
+        maintenanceStart: Date | null;
+        maintenanceEnd: Date | null;
     };
 
 }

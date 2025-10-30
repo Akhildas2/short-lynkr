@@ -16,12 +16,14 @@ import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-but
 import { RouterLink } from '@angular/router';
 import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
 import { RangeContext, RangeService } from '../../../shared/services/range/range.service';
+import { zoomInAnimation } from '../../../shared/utils/animations.util';
 
 @Component({
   selector: 'app-admin-dashboard',
   imports: [SharedModule, SpinnerComponent, SummaryCardComponent, PageHeaderComponent, NoDataComponent, AnalyticsChartComponent, StatsListComponent, MapChartComponent, TopCardComponent, ScrollButtonsComponent, RouterLink, ErrorMessageComponent],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss'
+  styleUrl: './admin-dashboard.component.scss',
+  animations: [zoomInAnimation]
 })
 export class AdminDashboardComponent implements OnInit {
   private adminApi = inject(AdminApiService);

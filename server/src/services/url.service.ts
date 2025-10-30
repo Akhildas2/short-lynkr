@@ -312,10 +312,20 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
 
     if (trackClicks) {
         url.clicks += 1;
+
+        // Auto-block logic
+        if (settings.systemSettings.enableAutoCleanup) {
+            const overClickLimit = url.clickLimit && url.clicks >= url.clickLimit;
+            const expired = url.expiresAt && url.expiresAt < new Date();
+
+            if (overClickLimit || expired) {
+                url.isActive = false; // Block the URL immediately
+            }
+        }
     }
     await url.save();
 
-    return url;
+    return url.populate('qrCode');
 };
 
 export const getUserUrls = async (userId?: string) => {
