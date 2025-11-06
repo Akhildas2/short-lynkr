@@ -47,8 +47,6 @@ export const defaultAdminSettings: AdminSettings = {
         enforceHttps: true,
         enableTwoFactor: false,
         blockMaliciousUrls: true,
-        enableGdprCompliance: false,
-        cookieConsent: false
     },
 
     systemSettings: {

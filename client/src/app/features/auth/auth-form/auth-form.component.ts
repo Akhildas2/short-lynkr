@@ -93,4 +93,17 @@ export class AuthFormComponent {
     }, 3000);
   }
 
+  async onGoogleRegister() {
+    this.isLoading = true;
+    try { await this.effects.googleRegister(); }
+    finally { this.isLoading = false; }
+  }
+
+  async onGoogleLogin() {
+    this.isLoading = true;
+    try { await this.effects.googleLogin(); }
+    finally { this.isLoading = false; }
+  }
+
+
 }

@@ -52,8 +52,6 @@ export interface ISettings extends Document {
         enforceHttps: boolean;
         enableTwoFactor: boolean;
         blockMaliciousUrls: boolean;
-        enableGdprCompliance: boolean;
-        cookieConsent: boolean;
     };
 
     // System Settings

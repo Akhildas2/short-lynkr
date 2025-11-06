@@ -40,8 +40,6 @@ export interface AdminSettings {
         enforceHttps: boolean;
         enableTwoFactor: boolean;
         blockMaliciousUrls: boolean;
-        enableGdprCompliance: boolean;
-        cookieConsent: boolean;
     };
     systemSettings: {
         appName: string;

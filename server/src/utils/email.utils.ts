@@ -1,0 +1,39 @@
+import nodemailer from 'nodemailer';
+import { ApiError } from './ApiError';
+import { EmailOptions } from '../types/emailOption.interface';
+import SettingsModel from '../models/settings.model';
+
+// Create a transporter object using Gmail SMTP
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
+});
+
+/**
+ * Sends an email using the configured transporter
+ * @param {EmailOptions} options - Email options (to, subject, text, html)
+ */
+export const sendEmail = async (options: EmailOptions) => {
+    try {
+        const settings = await SettingsModel.findOne({});
+        if (!settings) throw new ApiError('Settings not found', 500);
+
+        const { systemSettings } = settings;
+        const appName = systemSettings.appName || 'Short-Lynkr';
+
+        const info = await transporter.sendMail({
+            from: `"${appName}" <${process.env.EMAIL_USER}>`, // sender address
+            to: options.to, // list of receivers
+            subject: options.subject, // Subject line
+            text: options.text, // plain text body
+            html: options.html, // html body
+        });
+
+        console.log('Message sent: %s', info.messageId);
+    } catch (error: any) {
+        throw new ApiError('Error sending email:', error)
+    }
+};

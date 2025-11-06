@@ -1,0 +1,59 @@
+<div class="flex flex-col md:flex-row min-h-screen">
+    <!-- Left Side -->
+    <div class="w-full md:w-1/2 flex items-center justify-center bg-white overflow-hidden relative">
+        <img src="assets/Enter OTP.gif" alt="OTP Illustration" class="max-h-screen max-w-full object-contain" />
+    </div>
+
+    <!-- Right Side (OTP Form) -->
+    <div class="w-full md:w-1/2 flex items-center justify-center bg-white p-8">
+        <div class="w-full max-w-md">
+            <h2 class="text-3xl font-bold text-gray-800 text-center mb-4">Enter Your OTP</h2>
+            <p class="text-gray-500 text-center mb-8">
+                Enter the 6-digit OTP sent to your <span class="font-bold hover:text-primary">{{ email }}</span>
+            </p>
+
+            <form [formGroup]="otpForm" (ngSubmit)="submitOtp()">
+                <!-- OTP Input Boxes -->
+                <div class="flex justify-between gap-2 py-3">
+                    <input *ngFor="let ctrl of ['otp0','otp1','otp2','otp3','otp4','otp5']; let i = index" #otpInput
+                        type="text" maxlength="1" [formControlName]="ctrl" (keyup)="onOtpInput($event, i)"
+                        (keydown)="onKeyDown($event, i)" class="otp-box text-center text-xl border border-gray-600 rounded-lg
+                        flex-1 min-w-[2rem] max-w-[3.5rem] h-12 focus:border-2
+                        focus:border-primary focus:outline-none" />
+                </div>
+
+
+                <!-- Validation Error -->
+                <div class="text-red-500 text-base" *ngIf="otpForm.errors?.['incompleteOtp'] && otpForm.touched">
+                    Please enter all 6 digits of the OTP.
+                </div>
+
+                <!-- Verify Button -->
+                <button type="submit" [disabled]="otpForm.invalid || isLoading" class="w-full py-3 mt-3 rounded-lg 
+                bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] 
+                text-white font-bold text-sm sm:text-base
+                transition-all duration-200 hover:shadow-lg hover:from-blue-600 hover:to-purple-700
+                hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed
+                flex items-center justify-center gap-1">
+                    <span class="hidden sm:inline">🔐</span>
+                    {{ isLoading ? 'Verifying...' : 'Verify OTP' }}
+                </button>
+
+            </form>
+
+            <!-- Resend Section -->
+            <div class="text-center text-gray-500 mt-5">
+                <ng-container *ngIf="timer > 0; else resendBtn">
+                    Resend OTP in <span class="text-red-600 font-medium">{{ timer }}</span>s
+                </ng-container>
+                <ng-template #resendBtn>
+                    <button type="button"
+                        class="font-bold text-lg sm:text-xl text-primary hover:underline hover:text-blue-800"
+                        [disabled]="isLoading" (click)="resendOtp()">
+                        {{ isLoading ? 'Sending...' : 'Resend OTP' }}
+                    </button>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>

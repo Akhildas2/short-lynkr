@@ -11,6 +11,9 @@ export interface AuthResponse {
     user: AuthUser;
     token: string;
     stats?: ProfileStats;
+    message?: string;
+    requireEmailVerification?: boolean;
+    isActive?: boolean;
 }
 
 export interface ProfileStats {

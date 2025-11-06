@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { AuthStore } from '../../../state/auth/auth.store';
+import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,7 @@ export class MaintenanceService {
   private initializing = false;
   private authStore = inject(AuthStore);
 
-  constructor(private router: Router, private api: AdminApiService, private snackbar: SnackbarService, private authEffects: AuthEffects) {
+  constructor(private router: Router, private api: AdminApiService, private snackbar: SnackbarService, private authEffects: AuthEffects, private settingsEffect: AdminSettingsEffects) {
     this.authEffects.checkAuthStatus();
 
     // Watch for maintenance mode and role changes
@@ -89,7 +90,6 @@ export class MaintenanceService {
         this.isMaintenanceSignal.set(false);
       }
     } catch (err) {
-      console.error('Error loading settings:', err);
       this.isMaintenanceSignal.set(false); // fallback
     } finally {
       this.initializedSignal.set(true);
@@ -103,7 +103,7 @@ export class MaintenanceService {
   private connectSocket(): void {
     this.socket = io(environment.baseApiUrl);
 
-    this.socket.on('maintenanceMode', (status: boolean) => {
+    this.socket.on('maintenanceMode', async (status: boolean) => {
       if (this.previousStatus !== status) {
         if (status) this.snackbar.showInfo('Maintenance started! The app will be back soon.');
         else this.snackbar.showSuccess('Maintenance finished! The app is back online.');
@@ -111,6 +111,8 @@ export class MaintenanceService {
 
       this.previousStatus = status;
       this.isMaintenanceSignal.set(status);
+
+      await this.settingsEffect.loadSettings();
     });
   }
 

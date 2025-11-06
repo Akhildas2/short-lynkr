@@ -1,5 +1,5 @@
 import Urls from '../models/url.model';
-import Users from '../models/user.model';
+import User from '../models/user.model';
 import SettingsModel from '../models/settings.model';
 import { IUser } from '../types/user.interface';
 import { ApiError } from '../utils/ApiError';
@@ -18,12 +18,12 @@ type UrlId = string | Types.ObjectId;
 const AdminService = {
     // ===== USERS =====
     async getAllUsers() {
-        return await Users.find({ role: { $ne: 'admin' } }).select('-password').lean();
+        return await User.find({ role: { $ne: 'admin' } }).select('-password').lean();
     },
 
     async createUser(data: Partial<IUser>) {
         // Check if user already exists by email
-        const existing = await Users.findOne({ email: data.email });
+        const existing = await User.findOne({ email: data.email });
         if (existing) throw new ApiError('User already exists.', 409);
 
         // Prevent updating role to admin
@@ -37,7 +37,7 @@ const AdminService = {
         }
 
         // Create and save user
-        const user = new Users(data);
+        const user = new User(data);
         await user.save();
         return user.toObject();
     },
@@ -48,13 +48,13 @@ const AdminService = {
             throw new ApiError('Cannot assign admin role to a user.', 400);
         }
         // Update user
-        const user = await Users.findByIdAndUpdate(userId, data, { new: true });
+        const user = await User.findByIdAndUpdate(userId, data, { new: true });
         if (!user) throw new ApiError('User not found', 404);
         return user.toObject();
     },
 
     async toggleBlockUser(userId: UserId, isBlocked: boolean) {
-        const user = await Users.findById(userId);
+        const user = await User.findById(userId);
         if (!user) throw new ApiError('User not found', 404);
 
         user.isBlocked = isBlocked;
@@ -64,7 +64,7 @@ const AdminService = {
     },
 
     async deleteUser(userId: UserId) {
-        const result = await Users.findByIdAndDelete(userId);
+        const result = await User.findByIdAndDelete(userId);
         if (!result) throw new ApiError('User not found', 404);
         return result.toObject();
     },
@@ -78,7 +78,7 @@ const AdminService = {
 
             const uniqueVisitors = new Set(analytics.map(a => a.ip)).size;
             const countryStats = aggregateStats(analytics, 'country', 'Unknown');
-            const topCountryEntry = getTop(countryStats, 1)[0];  
+            const topCountryEntry = getTop(countryStats, 1)[0];
             const topCountry = topCountryEntry ? topCountryEntry.name : 'N/A';
 
             return {
@@ -124,7 +124,7 @@ const AdminService = {
         const blockedUrls = urls.filter(u => u.isBlocked).length;
         const totalQrs = await Urls.countDocuments();
 
-        const users = await Users.find().lean();
+        const users = await User.find({ role: 'user' }).lean();
         const totalUsers = users.length;
         const blockedUsers = users.filter(u => u.isBlocked).length;
 
@@ -258,7 +258,7 @@ const AdminService = {
 
         // Get all data
         const urls = await Urls.find().lean();
-        const users = await Users.find().lean();
+        const users = await User.find({ role: 'user' }).lean();
 
         // Apply retention to analytics
         for (const url of urls) {

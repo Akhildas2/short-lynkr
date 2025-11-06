@@ -48,8 +48,6 @@ const settingsSchema = new Schema<ISettings>({
         enforceHttps: { type: Boolean, default: true },
         enableTwoFactor: { type: Boolean, default: false },
         blockMaliciousUrls: { type: Boolean, default: true },
-        enableGdprCompliance: { type: Boolean, default: false },
-        cookieConsent: { type: Boolean, default: false }
     },
 
     systemSettings: {

@@ -1,91 +1,129 @@
 import { Request, Response, NextFunction } from 'express';
-import User from '../models/user.model';
-import SettingsModel from '../models/settings.model';
-import { comparePassword, hashPassword } from '../utils/password';
-import jwt from 'jsonwebtoken';
-import { ApiError } from '../utils/ApiError';
+import * as authService from '../services/auth.service';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        // Fetch settings
-        const settings = await SettingsModel.findOne();
-        if (!settings) throw new ApiError('Settings not found', 500);
-
-        const { userSettings } = settings;
-        const { allowRegistration, requireEmailVerification, moderateNewUsers } = userSettings;
-
-        // --- Registration allowed check ---
-        if (!allowRegistration) {
-            res.status(403).json({ message: 'User registration is disabled by admin.' });
-            return
-        }
-
-        // Validate required fields
         const { username, email, password } = req.body;
         if (!username || !email || !password) {
             res.status(400).json({ message: 'Username, email, and password are required.' });
-            return
+            return;
         }
 
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            res.status(400).json({ message: 'Email already registered' });
-            return
-        }
-
-        // Hash password
-        const hashedPassword = await hashPassword(password);
-        // Create user
-        const user = await User.create({
-            username,
-            email,
-            password: hashedPassword
-        });
-
-        // Generate JWT token
-        const token = jwt.sign({ id: user._id, email: email, role: user.role }, process.env.JWT_SECRET!, { expiresIn: '1d' });
-        res.status(201).json({ user, token });
-
+        const result = await authService.registerUser(username, email, password);
+        res.status(201).json(result);
     } catch (error) {
         next(error);
     }
-}
-
+};
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email, password } = req.body;
-
-        const user = await User.findOne({ email })
-        if (!user) {
-            res.status(400).json({ message: 'Invalid credentials' });
-            return
-        }
-
-        const isMatch = await comparePassword(password, user.password)
-        if (!isMatch) {
-            res.status(400).json({ message: 'Invalid credentials' });
-            return
-        }
-
-        if (user.isBlocked) {
-            res.status(403).json({ message: 'Your account has been blocked. Please contact support for assistance.' });
+        if (!email || !password) {
+            res.status(400).json({ message: 'Email and password are required.' });
             return;
         }
 
-        user.lastLoginAt = new Date();
-        await user.save();
-
-        const token = jwt.sign(
-            { id: user._id, email: user.email, role: user.role },
-            process.env.JWT_SECRET!,
-            { expiresIn: '1d' }
-        );
-        const { password: _, ...userData } = user.toObject();
-        res.status(200).json({ user: userData, token });
-
+        const result = await authService.loginUser(email, password);
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
-}
+};
+
+
+export const googleAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { token, mode } = req.body;
+        if (!token || !mode) {
+            res.status(400).json({ message: 'Google token and mode are required.' });
+            return;
+        }
+
+        if (mode !== 'register' && mode !== 'login') {
+            res.status(400).json({ message: 'Invalid mode. Must be "register" or "login".' });
+            return;
+        }
+
+        const result = await authService.googleAuthenticate(token, mode);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email, otp } = req.body;
+        if (!email || !otp) {
+            res.status(400).json({ message: 'Email and OTP are required.' });
+            return;
+        }
+
+        const result = await authService.verifyEmailOtp(email, otp);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({ message: 'Email is required.' });
+            return;
+        }
+
+        const result = await authService.resendEmailOtp(email);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({ message: 'Email is required.' });
+            return;
+        }
+
+        const result = await authService.sendForgotPasswordOtp(email);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        if (!email || !otp || !newPassword) {
+            res.status(400).json({ message: 'Email, OTP, and new password are required.' });
+            return;
+        }
+
+        const result = await authService.resetPasswordWithOtp(email, otp, newPassword);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const otpRemainingTime = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const email = req.query.email as string;
+        if (!email) {
+            res.status(400).json({ message: 'Email is required' });
+            return;
+        }
+
+        const result = await authService.getOtpRemainingTime(email);
+        res.status(200).json(result);
+
+    } catch (error: any) {
+        next(error);
+    }
+};

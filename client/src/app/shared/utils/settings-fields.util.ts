@@ -152,14 +152,7 @@ export const securityFields = [
             { type: 'checkbox', label: 'Enable two-factor authentication', key: 'enableTwoFactor', icon: 'verified_user' },
             { type: 'checkbox', label: 'Block malicious URLs', key: 'blockMaliciousUrls', icon: 'block' },
         ],
-    },
-    {
-        title: 'Privacy Settings',
-        items: [
-            { type: 'checkbox', label: 'Enable GDPR compliance mode', key: 'enableGdprCompliance', icon: 'policy' },
-            { type: 'checkbox', label: 'Require cookie consent', key: 'cookieConsent', icon: 'cookie' },
-        ],
-    },
+    }
 ];
 
 // System
