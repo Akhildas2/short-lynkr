@@ -6,20 +6,19 @@ import { MaterialModule } from '../../../../Material.Module';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { ValidationErrorComponent } from '../../../shared/components/forms/validation-error/validation-error.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
+import { GoogleAuthEffects } from '../../../state/auth/googleAuth.effects';
 import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 
 @Component({
   selector: 'app-auth-form',
-  imports: [CommonModule, UserHeaderComponent, UserFooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent, LoaderComponent],
+  imports: [CommonModule, UserHeaderComponent, UserFooterComponent, MaterialModule, FormsModule, ReactiveFormsModule, ValidationErrorComponent, LoaderComponent, RouterLink],
   templateUrl: './auth-form.component.html',
   styleUrl: './auth-form.component.scss'
 })
 export class AuthFormComponent {
-  private settingsEffect = inject(AdminSettingsEffects);
   appName = signal('Short Lynkr');
-
   loginForm: FormGroup;
   registerForm: FormGroup;
   isActive = false;
@@ -27,7 +26,7 @@ export class AuthFormComponent {
   showLoginPassword = signal(false);
   showRegisterPassword = signal(false);
 
-  constructor(private fb: FormBuilder, private effects: AuthEffects, private route: ActivatedRoute, private router: Router) {
+  constructor(private fb: FormBuilder, private authEffects: AuthEffects, private googleAuthEffects: GoogleAuthEffects, private route: ActivatedRoute, private router: Router, private settingsEffect: AdminSettingsEffects) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
@@ -73,7 +72,7 @@ export class AuthFormComponent {
     const { username, email, password } = this.registerForm.value;
 
     setTimeout(async () => {
-      await this.effects.register(username, email, password);
+      await this.authEffects.register(username, email, password);
       this.isLoading = false;
     }, 3000);
   }
@@ -88,20 +87,20 @@ export class AuthFormComponent {
     const { email, password } = this.loginForm.value;
 
     setTimeout(async () => {
-      await this.effects.login(email, password);
+      await this.authEffects.login(email, password);
       this.isLoading = false;
     }, 3000);
   }
 
   async onGoogleRegister() {
     this.isLoading = true;
-    try { await this.effects.googleRegister(); }
+    try { await this.googleAuthEffects.googleRegister(); }
     finally { this.isLoading = false; }
   }
 
   async onGoogleLogin() {
     this.isLoading = true;
-    try { await this.effects.googleLogin(); }
+    try { await this.googleAuthEffects.googleLogin(); }
     finally { this.isLoading = false; }
   }
 

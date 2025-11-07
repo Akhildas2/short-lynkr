@@ -30,8 +30,8 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.authApiUrl}/resend-otp`, { email });
   }
 
-  forgotPassword(data: { email: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.authApiUrl}/forgot-password`, data);
+  forgotPassword(email: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.authApiUrl}/forgot-password`, { email });
   }
 
   resetPassword(data: { email: string; otp: string; newPassword: string }): Observable<AuthResponse> {

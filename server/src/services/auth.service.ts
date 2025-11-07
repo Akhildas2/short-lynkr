@@ -82,8 +82,6 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const googleAuthenticate = async (token: string, mode: 'register' | 'login') => {
-    console.log("mode", mode);
-
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({
         idToken: token,
@@ -201,8 +199,6 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
 
         user.lastLoginAt = new Date();
         await user.save();
-
-        console.log("user", user);
 
         const userToken = generateToken(user);
         const { password: _, otp: __, otpExpiresAt: ___, ...userData } = user.toObject();

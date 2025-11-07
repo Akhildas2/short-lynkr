@@ -7,7 +7,7 @@
         <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out"
             [ngClass]="{ 'translate-x-full opacity-100 z-30': isActive, 'opacity-0 sm:opacity-0 z-0': !isActive }">
 
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6">Create Account</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-primary dark:text-blue-500">Create Account</h1>
             <div class="w-full max-w-md space-y-4">
                 <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
 
@@ -48,14 +48,11 @@
                     <button class="btn-primary" [disabled]="registerForm.invalid||isLoading">Sign Up</button>
                 </form>
 
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t" [style.border-color]="'var(--text-color)'"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2" [style.background-color]="'var(--background-color)'"
-                            [style.color]="'var(--text-color)'">Or</span>
-                    </div>
+                <!-- OR Divider -->
+                <div class="flex items-center justify-center py-2">
+                    <div class="flex-grow border-t" [style.border-color]="'var(--text-color)'"></div>
+                    <span class="px-3 text-base font-semibold" [style.color]="'var(--text-color)'">OR</span>
+                    <div class="flex-grow border-t" [style.border-color]="'var(--text-color)'"></div>
                 </div>
 
                 <!-- Google Register Button -->
@@ -79,7 +76,8 @@
                 </button>
 
                 <div class="mt-4 text-center sm:hidden">
-                    <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
+                    <a class="text-blue-600 dark:text-blue-400 cursor-pointer hover:text-blue-700 hover:dark:text-blue-500 hover:underline"
+                        (click)="toggleForm()">
                         Already have an account? Sign In
                     </a>
                 </div>
@@ -90,7 +88,7 @@
         <div class="absolute top-0 left-0 w-full sm:w-1/2 h-full flex flex-col items-center justify-center p-4 sm:p-10 transition-transform duration-700 ease-in-out z-10"
             [ngClass]="{ 'translate-x-0 opacity-100': !isActive, 'translate-x-full opacity-0': isActive }">
 
-            <h1 class="text-2xl sm:text-3xl font-bold mb-6">Sign In</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold mb-6 text-primary dark:text-blue-500">Sign In</h1>
             <div class="w-full max-w-md space-y-4">
                 <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
 
@@ -120,14 +118,19 @@
                     <button class="btn-primary" [disabled]="loginForm.invalid||isLoading">Sign In</button>
                 </form>
 
-                <div class="relative my-6">
-                    <div class="absolute inset-0 flex items-center">
-                        <div class="w-full border-t" [style.border-color]="'var(--text-color)'"></div>
-                    </div>
-                    <div class="relative flex justify-center text-sm">
-                        <span class="px-2" [style.background-color]="'var(--background-color)'"
-                            [style.color]="'var(--text-color)'">Or</span>
-                    </div>
+                <!-- OR Divider -->
+                <div class="flex items-center justify-center pt-2">
+                    <div class="flex-grow border-t" [style.border-color]="'var(--text-color)'"></div>
+                    <span class="px-3 text-base font-semibold" [style.color]="'var(--text-color)'">OR</span>
+                    <div class="flex-grow border-t" [style.border-color]="'var(--text-color)'"></div>
+                </div>
+
+                <!-- Forgot Password -->
+                <div class="text-center pb-2">
+                    <a class="text-blue-600 dark:text-blue-400  hover:text-blue-700 hover:dark:text-blue-500 hover:underline font-medium"
+                        [routerLink]="['/auth/forgot-password']">
+                        Forgot Password?
+                    </a>
                 </div>
 
                 <!--  Google Login Button -->
@@ -151,7 +154,8 @@
                 </button>
 
                 <div class="mt-4 text-center sm:hidden">
-                    <a class="text-blue-500 cursor-pointer" (click)="toggleForm()">
+                    <a class="text-blue-600 dark:text-blue-400 cursor-pointer hover:text-blue-700 hover:dark:text-blue-500 hover:underline"
+                        (click)="toggleForm()">
                         Don't have an account? Sign Up
                     </a>
                 </div>
@@ -162,23 +166,32 @@
         <div class="absolute top-0 left-0 sm:left-1/2 w-full sm:w-1/2 h-full hidden sm:flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
             [ngClass]="{ '-translate-x-full': isActive }">
 
-            <div class="max-w-sm">
-                <h2 class="text-3xl sm:text-4xl font-bold mb-4">
-                    {{ isActive ? 'Welcome Back to ' + appName() + '!' : 'Join ' + appName() + ' Today!' }}
+            <div class="max-w-md flex flex-col items-center">
+                <!-- Title -->
+                <h2 class="text-2xl sm:text-3xl font-bold">
+                    {{ isActive ? 'Join ' + appName() + ' Today!' : 'Welcome Back to ' + appName() + '!' }}
                 </h2>
-                <p class="mb-8 text-lg font-light">
-                    {{ isActive ? 'Manage your links and track QR code scans effortlessly.' : 'Simplify your links and
-                    generate dynamic QR codes in seconds.' }}
-                </p>
+
+                <!-- Illustration Image -->
+                <img *ngIf="isActive" src="assets/Sign up (1).gif" alt="Sign up Illustration"
+                    class="max-w-full object-contain dark:hidden">
+                <img *ngIf="isActive" src="assets/Sign up (2).gif" alt="Sign up Illustration"
+                    class="max-w-full object-contain hidden dark:block">
+
+                <img *ngIf="!isActive" src="assets/Login (1).gif" alt="Login Illustration"
+                    class="max-w-full object-contain dark:hidden">
+                <img *ngIf="!isActive" src="assets/Login (2).gif" alt="Login Illustration"
+                    class="max-w-full object-contain hidden dark:block">
+
+                <!-- Toggle Button -->
                 <button mat-stroked-button (click)="toggleForm()"
-                    class="rounded-md hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <mat-icon class="mr-2">
-                        {{ isActive ? 'login' : 'person_add' }}
-                    </mat-icon>
-                    {{ isActive ? 'Sign In' : 'Sign Up' }}
-                </button>
+                    class="rounded-md px-6 py-2 flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-blue-700">
+                    <mat-icon> {{ isActive ? 'login' : 'person_add' }} </mat-icon> {{ isActive ? 'Go To Sign In' : 'Go
+                    To Sign Up'
+                    }}</button>
             </div>
         </div>
+
     </div>
 
     <!-- Loading Overlay -->
