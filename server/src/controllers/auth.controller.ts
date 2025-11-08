@@ -85,16 +85,12 @@ export const resendOtp = async (req: Request, res: Response, next: NextFunction)
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email } = req.body;
-        console.log("email",email);
-        
         if (!email) {
             res.status(400).json({ message: 'Email is required.' });
             return;
         }
 
         const result = await authService.sendForgotPasswordOtp(email);
-        console.log("result",result);
-       
         res.status(200).json(result);
     } catch (error) {
         next(error);

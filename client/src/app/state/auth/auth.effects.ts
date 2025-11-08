@@ -143,6 +143,19 @@ export class AuthEffects {
         }
     }
 
+    async resetPassword(email: string, otp: string, newPassword: string): Promise<void> {
+        this.authStore.setLoading();
+        try {
+            const response = await firstValueFrom(this.authApiService.resetPassword({ email, otp, newPassword }));
+            this.snackbar.showSuccess(response.message || 'Password reset successfully!');
+            this.router.navigate(['/auth/sign-in']);
+
+        } catch (error: any) {
+            const errorMessage = error?.error?.message || 'Email verification failed.';
+            this.authStore.setError(errorMessage);
+            this.snackbar.showError(errorMessage);
+        }
+    }
 
     async logout() {
         const activeRole = getActiveRole();

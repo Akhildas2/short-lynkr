@@ -127,7 +127,7 @@
 
                 <!-- Forgot Password -->
                 <div class="text-center pb-2">
-                    <a class="text-blue-600 dark:text-blue-400  hover:text-blue-700 hover:dark:text-blue-500 hover:underline font-medium"
+                    <a class="text-base sm:text-lg text-blue-700 dark:text-blue-300 hover:underline hover:text-blue-400 hover:dark:text-blue-600 font-bold"
                         [routerLink]="['/auth/forgot-password']">
                         Forgot Password?
                     </a>
@@ -173,14 +173,14 @@
                 </h2>
 
                 <!-- Illustration Image -->
-                <img *ngIf="isActive" src="assets/Sign up (1).gif" alt="Sign up Illustration"
+                <img *ngIf="isActive" src="assets/Signup-light.gif" alt="Signup Illustration - Light"
                     class="max-w-full object-contain dark:hidden">
-                <img *ngIf="isActive" src="assets/Sign up (2).gif" alt="Sign up Illustration"
+                <img *ngIf="isActive" src="assets/Signup-dark.gif" alt="Signup Illustration - Dark"
                     class="max-w-full object-contain hidden dark:block">
 
-                <img *ngIf="!isActive" src="assets/Login (1).gif" alt="Login Illustration"
+                <img *ngIf="!isActive" src="assets/Login-light.gif" alt="Login Illustration - Light"
                     class="max-w-full object-contain dark:hidden">
-                <img *ngIf="!isActive" src="assets/Login (2).gif" alt="Login Illustration"
+                <img *ngIf="!isActive" src="assets/Login-dark.gif" alt="Login Illustration - Dark"
                     class="max-w-full object-contain hidden dark:block">
 
                 <!-- Toggle Button -->

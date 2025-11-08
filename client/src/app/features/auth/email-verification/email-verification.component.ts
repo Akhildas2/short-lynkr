@@ -3,10 +3,12 @@ import { SharedModule } from '../../../shared/shared.module';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthEffects } from '../../../state/auth/auth.effects';
+import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
+import { ThemeToggleComponent } from '../../../shared/components/ui/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-email-verification',
-  imports: [SharedModule, ReactiveFormsModule],
+  imports: [SharedModule, ReactiveFormsModule, ThemeToggleComponent],
   templateUrl: './email-verification.component.html',
   styleUrl: './email-verification.component.scss'
 })
@@ -20,11 +22,7 @@ export class EmailVerificationComponent implements OnInit {
 
   @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef>;
 
-  constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private authEffect: AuthEffects
-  ) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private authEffect: AuthEffects, private snackbar: SnackbarService) {
     this.otpForm = this.fb.group(
       {
         otp0: ['', [Validators.required, Validators.pattern('^[0-9]$')]],
@@ -91,6 +89,10 @@ export class EmailVerificationComponent implements OnInit {
   async submitOtp(): Promise<void> {
     this.otpForm.markAllAsTouched();
     if (this.otpForm.invalid) return;
+    if (!this.email) {
+      this.snackbar.showError('Email is missing. Cannot verify OTP.');
+      return;
+    }
 
     this.isLoading = true;
     const otp = Object.values(this.otpForm.value).join('');
@@ -104,6 +106,10 @@ export class EmailVerificationComponent implements OnInit {
 
   /** Resend OTP */
   async resendOtp(): Promise<void> {
+    if (!this.email) {
+      this.snackbar.showError('Email is missing. Cannot verify OTP.');
+      return;
+    }
     if (this.isLoading || !this.email) return;
 
     this.isLoading = true;

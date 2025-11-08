@@ -202,7 +202,7 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
 
         const userToken = generateToken(user);
         const { password: _, otp: __, otpExpiresAt: ___, ...userData } = user.toObject();
-        return { user: userData, token: userToken, isActive: true,  requireEmailVerification: false };
+        return { user: userData, token: userToken, isActive: true, requireEmailVerification: false };
     }
 
     throw new ApiError('Invalid authentication mode', 400);
@@ -246,14 +246,14 @@ export const sendForgotPasswordOtp = async (email: string) => {
     if (user) {
         const otp = generateOtp();
         user.otp = otp;
-        user.otpExpiresAt = new Date(Date.now() + 2 * 60 * 1000);
+        user.otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
         await user.save();
 
         await sendEmail({
             to: user.email,
             subject: 'Password Reset Request',
-            text: `Your password reset code is: ${otp}. It will expire in 2 minutes.`,
-            html: `<p>Your password reset code is: <b>${otp}</b></p><p>It will expire in 2 minutes.</p>`,
+            text: `Your password reset code is: ${otp}. It will expire in 5 minutes.`,
+            html: `<p>Your password reset code is: <b>${otp}</b></p><p>It will expire in 5 minutes.</p>`,
         });
     }
 

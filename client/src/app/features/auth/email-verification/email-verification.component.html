@@ -1,14 +1,20 @@
-<div class="flex flex-col md:flex-row min-h-screen">
+<div class="flex flex-col md:flex-row min-h-screen bg-[var(--background-color)] text-[var(--text-color)]">
+    <app-theme-toggle class="absolute top-4 right-4 z-10"></app-theme-toggle>
+
     <!-- Left Side -->
-    <div class="w-full md:w-1/2 flex items-center justify-center bg-white overflow-hidden relative">
-        <img src="assets/Enter OTP.gif" alt="OTP Illustration" class="max-h-screen max-w-full object-contain" />
+    <div class="w-full md:w-1/2 flex items-center justify-center overflow-hidden relative">
+        <img src="assets/Otp-light.gif" alt="Enter Otp Illustration - Light Mode"
+            class="max-h-screen max-w-full object-contain dark:hidden w-full h-full" />
+        <img src="assets/Otp-dark.gif" alt="Enter Otp Illustration - Dark Mode"
+            class="max-h-screen max-w-full object-contain hidden dark:block w-full h-full" />
+
     </div>
 
     <!-- Right Side (OTP Form) -->
-    <div class="w-full md:w-1/2 flex items-center justify-center bg-white p-8">
+    <div class="w-full md:w-1/2 flex items-center justify-center bg-white dark:bg-gray-900 p-8">
         <div class="w-full max-w-md">
-            <h2 class="text-3xl font-bold text-gray-800 text-center mb-4">Enter Your OTP</h2>
-            <p class="text-gray-500 text-center mb-8">
+            <h2 class="text-3xl font-bold text-center mb-4">Enter Your OTP</h2>
+            <p class="text-gray-700 dark:text-gray-300 text-center mb-8">
                 Enter the 6-digit OTP sent to your <span class="font-bold hover:text-primary">{{ email }}</span>
             </p>
 
@@ -17,7 +23,7 @@
                 <div class="flex justify-between gap-2 py-3">
                     <input *ngFor="let ctrl of ['otp0','otp1','otp2','otp3','otp4','otp5']; let i = index" #otpInput
                         type="text" maxlength="1" [formControlName]="ctrl" (keyup)="onOtpInput($event, i)"
-                        (keydown)="onKeyDown($event, i)" class="otp-box text-center text-xl border border-gray-600 rounded-lg
+                        (keydown)="onKeyDown($event, i)" class="bg-white text-black text-center text-xl border border-gray-600 rounded-lg
                         flex-1 min-w-[2rem] max-w-[3.5rem] h-12 focus:border-2
                         focus:border-primary focus:outline-none" />
                 </div>
@@ -48,7 +54,7 @@
                 </ng-container>
                 <ng-template #resendBtn>
                     <button type="button"
-                        class="font-bold text-lg sm:text-xl text-primary hover:underline hover:text-blue-800"
+                        class="font-bold text-lg sm:text-xl text-blue-700 dark:text-blue-300 hover:underline hover:text-blue-400 hover:dark:text-blue-600"
                         [disabled]="isLoading" (click)="resendOtp()">
                         {{ isLoading ? 'Sending...' : 'Resend OTP' }}
                     </button>
