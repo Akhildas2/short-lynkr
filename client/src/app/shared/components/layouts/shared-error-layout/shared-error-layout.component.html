@@ -1,0 +1,59 @@
+<div class="flex flex-col min-h-screen bg-inherit text-[var(--text-color)]">
+    <div class="page-wrapper bg-white dark:bg-gray-900">
+        <app-theme-toggle class="flex justify-end mt-4 mr-4"></app-theme-toggle>
+
+        <!-- Numbers -->
+        <div class="numbers-layer z-20 pointer-events-none">
+            <div *ngFor="let number of getNumberArray(); let i = index" class="number"
+                [class.-with-shadow]="isWithShadow(i)">
+                {{ number }}
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="oops-message">
+            <div class="w-full max-w-md mx-auto">
+                <ng-container *ngIf="errorConfig.lightGif && errorConfig.darkGif ; else showCode">
+                    <img [src]="errorConfig.lightGif" [alt]="errorConfig.code + ' Illustration - Light Mode'"
+                        class="object-contain dark:hidden w-full h-full" />
+                    <img [src]="errorConfig.darkGif" [alt]="errorConfig.code + ' Illustration - Dark Mode'"
+                        class="object-contain hidden dark:block w-full h-full" />
+                </ng-container>
+
+                <ng-template #showCode>
+                    <div class="text-9xl font-bold text-gray-700 dark:text-gray-300 animate-bounce">
+                        {{ errorConfig.code }}
+                    </div>
+                </ng-template>
+
+            </div>
+
+            <h2 class="text-3xl font-semibold mb-6 mt-4">{{ errorConfig.title }}</h2>
+            <p class="text-center text-gray-700 dark:text-gray-300 mb-6">
+                {{ errorConfig.message }}
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-4">
+                <!-- Go Back Button -->
+                <button (click)="goBack()" class="flex items-center justify-center px-6 py-3 rounded-lg font-medium text-white 
+           bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 
+           shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300 ease-in-out 
+           focus:outline-none focus:ring-4 focus:ring-purple-300">
+                    <mat-icon class="mr-2 text-white">arrow_back</mat-icon>
+                    Go Back
+                </button>
+
+                <!-- Go Home Button -->
+                <button (click)="goHome()" class="flex items-center justify-center px-6 py-3 rounded-lg font-medium text-white 
+           bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 
+           shadow-md hover:scale-105 hover:shadow-xl transition-transform duration-300 ease-in-out 
+           focus:outline-none focus:ring-4 focus:ring-cyan-300">
+                    <mat-icon class="mr-2 text-white">home</mat-icon>
+                    Go Home
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+</div>

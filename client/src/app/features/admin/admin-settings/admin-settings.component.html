@@ -1,13 +1,14 @@
 <div class="px-2 sm:px-4 max-w-screen-2xl">
 
-    <div class="flex gap-6 mx-auto">
+    <div class="flex flex-col lg:flex-row gap-6 mx-auto">
 
         <!-- Sidebar Navigation -->
-        <div class="w-64 h-full bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-2 shadow-lg">
-            <ul class="flex flex-col gap-2">
-                <li *ngFor="let tab of tabs">
+        <div class="w-full lg:w-64 h-full bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-2 shadow-lg">
+            <ul class="flex flex-wrap justify-center lg:flex-col gap-2 py-2 lg:py-0">
+                <li *ngFor="let tab of tabs" class="flex-[1_1_45%] sm:flex-[1_1_30%] lg:flex-none">
                     <button mat-stroked-button (click)="setActiveTab(tab.id)"
-                        class="group flex items-center gap-3 w-full px-4 py-2 rounded-lg transition truncate" [ngClass]="{
+                        class="group flex items-center justify-center lg:justify-start gap-3 w-full px-4 py-2 rounded-lg transition text-sm md:text-base truncate"
+                        [ngClass]="{
                         'bg-blue-600 text-white': activeTab === tab.id,
                         'hover:bg-blue-600 hover:text-white': activeTab !== tab.id
                         }">

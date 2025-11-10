@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { ErrorPageComponent } from './error-page/error-page.component';
 import { NotFoundComponent } from './error-pages/not-found.component';
 import { BadGatewayComponent } from './error-pages/bad-gateway.component';
 import { InternalErrorComponent } from './error-pages/internal-error.component';
+import { ErrorPageComponent } from './error-pages/error-page.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },

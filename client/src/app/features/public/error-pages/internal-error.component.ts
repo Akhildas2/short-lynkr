@@ -1,12 +1,11 @@
-
 import { Component } from '@angular/core';
-import { ErrorConfig, ErrorPageComponent } from '../../../shared/components/layouts/error-page/error-page.component';
+import { SharedErrorLayoutComponent } from '../../../shared/components/layouts/shared-error-layout/shared-error-layout.component';
+import { ErrorConfig } from '../../../models/error/errorConfig.interface';
 
 @Component({
     selector: 'app-internal-error',
-    standalone: true,
-    imports: [ErrorPageComponent],
-    template: '<app-error-page [errorConfig]="errorConfig"></app-error-page>'
+    imports: [SharedErrorLayoutComponent],
+    template: '<app-shared-error-layout [errorConfig]="errorConfig"></app-shared-error-layout>'
 })
 export class InternalErrorComponent {
     errorConfig: ErrorConfig = {

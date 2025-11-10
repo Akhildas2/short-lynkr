@@ -7,6 +7,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { errorInterceptor } from './core/interceptors/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     provideAnimationsAsync(),
     provideHttpClient(
-      withInterceptors([authInterceptor])
+      withInterceptors([authInterceptor, errorInterceptor])
     ),
     provideCharts(withDefaultRegisterables()),
   ]
