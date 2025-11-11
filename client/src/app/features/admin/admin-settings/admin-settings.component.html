@@ -1,13 +1,15 @@
 <div class="px-2 sm:px-4 max-w-screen-2xl">
 
-    <div class="flex flex-col lg:flex-row gap-6 mx-auto">
+    <div class="flex flex-col gap-6 mx-auto">
 
         <!-- Sidebar Navigation -->
-        <div class="w-full lg:w-64 h-full bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-2 shadow-lg">
-            <ul class="flex flex-wrap justify-center lg:flex-col gap-2 py-2 lg:py-0">
-                <li *ngFor="let tab of tabs" class="flex-[1_1_45%] sm:flex-[1_1_30%] lg:flex-none">
+        <div
+            class="w-full bg-white dark:bg-gray-800 rounded-xl p-4 shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
+            <ul
+                class="grid [grid-template-columns:repeat(auto-fit,minmax(8rem,1fr))]  md:grid-cols-3 lg:grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-4 items-center">
+                <li *ngFor="let tab of tabs">
                     <button mat-stroked-button (click)="setActiveTab(tab.id)"
-                        class="group flex items-center justify-center lg:justify-start gap-3 w-full px-4 py-2 rounded-lg transition text-sm md:text-base truncate"
+                        class="group flex items-center justify-center lg:justify-start gap-2 w-full px-4 py-2 text-xs md:text-sm lg:text-base font-medium rounded-lg transition-all duration-300 ease-out"
                         [ngClass]="{
                         'bg-blue-600 text-white': activeTab === tab.id,
                         'hover:bg-blue-600 hover:text-white': activeTab !== tab.id
@@ -29,63 +31,85 @@
         <div class="h-full w-full bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl">
 
             <!-- Profile & Security Tab -->
-            <ng-container *ngIf="activeTab==='profile'">
-                <h2 class="text-2xl font-semibold mb-2">Profile & Security</h2>
-                <p class="text-sm text-gray-700 dark:text-gray-300 mb-6">Manage your profile information and account
-                    security</p>
+            <ng-container *ngIf="activeTab === 'profile'">
+                <section class="py-4 sm:py-6">
+                    <!-- Title -->
+                    <div class="text-center sm:text-left mb-6 sm:mb-8">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold mb-1 text-gray-900 dark:text-gray-100">
+                            Profile & Security
+                        </h2>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                            Manage your profile information and account security
+                        </p>
+                    </div>
 
-                <main class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-                    <mat-card *ngIf="isAdmin() && admin() as u;"
-                        class="w-full bg-white dark:bg-gray-800 shadow-lg rounded-3xl p-6 sm:p-8 space-y-8 border border-gray-200 dark:border-gray-700">
+                    <!-- Main Card -->
+                    <mat-card *ngIf="isAdmin() && admin() as u"
+                        class="max-w-full sm:max-w-4xl mx-auto bg-white dark:bg-gray-900 rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 transition-all duration-500 hover:shadow-blue-500 dark:hover:shadow-blue-800"
+                        @zoomIn>
 
                         <div
-                            class="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-                            <div
-                                class="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 text-center sm:text-left">
-                                <img mat-card-avatar
-                                    [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.username"
-                                    alt="{{ u.username }}"
-                                    class="w-28 h-28 md:w-36 md:h-36 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-lg transition-transform duration-300 hover:scale-105 ring-4 ring-blue-200 dark:ring-blue-900" />
-                                <div>
-                                    <h2
-                                        class="text-3xl sm:text-4xl font-extrabold text-gray-800 dark:text-gray-100 leading-tight">
-                                        {{ u.username | titlecase }}</h2>
+                            class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 sm:gap-8 p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
+
+                            <!-- Left: Avatar + Logout -->
+                            <div class="flex flex-col items-left sm:items-start space-y-4 w-full sm:w-auto">
+                                <div class="relative group">
+                                    <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.username"
+                                        alt="{{ u.username }}"
+                                        class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full border-4 border-blue-500 dark:border-blue-400 shadow-lg ring-4 ring-blue-100 dark:ring-blue-800 transition-transform duration-300 group-hover:scale-105" />
+                                    <mat-icon
+                                        class="absolute top-0 left-0 sm:left-1 sm:top-3 text-green-500 hover:text-green-600 transition-all duration-300 scale-110 sm:scale-150">verified</mat-icon>
+                                </div>
+
+                                <button mat-mini-fab matTooltip="Logout Now" (click)="logout()"
+                                    class="absolute right-2 top-4 bg-red-500 hover:bg-red-600 white-text transition-all duration-300 hover:scale-110 text-xs sm:text-base">
+                                    <mat-icon>logout</mat-icon>
+                                </button>
+
+                                <div class="text-center sm:text-left">
+                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                        {{ u.username | titlecase }}
+                                    </h2>
                                     <p
-                                        class="text-gray-600 dark:text-gray-300 text-sm sm:text-base flex items-center justify-center sm:justify-start mt-2">
-                                        <mat-icon class="mr-2 text-base">email</mat-icon>{{ u.email | capitalize }}
+                                        class="flex items-center justify-center sm:justify-start mt-3 text-gray-600 dark:text-gray-300 text-xs sm:text-base font-semibold">
+                                        <mat-icon class="mr-1 text-md">email</mat-icon>
+                                        {{ u.email | lowercase }}
                                     </p>
                                 </div>
                             </div>
 
-                            <button mat-mini-fab
-                                class="bg-red-500 hover:bg-red-600/95 dark:bg-red-500 dark:hover:bg-red-600/95 white-text
-                                transition-all duration-300 ease-out transform hover:scale-125 hover:shadow-xl active:scale-100"
-                                matTooltip="Logout Now" (click)="logout()">
-                                <mat-icon>logout</mat-icon>
-                            </button>
+                            <!-- Right: Quick Stats / Info -->
+                            <div
+                                class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 sm:p-5 w-full sm:w-auto text-center sm:text-left">
+                                <h3 class="text-gray-800 dark:text-gray-200 font-semibold mb-2 text-sm sm:text-base">
+                                    Account Overview
+                                </h3>
+                                <ul class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 space-y-1 sm:space-y-2">
+                                    <li><strong>Role:</strong> {{ u.role | titlecase }}</li>
+                                    <li><strong>Member Since:</strong> {{ u.createdAt | date }}</li>
+                                </ul>
+                            </div>
                         </div>
 
-
-                        <div class="flex flex-col sm:flex-row justify-end gap-6 pt-6">
-                            <!-- Edit Profile -->
+                        <!-- Action Buttons -->
+                        <div
+                            class="flex flex-col sm:flex-row justify-end gap-3 sm:gap-6 p-4 sm:p-6 bg-gray-100 dark:bg-gray-800 rounded-b-2xl sm:rounded-b-3xl">
                             <button mat-stroked-button (click)="openEditDialog()"
-                                class="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 border-gray-600 dark:border-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
-                                <mat-icon class="group-hover:scale-110  transition-transform">edit</mat-icon>
+                                class="flex items-center justify-center gap-2 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border-gray-400 dark:border-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
+                                <mat-icon>edit</mat-icon>
                                 Edit Profile
                             </button>
 
-                            <!-- Change Password -->
-                            <button mat-button (click)="openPasswordDialog()"
-                                class="white-text flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-blue-500 hover:bg-blue-700 rounded-lg transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
-                                <mat-icon class="group-hover:scale-110 transition-transform">lock_reset</mat-icon>
+                            <button mat-flat-button (click)="openPasswordDialog()"
+                                class="flex items-center justify-center gap-2 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
+                                <mat-icon>lock_reset</mat-icon>
                                 Change Password
                             </button>
                         </div>
-
                     </mat-card>
-
-                </main>
+                </section>
             </ng-container>
+
 
             <!-- Url Settings Tab -->
             <app-settings-tab *ngIf="activeTab === 'url-settings'" [title]="'URL Settings'" [sectionKey]="'urlSettings'"

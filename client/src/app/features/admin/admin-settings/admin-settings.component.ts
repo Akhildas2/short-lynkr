@@ -11,12 +11,14 @@ import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 import { defaultAdminSettings } from '../../../models/settings/adminSettings-defaults';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme/theme.service';
+import { zoomInAnimation } from '../../../shared/utils/animations.util';
 
 @Component({
   selector: 'app-admin-settings',
   imports: [SharedModule, SettingsTabComponent],
   templateUrl: './admin-settings.component.html',
-  styleUrl: './admin-settings.component.scss'
+  styleUrl: './admin-settings.component.scss',
+  animations:[zoomInAnimation]
 })
 export class AdminSettingsComponent implements OnInit {
   tabs = [
