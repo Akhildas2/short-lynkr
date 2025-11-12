@@ -3,12 +3,14 @@ import { SharedModule } from '../../../shared.module';
 import { SnackbarService } from '../../../services/snackbar/snackbar.service';
 import { DateAdapter } from '@angular/material/core';
 import { combineDateAndTime, getFormattedTime, getTimeString, isToday, parseTime } from '../../../utils/date.helpers';
+import { zoomInAnimation } from '../../../utils/animations.util';
 
 @Component({
   selector: 'app-settings-tab',
   imports: [SharedModule],
   templateUrl: './settings-tab.component.html',
-  styleUrl: './settings-tab.component.scss'
+  styleUrl: './settings-tab.component.scss',
+  animations: [zoomInAnimation]
 })
 export class SettingsTabComponent implements OnChanges {
   private snackbarService = inject(SnackbarService);
@@ -36,7 +38,7 @@ export class SettingsTabComponent implements OnChanges {
     this.adapter.setLocale('en-GB'); // dd/MM/yyyy
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.settings?.maintenanceStart) {
       this.settings.maintenanceStartTime = getTimeString(this.settings.maintenanceStart);
     }

@@ -8,6 +8,7 @@ import { sendVerificationOtp } from '../utils/sendVerificationOtp.utils';
 import { generateToken } from '../utils/generateToken.utils';
 import { createUser } from '../utils/createUser.utils';
 import { OAuth2Client } from 'google-auth-library';
+import { sendNotification } from './sendNotifications.service';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -17,6 +18,7 @@ export const registerUser = async (username: string, email: string, password: st
     if (!settings) throw new ApiError('Settings not found', 500);
 
     const { allowRegistration, requireEmailVerification, moderateNewUsers } = settings.userSettings;
+    const { appName } = settings.systemSettings;
     if (!allowRegistration) throw new ApiError('User registration is disabled by admin.', 403);
 
     // Check existing user
@@ -36,14 +38,38 @@ export const registerUser = async (username: string, email: string, password: st
         user.isEmailVerified = true;
         user.isActive = !moderateNewUsers;
         await user.save();
-        if (!user.isActive) return { message: "Registration successful. Awaiting admin approval before login.", requireEmailVerification: false, isActive: false };
+
+        if (!user.isActive) {
+            // Notify admins
+            await sendNotification({
+                title: "New User Pending Approval",
+                message: `${user.username} just registered on ${appName} and is awaiting admin approval.`,
+                forAdmin: true,
+                type: "info",
+                category: "user",
+            });
+
+            return {
+                message: "Registration successful. Awaiting admin approval before login.",
+                requireEmailVerification: false,
+                isActive: false
+            };
+        }
 
         // Auto-login if active
         const token = generateToken(user);
         const { password: _, ...userData } = user.toObject();
+        // Notify admins
+        await sendNotification({
+            title: "New User Joined",
+            message: ` ${user.username} just joined ${appName}.`,
+            forAdmin: true,
+            type: "success",
+            category: "user",
+        });
+
         return { message: "Logged in successfully.", user: userData, token, requireEmailVerification: false, isActive: true };
     }
-
 
     // Create new user
     user = await createUser(username, email, password, requireEmailVerification, moderateNewUsers);
@@ -55,7 +81,31 @@ export const registerUser = async (username: string, email: string, password: st
 
     await user.save();
 
-    if (!user.isActive) return { message: "Registration successful. Awaiting admin approval.", requireEmailVerification: false, isActive: false };
+    if (!user.isActive) {
+        // Notify admins
+        await sendNotification({
+            title: "New User Registered",
+            message: `${user.username} has joined ${appName} (Awaiting admin approval).`,
+            forAdmin: true,
+            type: "info",
+            category: "user"
+        });
+
+        return {
+            message: "Registration successful. Awaiting admin approval before login.",
+            requireEmailVerification: false,
+            isActive: false
+        };
+    }
+
+    // Notify admins
+    await sendNotification({
+        title: "New User Registered",
+        message: `${user.username} has joined ${appName}.`,
+        forAdmin: true,
+        type: "info",
+        category: "user"
+    });
 
     const token = generateToken(user);
     const { password: _, ...userData } = user.toObject();
@@ -101,6 +151,7 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
     if (!settings) throw new ApiError('Settings not found', 500);
 
     const { allowRegistration, moderateNewUsers } = settings.userSettings;
+    const { appName } = settings.systemSettings;
 
     let user = await User.findOne({ email });
 
@@ -123,6 +174,15 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
             await user.save();
 
             if (!user.isActive) {
+                // Notify admins
+                await sendNotification({
+                    title: "New Google User Joined",
+                    message: `${user.username} signed up using Google on ${appName}.`,
+                    forAdmin: true,
+                    type: "success",
+                    category: "user",
+                });
+
                 return {
                     message: "Registration successful. Awaiting admin approval before login.",
                     requireEmailVerification: false,
@@ -132,6 +192,15 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
 
             const token = generateToken(user);
             const { password: _, ...userData } = user.toObject();
+            // Notify admins
+            await sendNotification({
+                title: "New Google User Joined",
+                message: `${user.username} signed up using Google on ${appName}.`,
+                forAdmin: true,
+                type: "success",
+                category: "user",
+            });
+
             return {
                 message: "Registered and logged in successfully.",
                 user: userData,
@@ -156,6 +225,15 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
         await user.save();
 
         if (!user.isActive) {
+            // Notify admins
+            await sendNotification({
+                title: "New Google User Joined",
+                message: `${user.username} signed up using Google on ${appName}.`,
+                forAdmin: true,
+                type: "success",
+                category: "user",
+            });
+
             return {
                 message: "Registration successful. Awaiting admin approval.",
                 requireEmailVerification: false,
@@ -165,6 +243,15 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
 
         const userToken = generateToken(user);
         const { password: _, ...userData } = user.toObject();
+        // Notify admins
+        await sendNotification({
+            title: "New Google User Joined",
+            message: `${user.username} signed up using Google on ${appName}.`,
+            forAdmin: true,
+            type: "success",
+            category: "user",
+        });
+
         return {
             message: 'Registration successful. Logged in successfully.',
             user: userData,

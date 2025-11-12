@@ -10,4 +10,4 @@ const qrCodeSchema = new Schema<QrCodeDocument>({
     backgroundColor: { type: String, default: '#FFFFFF' },
 }, { timestamps: true });
 
-export default mongoose.model<QrCodeDocument>('QrCode', qrCodeSchema)
+export default mongoose.model<QrCodeDocument>('QrCode', qrCodeSchema);

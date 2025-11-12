@@ -29,7 +29,7 @@ export class AdminSidebarComponent {
     { icon: 'groups', label: 'Users', routeLink: '/admin/users' },
     { icon: 'link', label: 'Urls', routeLink: '/admin/urls' },
     { icon: 'analytics', label: 'Analytics', routeLink: '/admin/analytics' },
-    //{ icon: 'folder', label: 'Categories', routeLink: '/admin/categories' },
+    { icon: 'notifications', label: 'Notifications', routeLink: '/admin/notifications' },
     // { icon: 'security', label: 'Security', routeLink: '/admin/security' }
   ];
 

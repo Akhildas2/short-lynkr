@@ -6,6 +6,7 @@ import { UrlsManagementComponent } from './urls-management/urls-management.compo
 import { AdminAnalyticsComponent } from './admin-analytics/admin-analytics.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
+import { AdminNotificationComponent } from './admin-notification/admin-notification.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'users', component: UsersManagementComponent },
       { path: 'urls', component: UrlsManagementComponent },
       { path: 'analytics', component: AdminAnalyticsComponent },
+      { path: 'notifications', component: AdminNotificationComponent },
       { path: 'settings', component: AdminSettingsComponent },
     ]
   }

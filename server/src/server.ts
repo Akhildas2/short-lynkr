@@ -9,6 +9,7 @@ import urlRoutes, { redirectRouter } from './routes/url.routes';
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import adminRoutes from './routes/admin.routes';
+import notificationRoutes from './routes/notification.routes';
 import { errorHandler } from "./middleware/errorHandler";
 import { apiAccessMiddleware } from "./middleware/api-access";
 import { startMaintenanceStatusBroadcast } from "./services/maintenance.service";
@@ -53,6 +54,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/url', urlRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 app.use('/', redirectRouter);
 app.use(errorHandler);
 

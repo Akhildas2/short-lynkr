@@ -11,6 +11,7 @@ import { getDateRange } from '../utils/getDateRange.utils';
 import { getAverageResponseTime, getDbStorageUsed, getErrorRate } from '../middleware/metrics';
 import { formatBytes } from '../utils/formatBytes';
 import { applyRetention } from '../utils/applyRetention.utils';
+import { sendNotification } from './sendNotifications.service';
 
 type UserId = string | Types.ObjectId;
 type UrlId = string | Types.ObjectId;
@@ -39,6 +40,25 @@ const AdminService = {
         // Create and save user
         const user = new User(data);
         await user.save();
+
+        // Notify the user
+        await sendNotification({
+            userId: user.id,
+            title: "Account Created",
+            message: `Welcome ${user.username}! Your account has been created.`,
+            type: "success",
+            category: "user"
+        });
+
+        // Notify admins
+        await sendNotification({
+            title: "New User Registered",
+            message: `${user.username} has registered.`,
+            forAdmin: true,
+            type: "info",
+            category: "system"
+        });
+
         return user.toObject();
     },
 
@@ -60,6 +80,26 @@ const AdminService = {
         user.isBlocked = isBlocked;
         user.blockedAt = isBlocked ? new Date() : null;
         await user.save();
+
+        // Notify the user
+        await sendNotification({
+            userId: user.id, // use _id consistently
+            title: isBlocked ? 'Account Blocked' : 'Account Unblocked',
+            message: `Hello ${user.username}, your account has been ${isBlocked ? 'blocked' : 'unblocked'} by an admin.`,
+            type: isBlocked ? 'warning' : 'success',
+            category: 'user',
+        });
+
+        // Notify admins
+        await sendNotification({
+            title: `User ${user.username} (${user.email}) has been ${isBlocked ? 'blocked' : 'unblocked'}`,
+            message: `Admin has ${isBlocked ? 'blocked' : 'unblocked'} the account of ${user.username} (${user.email}).`,
+            forAdmin: true,
+            type: 'info',
+            category: 'system',
+        });
+
+
         return user.toObject();
     },
 
@@ -92,10 +132,32 @@ const AdminService = {
     async toggleBlockUrl(urlId: UrlId, isBlocked: boolean) {
         const url = await Urls.findById(urlId);
         if (!url) throw new ApiError('URL not found', 404);
+        const user = url.userId ? await User.findById(url.userId) : null;
 
         url.isBlocked = isBlocked;
         url.blockedAt = isBlocked ? new Date() : null;
         await url.save();
+
+        // Notify the user (if linked)
+        if (user) {
+            await sendNotification({
+                userId: user.id,
+                title: isBlocked ? 'URL Blocked' : 'URL Unblocked',
+                message: `Hi ${user.username}, your shortened URL (${url.shortUrl}) — ${url.originalUrl} has been ${isBlocked ? 'blocked' : 'unblocked'} by an admin.`,
+                type: isBlocked ? 'warning' : 'success',
+                category: 'url',
+            });
+        }
+
+        // Notify admins
+        await sendNotification({
+            title: `URL ${isBlocked ? 'Blocked' : 'Unblocked'}`,
+            message: `${user ? user.username : 'Unknown User'}’s URL (${url.shortUrl}) — ${url.originalUrl} has been ${isBlocked ? 'blocked' : 'unblocked'} by an admin.`,
+            forAdmin: true,
+            type: 'info',
+            category: 'system',
+        });
+
         return url.toObject();
     },
 

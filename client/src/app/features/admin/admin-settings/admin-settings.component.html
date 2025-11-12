@@ -52,27 +52,30 @@
                             class="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 sm:gap-8 p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
 
                             <!-- Left: Avatar + Logout -->
-                            <div class="flex flex-col items-left sm:items-start space-y-4 w-full sm:w-auto">
+                            <div class="flex flex-col items-start justify-between space-y-4 w-full sm:w-auto">
                                 <div class="relative group">
                                     <img [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.username"
                                         alt="{{ u.username }}"
                                         class="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full border-4 border-blue-500 dark:border-blue-400 shadow-lg ring-4 ring-blue-100 dark:ring-blue-800 transition-transform duration-300 group-hover:scale-105" />
                                     <mat-icon
-                                        class="absolute top-0 left-0 sm:left-1 sm:top-3 text-green-500 hover:text-green-600 transition-all duration-300 scale-110 sm:scale-150">verified</mat-icon>
+                                        class="absolute top-1 right-1 sm:top-2 sm:right-4 text-green-500 hover:text-green-600 transition-all duration-300 scale-125 sm:scale-150">verified</mat-icon>
                                 </div>
 
                                 <button mat-mini-fab matTooltip="Logout Now" (click)="logout()"
-                                    class="absolute right-2 top-4 bg-red-500 hover:bg-red-600 white-text transition-all duration-300 hover:scale-110 text-xs sm:text-base">
+                                    class="absolute right-4 top-0 bg-red-500 hover:bg-red-600 white-text transition-all duration-300 hover:scale-110 text-xs sm:text-base">
                                     <mat-icon>logout</mat-icon>
                                 </button>
 
-                                <div class="text-center sm:text-left">
-                                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                <div class="text-start">
+                                    <h2
+                                        class="flex items-center sm:justify-start text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 truncate">
+                                        <mat-icon class="mr-2 scale-75 sm:scale-125">person</mat-icon>
                                         {{ u.username | titlecase }}
                                     </h2>
                                     <p
-                                        class="flex items-center justify-center sm:justify-start mt-3 text-gray-600 dark:text-gray-300 text-xs sm:text-base font-semibold">
-                                        <mat-icon class="mr-1 text-md">email</mat-icon>
+                                        class="flex items-center justify-center sm:justify-start mt-3 text-gray-700 dark:text-gray-300 text-xs sm:text-base font-semibold truncate">
+                                        <mat-icon
+                                            class="mr-2 scale-75 sm:scale-125 text-gray-700 dark:text-gray-300">email</mat-icon>
                                         {{ u.email | lowercase }}
                                     </p>
                                 </div>
@@ -80,12 +83,13 @@
 
                             <!-- Right: Quick Stats / Info -->
                             <div
-                                class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 sm:p-5 w-full sm:w-auto text-center sm:text-left">
+                                class="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4 sm:p-5 w-full sm:w-auto text-center sm:text-left">
                                 <h3 class="text-gray-800 dark:text-gray-200 font-semibold mb-2 text-sm sm:text-base">
                                     Account Overview
                                 </h3>
-                                <ul class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 space-y-1 sm:space-y-2">
-                                    <li><strong>Role:</strong> {{ u.role | titlecase }}</li>
+                                <ul
+                                    class="text-xs sm:text-base text-gray-900 dark:text-gray-400 space-y-1 sm:space-y-2">
+                                    <li class="text-green-800 dark:text-green-300"><strong>Role:</strong> {{ u.role | titlecase }}</li>
                                     <li><strong>Member Since:</strong> {{ u.createdAt | date }}</li>
                                 </ul>
                             </div>
@@ -102,7 +106,7 @@
 
                             <button mat-flat-button (click)="openPasswordDialog()"
                                 class="flex items-center justify-center gap-2 w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base">
-                                <mat-icon>lock_reset</mat-icon>
+                                <mat-icon class="text-white">lock_reset</mat-icon>
                                 Change Password
                             </button>
                         </div>

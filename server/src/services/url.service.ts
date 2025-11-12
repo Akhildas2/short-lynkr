@@ -10,7 +10,11 @@ import { aggregateStats, filterAnalyticsByRange, getPercentageChange, getTop } f
 import QrCodeModel from '../models/qrCode.model';
 import { anonymizeIp } from '../utils/anonymizeIp.utils';
 import { checkUserUrlLimit } from '../utils/checkUserUrlLimit.utils';
+import { sendNotification } from './sendNotifications.service';
+import { Types } from 'mongoose';
 const UAParser = require('ua-parser-js');
+
+const toObjectId = (id: string) => new Types.ObjectId(id);
 
 export const createShortUrl = async (originalUrl: string, userId?: string, customCode?: string, expiryDays?: number, clickLimit?: number,
     tags?: string[]) => {
@@ -124,6 +128,28 @@ export const createShortUrl = async (originalUrl: string, userId?: string, custo
 
     newUrl.qrCode = qrCode._id;
     await newUrl.save();
+
+    // Notify admins
+    await sendNotification({
+        title: " New URL Created",
+        message: userId
+            ? `User ${userId} created a new short link (${shortUrl}).`
+            : `A guest user created a new short link (${shortUrl}).`,
+        forAdmin: true,
+        type: "info",
+        category: "url",
+    });
+
+    // User notification
+    if (userId) {
+        await sendNotification({
+            userId: toObjectId(userId),
+            title: "Short URL Created",
+            message: `Your short link (${shortUrl}) for ${originalUrl} was created successfully.`,
+            type: "success",
+            category: "url",
+        });
+    }
 
     return newUrl.populate('qrCode');
 };
@@ -249,6 +275,26 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     url.isActive = notExpired && underLimit;
 
     const updatedUrl = await url.save();
+
+    // Notify admins
+    await sendNotification({
+        title: "Short URL Updated",
+        message: `User ${userId} updated short link: ${updatedUrl.shortUrl}`,
+        forAdmin: true,
+        type: "info",
+        category: "url",
+    });
+
+    if (userId) {
+        await sendNotification({
+            userId: toObjectId(userId),
+            title: "URL Updated",
+            message: `Your short link (${updatedUrl.shortUrl}) was updated successfully.`,
+            type: "success",
+            category: "url",
+        });
+    }
+
     await updatedUrl.populate('qrCode');
     return updatedUrl;
 
@@ -320,6 +366,17 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
 
             if (overClickLimit || expired) {
                 url.isActive = false; // Block the URL immediately
+
+                if (url.userId) {
+                    const reason = overClickLimit ? 'reached its click limit' : 'expired';
+                    await sendNotification({
+                        userId: url.userId,
+                        title: "URL Deactivated",
+                        message: `Your short link (${url.shortUrl}) has been deactivated because it ${reason}.`,
+                        type: "warning",
+                        category: "url",
+                    });
+                }
             }
         }
     }
@@ -338,7 +395,30 @@ export const getUserUrls = async (userId?: string) => {
 }
 
 export const deleteUserUrl = async (id: string, userId?: string) => {
-    return await UrlModel.findOneAndDelete({ _id: id, userId });
+    const deletedUrl = await UrlModel.findOneAndDelete({ _id: id, userId });
+    if (!deletedUrl) throw new ApiError("URL not found or access denied", 404);
+    //  Notify admins
+    await sendNotification({
+        title: "Short URL Deleted",
+        message: `User ${userId} deleted the short link: ${deletedUrl.shortUrl}`,
+        forAdmin: true,
+        type: "warning",
+        category: "url",
+    });
+
+    //  Notify user
+    if (userId) {
+        await sendNotification({
+            userId: toObjectId(userId),
+            title: "URL Deleted",
+            message: `Your short link (${deletedUrl.shortUrl}) was deleted successfully.`,
+            type: "info",
+            category: "url",
+        });
+    }
+
+    return deletedUrl;
+
 };
 
 export const getUrlById = async (id: string, range: string) => {

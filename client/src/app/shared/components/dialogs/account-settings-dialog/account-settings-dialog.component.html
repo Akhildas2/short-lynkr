@@ -54,8 +54,9 @@
             class="mr-2 px-6 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95"><mat-icon>cancel</mat-icon>Cancel</button>
 
         <button mat-flat-button [disabled]="form.invalid" [ngClass]="{ 'opacity-50': form.invalid }" type="submit"
-            class="px-6 py-2 rounded-md text-black dark:text-white  bg-blue-500 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-800 transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
-            <mat-icon>{{ data.mode === 'edit' ? 'update' : 'lock_reset' }}</mat-icon>{{ data.mode === 'edit' ? 'Update'
+            class="px-6 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-800 transition-all duration-300 ease-out transform hover:scale-110 hover:shadow-xl active:scale-95">
+            <mat-icon class="text-white">{{ data.mode === 'edit' ? 'update' : 'lock_reset' }}</mat-icon>{{ data.mode ===
+            'edit' ? 'Update'
             : 'Change' }}
         </button>
 

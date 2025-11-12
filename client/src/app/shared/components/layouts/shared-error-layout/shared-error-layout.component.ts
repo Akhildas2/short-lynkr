@@ -32,12 +32,11 @@ export class SharedErrorLayoutComponent {
 
   getNumberArray(): string[] {
     let baseNumbers = this.errorConfig.numbers;
-    console.log("basena",baseNumbers);
-    
 
     if (this.errorConfig.code === '0') {
       baseNumbers = ['O', 'F', 'F', 'L', 'I', 'N', 'E'];
     }
+
     const result: string[] = [];
     for (let i = 0; i < 8; i++) result.push(baseNumbers[i % baseNumbers.length]);
     for (let i = 0; i < 4; i++) result.push(baseNumbers[i % baseNumbers.length]);
