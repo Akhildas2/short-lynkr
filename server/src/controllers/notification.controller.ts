@@ -12,9 +12,11 @@ export const getNotifications = async (req: AuthRequest, res: Response, next: Ne
 
         let filter: any = {};
         if (isAdmin) {
-            filter = { forAdmin: true };
+            filter = {
+                $or: [{ forAdmin: true }, { userId: null, forAdmin: false }]
+            };
         } else {
-            filter = { $or: [{ userId }, { forAdmin: false, userId: null }] };
+            filter = { $or: [{ userId }, { userId: null, forAdmin: false }] };
         }
 
         const notifications = await Notification.find(filter).sort({ createdAt: -1 });
@@ -105,9 +107,30 @@ export const deleteNotification = async (req: AuthRequest, res: Response, next: 
         }
 
         const io = req["io"];
-        io?.emit("notificationDeleted", id);
+        io?.emit("notificationDeleted", notification);
 
         res.status(200).json({ message: "Notification deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Delete multiple notification
+export const deleteMultipleNotifications = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { ids } = req.body;
+        if (!ids || !Array.isArray(ids) || !ids.length) {
+            res.status(400).json({ message: 'No notification IDs provided' });
+            return;
+        }
+
+        // Delete all notifications with the given IDs
+        const result = await Notification.deleteMany({ _id: { $in: ids } });
+
+        const io = req["io"];
+        io?.emit("notificationDeleted", result);
+
+        res.status(200).json({ message: "Notifications deleted successfully" });
     } catch (error) {
         next(error);
     }

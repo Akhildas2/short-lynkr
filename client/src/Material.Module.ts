@@ -23,6 +23,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @NgModule({
     exports: [
@@ -49,7 +50,8 @@ import { NgxMatTimepickerModule } from 'ngx-mat-timepicker';
         MatCheckboxModule,
         MatSlideToggleModule,
         MatTimepickerModule,
-        NgxMatTimepickerModule
+        NgxMatTimepickerModule,
+        MatButtonToggleModule
     ]
 
 })

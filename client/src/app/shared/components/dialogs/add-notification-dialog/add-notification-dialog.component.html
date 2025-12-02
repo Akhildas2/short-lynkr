@@ -1,0 +1,111 @@
+<div class="p-4 w-full bg-white dark:bg-gray-900 shadow-2xl overflow-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4 px-4">
+        <h2 class="text-lg sm:text-xl font-bold text-gray-700 dark:text-gray-200"> Add Notification</h2>
+        <button (click)="dialogRef.close()">
+            <mat-icon class="hover:bg-red-600 hover:text-white scale-110 rounded-full align-middle">close</mat-icon>
+        </button>
+    </div>
+    <mat-divider />
+
+    <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()" class="p-4 space-y-2">
+
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Title</mat-label>
+            <input matInput formControlName="title" required>
+            <mat-error *ngIf="notificationForm.controls['title'].hasError('required')">
+                Title is required
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['title'].hasError('minlength')">
+                Minimum 3 characters required
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['title'].hasError('maxlength')">
+                Maximum 30 characters allowed
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['title'].hasError('whitespace')">
+                Title cannot be empty or whitespace
+            </mat-error>
+
+        </mat-form-field>
+
+        <!-- Message -->
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Message</mat-label>
+            <textarea matInput formControlName="message" rows="3" required></textarea>
+            <mat-error *ngIf="notificationForm.controls['message'].hasError('required')">
+                Message is required
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['message'].hasError('minlength')">
+                Minimum 3 characters required
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['message'].hasError('maxlength')">
+                Maximum 100 characters allowed
+            </mat-error>
+            <mat-error *ngIf="notificationForm.controls['message'].hasError('whitespace')">
+                Message cannot be empty or whitespace
+            </mat-error>
+
+        </mat-form-field>
+
+        <div class="flex flex-row gap-3">
+            <!-- Type -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Type</mat-label>
+                <mat-select formControlName="type" required>
+                    <mat-option *ngFor="let type of types" [value]="type">{{ type | titlecase }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="notificationForm.controls['type'].hasError('required')">
+                    Type is required
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Category -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category" required>
+                    <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat | titlecase }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="notificationForm.controls['category'].hasError('required')">
+                    Category is required
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="flex flex-row gap-3">
+
+            <!-- Send To -->
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Send To</mat-label>
+                <mat-select formControlName="sendTo">
+                    <mat-option value="all">All Users</mat-option>
+                    <mat-option value="user">Specific User</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <!-- If specific user selected, show userId field -->
+            <mat-form-field appearance="outline" class="w-full" *ngIf="notificationForm.value.sendTo === 'user'">
+                <mat-label>User ID</mat-label>
+                <input matInput formControlName="userId">
+                <mat-error *ngIf="!notificationForm.value.userId">User ID required</mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- For Admin -->
+        <mat-checkbox formControlName="forAdmin">For Admin Only</mat-checkbox>
+
+        <!-- Actions -->
+        <div class="mt-5 flex justify-end gap-4">
+            <button mat-button (click)="dialogRef.close()"
+                class="white-text bg-blue-600 dark:bg-blue-400 hover:bg-blue-800 hover:dark:bg-blue-600 rounded-xl scale-95 hover:scale-110">
+                <mat-icon>cancel</mat-icon>
+                Close
+            </button>
+            <button mat-button [disabled]="notificationForm.invalid" type="submit"
+                class="white-text bg-green-600 dark:bg-green-400 hover:bg-green-800 hover:dark:bg-green-600 rounded-xl scale-95 hover:scale-110 disabled:bg-green-200 disabled:dark:bg-green-200">
+                <mat-icon>add</mat-icon>
+                Add
+            </button>
+        </div>
+    </form>
+</div>

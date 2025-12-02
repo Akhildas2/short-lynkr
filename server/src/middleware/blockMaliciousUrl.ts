@@ -3,7 +3,11 @@ import SettingsModel from "../models/settings.model";
 import { ApiError } from "../utils/ApiError";
 import fetch from "node-fetch";
 
-export const blockMaliciousUrlMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const blockMaliciousUrlMiddleware = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
     try {
         const settings = await SettingsModel.findOne();
         if (!settings) throw new ApiError("Settings not found", 500);
@@ -12,21 +16,22 @@ export const blockMaliciousUrlMiddleware = async (req: Request, res: Response, n
         const { originalUrl } = req.body;
 
         if (!securitySettings.blockMaliciousUrls) return next();
+        if (!originalUrl) return next();
 
-        // Validate URL
+        // Validate URL format
         let urlObj: URL;
         try {
             urlObj = new URL(originalUrl);
             if (!["http:", "https:"].includes(urlObj.protocol)) {
                 res.status(400).json({ message: "Only HTTP/HTTPS URLs allowed." });
-                return
+                return;
             }
         } catch {
             res.status(400).json({ message: "Invalid URL format." });
-            return
+            return;
         }
 
-        // Local quick pattern checks
+        // Local quick malicious keyword checks
         const maliciousPatterns = [
             /phishing/i,
             /malware/i,
@@ -36,6 +41,7 @@ export const blockMaliciousUrlMiddleware = async (req: Request, res: Response, n
             /scam/i,
             /fraud/i,
         ];
+
         if (maliciousPatterns.some((p) => p.test(originalUrl))) {
             res.status(400).json({ message: "Unsafe URL content detected." });
             return;
@@ -46,9 +52,28 @@ export const blockMaliciousUrlMiddleware = async (req: Request, res: Response, n
             originalUrl
         )}&format=json`;
 
-        const response = await fetch(phishCheckUrl);
-        const data = await response.json();
+        let response;
+        try {
+            response = await fetch(phishCheckUrl);
+        } catch (err) {
+            return next(); // Do not block URL if API fails
+        }
 
+        // Check if the response is JSON
+        const contentType = response.headers.get("content-type") || "";
+        if (!contentType.includes("application/json")) {
+            return next();
+        }
+
+        // Safe JSON parsing
+        let data: any;
+        try {
+            data = await response.json();
+        } catch (err) {
+            return next();
+        }
+
+        // Phishing confirmed
         if (
             data?.results?.in_database &&
             data.results.verified &&

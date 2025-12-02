@@ -1,0 +1,297 @@
+<div class="min-h-screen flex flex-col transition-colors duration-300">
+    <!-- Header -->
+    <app-user-header></app-user-header>
+
+    <div class="bg-white dark:bg-gray-900 pt-6 pb-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-8">
+
+            <!-- LEFT: Form -->
+            <section
+                class="w-full lg:w-[60%] bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 lg:p-8">
+
+                <!-- Header -->
+                <div class="flex items-center gap-3 mb-6">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] flex items-center justify-center shadow-md">
+                        <mat-icon class="text-white">qr_code</mat-icon>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-xl sm:text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]">
+                            Create Social QR Code
+                        </h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            Make a beautiful, brandable QR code for any social profile.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form [formGroup]="socialQrForm" (ngSubmit)="submit()" class="space-y-3">
+
+                    <!-- Platform -->
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Platform</mat-label>
+                        <mat-select formControlName="platform">
+                            <mat-select-trigger>
+                                <div class="flex items-center gap-2">
+                                    <i [class]="platformIcons[socialQrForm.value.platform]"></i>
+                                    <span class="align-middle">{{ socialQrForm.value.platform }}</span>
+                                </div>
+                            </mat-select-trigger>
+
+                            <mat-option *ngFor="let p of platforms" [value]="p">
+                                <div class="flex items-center gap-2">
+                                    <i [class]="platformIcons[p]"></i>
+                                    <span>{{ p }}</span>
+                                </div>
+                            </mat-option>
+                        </mat-select>
+
+                        <mat-error *ngIf="socialQrForm.get('platform')?.hasError('required')">
+                            Platform is required.
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Username & Profile URL for known platforms -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                        *ngIf="socialQrForm.get('platform')?.value && socialQrForm.get('platform')?.value !== 'Other'">
+
+                        <!-- Profile URL (readonly, auto-filled) -->
+                        <mat-form-field appearance="outline"
+                            class="w-full border-2 border-gray-300 dark:border-gray-500 h-14 rounded-md">
+                            <mat-icon matPrefix [class]="platformIcons[socialQrForm.value.platform]"
+                                class="text-base"></mat-icon>
+
+                            <mat-label class="dark:bg-gray-800 bg-gray-50">Profile URL</mat-label>
+                            <input matInput formControlName="accountUrl" readonly
+                                placeholder="https://platform.com/username"
+                                class="disabled:text-gray-700 dark:disabled:text-gray-200 disabled:cursor-not-allowed" />
+                            <mat-hint class="truncate">{{ getProfileHint() }}</mat-hint>
+
+                            <mat-error *ngIf="socialQrForm.get('accountUrl')?.hasError('required')">
+                                Profile URL is required.
+                            </mat-error>
+                            <mat-error *ngIf="socialQrForm.get('accountUrl')?.hasError('pattern')">
+                                Profile URL must be valid (start with http:// or https://).
+                            </mat-error>
+                        </mat-form-field>
+
+                        <!-- Username -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-icon matPrefix>account_circle</mat-icon>
+                            <mat-label>Username</mat-label>
+                            <input matInput formControlName="username" placeholder="Enter username" />
+
+                            <mat-error *ngIf="getUsernameError()">
+                                {{ getUsernameError() }}
+                            </mat-error>
+                        </mat-form-field>
+
+                    </div>
+
+                    <!-- Full URL input for Other or if no platform selected -->
+                    <mat-form-field
+                        *ngIf="!socialQrForm.get('platform')?.value || socialQrForm.get('platform')?.value === 'Other'"
+                        appearance="outline" class="w-full">
+                         <mat-icon matPrefix>public</mat-icon>
+                        <mat-label>Profile URL</mat-label>
+                        <input matInput formControlName="accountUrl" placeholder="https://example.com/your-profile" />
+                        <mat-hint class="truncate">{{ getProfileHint() }}</mat-hint>
+                        <mat-error *ngIf="socialQrForm.get('accountUrl')?.hasError('required')">
+                            URL is required.
+                        </mat-error>
+                        <mat-error *ngIf="socialQrForm.get('accountUrl')?.hasError('pattern')">
+                            Enter a valid full URL (must start with http:// or https://)
+                        </mat-error>
+                    </mat-form-field>
+
+
+                    <!-- Size & Format -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>QR Size</mat-label>
+                            <mat-select formControlName="size">
+                                <mat-option *ngFor="let q of QR_SIZES" [value]="q">{{ q }} px</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Format</mat-label>
+                            <mat-select formControlName="format">
+                                <mat-option *ngFor="let f of formats" [value]="f">{{ f }}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Colors -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Foreground Color -->
+                        <mat-form-field appearance="outline" class="w-full" floatLabel="always">
+                            <mat-label>Foreground Color</mat-label>
+                            <div class="flex items-center gap-3 w-full">
+                                <label
+                                    class="w-12 h-12 rounded-lg cursor-pointer shadow-md hover:scale-105 transition-transform"
+                                    [style.backgroundColor]="socialQrForm.get('foregroundColor')?.value || '#000000'">
+                                    <input type="color" formControlName="foregroundColor"
+                                        class="opacity-0 w-full h-full cursor-pointer" />
+                                </label>
+                                <input matInput type="text" formControlName="foregroundColor" placeholder="#000000"
+                                    class="flex-1 font-mono uppercase" maxlength="7" />
+                            </div>
+                            <mat-error *ngIf="socialQrForm.get('foregroundColor')?.hasError('required')">Foreground
+                                color is
+                                required.</mat-error>
+                            <mat-error *ngIf="socialQrForm.get('foregroundColor')?.hasError('pattern')">Must be a valid
+                                hex
+                                color.</mat-error>
+                        </mat-form-field>
+
+                        <!-- Background Color -->
+                        <mat-form-field appearance="outline" class="w-full" floatLabel="always">
+                            <mat-label>Background Color</mat-label>
+                            <div class="flex items-center gap-3 w-full">
+                                <label
+                                    class="w-12 h-12 rounded-lg cursor-pointer shadow-md hover:scale-105 transition-transform"
+                                    [style.backgroundColor]="socialQrForm.get('backgroundColor')?.value || '#FFFFFF'">
+                                    <input type="color" formControlName="backgroundColor"
+                                        class="opacity-0 w-full h-full cursor-pointer" />
+                                </label>
+                                <input matInput type="text" formControlName="backgroundColor" placeholder="#FFFFFF"
+                                    class="flex-1 font-mono uppercase" maxlength="7" />
+                            </div>
+                            <mat-error *ngIf="socialQrForm.get('backgroundColor')?.hasError('required')">Background
+                                color is
+                                required.</mat-error>
+                            <mat-error *ngIf="socialQrForm.get('backgroundColor')?.hasError('pattern')">Must be a valid
+                                hex
+                                color.</mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- Contrast Error -->
+                    <div *ngIf="socialQrForm.hasError('sameColor') && (socialQrForm.dirty || socialQrForm.touched)"
+                        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-start gap-3">
+                        <mat-icon
+                            class="text-red-600 dark:text-red-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">error_outline</mat-icon>
+                        <div class="text-xs sm:text-sm text-red-600 dark:text-red-400">
+                            <span class="font-semibold">Contrast Issue:</span>
+                            Foreground and Background colors cannot be the same. The QR code will be unreadable.
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                        <button mat-stroked-button type="button" (click)="resetForm()"
+                            class="px-4 py-2 rounded-full flex items-center gap-2">
+                            <mat-icon>restart_alt</mat-icon>
+                            <span>Reset</span>
+                        </button>
+
+                        <button mat-flat-button color="primary" type="submit"
+                            [disabled]="socialQrForm.invalid || isLoading" class="px-6 py-3 rounded-full font-semibold flex items-center gap-2
+                          disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-200
+                            disabled:cursor-not-allowed transition-all duration-200">
+                            <mat-icon
+                                class="text-white disabled:text-gray-400 dark:disabled:text-gray-300">qr_code_2</mat-icon>
+                            <span>Generate QR Code</span>
+                            <mat-progress-spinner *ngIf="isLoading" diameter="18" mode="indeterminate"
+                                strokeWidth="2"></mat-progress-spinner>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <!-- RIGHT: QR Preview -->
+            <aside
+                class="flex-1 lg:flex-[0_0_40%] bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 p-6 lg:p-8 flex flex-col items-center">
+
+                <!-- Header -->
+                <div class="w-full flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-100">Preview</h2>
+                    <div class="flex items-center gap-3">
+                        <button *ngIf="lastSubmittedQr && qrPreview" mat-icon-button aria-label="Download QR"
+                            (click)="downloadQr()"
+                            class="text-gray-700 dark:text-gray-300 hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">
+                            <i class="fas fa-download text-xl flex justify-center align-middle"></i>
+                        </button>
+                        <button mat-icon-button aria-label="Refresh" (click)="refreshQr()"
+                            class="text-gray-700 dark:text-gray-300 hover:bg-gray-100 hover:dark:bg-gray-700 transition-colors">
+                            <i class="fas fa-rotate-right text-xl flex justify-center align-middle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Image -->
+                <div class="w-full flex-1 flex flex-col items-center justify-center gap-6">
+                    <div
+                        class="w-full max-w-sm flex flex-col items-center justify-center transition-transform hover:scale-[1.03] duration-200">
+
+                        <!-- Loader -->
+                        <div *ngIf="isLoading" class="flex justify-center items-center h-60">
+                            <mat-progress-spinner diameter="50" mode="indeterminate"></mat-progress-spinner>
+                        </div>
+
+                        <!-- QR Preview -->
+                        <ng-container *ngIf="!isLoading">
+                            <!-- Inside preview section -->
+                            <ng-container *ngIf="qrPreview; else placeholder">
+                                <ng-container *ngIf="socialQrForm.value.format === 'SVG'; else rasterPreview">
+                                    <div class="qr-preview-box" [innerHTML]="qrPreview">
+                                    </div>
+                                </ng-container>
+
+
+                                <ng-template #rasterPreview>
+                                    <img [src]="qrPreview" alt="QR preview" class="qr-preview-box" />
+                                </ng-template>
+                            </ng-container>
+
+                            <ng-template #placeholder>
+                                <div
+                                    class="flex flex-col justify-center items-center gap-3 text-gray-400 h-80 text-center">
+                                    <i class="fas fa-qrcode text-6xl"></i>
+                                    <div class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        {{ lastSubmittedName ? (lastSubmittedName + ' QR Generated!') : 'No preview yet'
+                                        }}
+                                    </div>
+
+                                    <div class="text-xs text-gray-600 dark:text-gray-400">
+                                        Fill the form and auto show preview.
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                        </ng-container>
+
+                    </div>
+
+                    <!-- Meta Info -->
+                    <div
+                        class="w-full max-w-sm flex justify-between px-2 gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <div>Size: <span class="font-semibold">{{ socialQrForm.get('size')?.value }} px</span></div>
+                        <div>Format: <span class="font-semibold">{{ socialQrForm.get('format')?.value }}</span></div>
+                    </div>
+
+                    <!-- Tip -->
+                    <div class="w-full max-w-sm text-xs text-gray-500 dark:text-gray-400 text-start">
+                        <i class="fas fa-lightbulb mr-1 text-yellow-400"></i>
+                        Pro tip: choose high contrast between foreground and background for reliable scanning.
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <!-- Global Loader -->
+        <app-spinner *ngIf="isLoading && !qrPreview"></app-spinner>
+    </div>
+
+
+    <!-- Footer -->
+    <app-user-footer></app-user-footer>
+</div>

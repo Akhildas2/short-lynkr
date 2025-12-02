@@ -27,6 +27,10 @@ export class ValidationErrorComponent {
     if (control.errors['pattern']) {
       return 'Must contain at least 1 uppercase, 1 lowercase, 1 number, and 1 special character.';
     }
+    if (control.errors['whitespace']) {
+      return 'This field cannot be empty or only spaces.';
+    }
+
     return null;
   }
 

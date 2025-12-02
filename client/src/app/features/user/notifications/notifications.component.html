@@ -1,0 +1,188 @@
+<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900 mb-4 max-w-7xl mx-auto">
+    <!-- header -->
+    <header
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-3 px-4 sm:px-6 py-4">
+        <!-- Title -->
+        <h1
+            class="text-4xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] whitespace-nowrap">
+            Notifications
+        </h1>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto truncate mr-2">
+            <button (click)="deleteAllNotifications()" *ngIf="notifications().length !== 0"
+                class="flex items-center justify-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-lg text-sm lg:text-base font-medium bg-red-600 hover:bg-red-700 text-white transition-all shadow-md hover:scale-100 active:scale-90 w-full sm:w-auto">
+                <mat-icon class="text-white">delete_sweep</mat-icon>
+                Delete All
+            </button>
+
+            <button (click)="toggleAllReadUnread()" *ngIf="notifications().length !== 0"
+                class="flex items-center justify-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-lg text-sm lg:text-base font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md hover:scale-100 active:scale-90 w-full sm:w-auto">
+                <mat-icon class="text-white">{{ totalUnread() > 0 ? 'mark_email_read' : 'mark_email_unread'
+                    }}</mat-icon>
+                {{ totalUnread() > 0 ? 'Mark All as Read' : 'Mark All as Unread' }}
+            </button>
+        </div>
+    </header>
+
+
+    <!-- Filter Bar -->
+    <div class="px-4 pt-4 w-full" *ngIf="notifications().length !== 0">
+
+        <!-- MOBILE VIEW: Dropdown only -->
+        <div class="block sm:hidden">
+            <mat-form-field appearance="outline" class="w-full rounded-xl">
+                <mat-label>Filter Notifications</mat-label>
+                <mat-select [(ngModel)]="currentFilter" aria-label="Filter notifications">
+                    <mat-option value="all">
+                        <mat-icon class="mr-2 text-black">list_alt</mat-icon>
+                        All ({{ notifications().length }})
+                    </mat-option>
+                    <mat-option value="read">
+                        <mat-icon class="mr-2 text-lime-600">drafts</mat-icon>
+                        Read ({{ totalRead() }})
+                    </mat-option>
+                    <mat-option value="unread">
+                        <mat-icon class="mr-2 text-rose-600">fiber_new</mat-icon>
+                        Unread ({{ totalUnread() }})
+                    </mat-option>
+
+                    <mat-option *ngFor="let cat of categories()" [value]="cat">
+                        <mat-icon class="mr-2" [ngClass]="getCategoryClass(cat)">
+                            {{ getCategoryIcon(cat) }}
+                        </mat-icon>
+                        {{ cat | titlecase }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- DESKTOP/MEDIUM: Toggle Group with Scroll -->
+        <div class="hidden sm:block w-full">
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide">
+                <!-- Toggles -->
+                <mat-button-toggle-group class="shadow-lg dark:shadow-xl bg-gray-200 rounded-xl flex-shrink-0"
+                    [(ngModel)]="currentFilter" aria-label="Status filter">
+                    <!-- All -->
+                    <mat-button-toggle value="all">
+                        <mat-icon class="mr-1 text-black">list</mat-icon>
+                        All ({{ notifications().length }})
+                    </mat-button-toggle>
+
+                    <!-- Read -->
+                    <mat-button-toggle value="read">
+                        <mat-icon class="mr-1 text-lime-600 dark:text-lime-500">drafts</mat-icon>
+                        Read ({{ totalRead() }})
+                    </mat-button-toggle>
+
+                    <!-- Unread -->
+                    <mat-button-toggle value="unread">
+                        <mat-icon class="mr-1 text-rose-600 dark:text-rose-500">fiber_new</mat-icon>
+                        Unread ({{ totalUnread() }})
+                    </mat-button-toggle>
+
+                    <!-- Categories -->
+                    <mat-button-toggle *ngFor="let cat of categories()" [value]="cat">
+                        <mat-icon class="mr-1" [ngClass]="getCategoryClass(cat)">
+                            {{ getCategoryIcon(cat) }}
+                        </mat-icon>
+                        {{ cat | titlecase }}
+                    </mat-button-toggle>
+
+                </mat-button-toggle-group>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Main content -->
+    <div class="flex-1 flex flex-col justify-start px-4 py-4 overflow-y-auto">
+        <ng-container *ngIf="filteredNotifications().length > 0; else noData">
+            <!-- Notification List -->
+            <div
+                class="grid grid-cols-1 lg:[grid-template-columns:repeat(auto-fill,minmax(22rem,1fr))] sm:grid-cols-2 gap-4">
+                <div *ngFor="let n of paginatedNotifications()" (click)="markAsRead(n)" class="group relative p-5 rounded-2xl transition-all duration-200 cursor-pointer border border-gray-300 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1
+                bg-white/80 dark:bg-gray-800/70 backdrop-blur-sm"
+                    [ngClass]="{'ring-2 ring-blue-500 dark:ring-blue-300': !n.read}">
+
+                    <!-- Unread dot -->
+                    <div *ngIf="!n.read"
+                        class="absolute top-3 right-3 w-4 h-4 bg-blue-500 dark:bg-blue-300 rounded-full animate-pulse">
+                    </div>
+
+                    <!-- Icon and content -->
+                    <div class="flex items-start gap-4">
+                        <div class="flex items-center justify-center w-12 h-12 rounded-xl">
+                            <mat-icon class="scale-150" [ngClass]="getIconClass(getSafeType(n.type))">{{
+                                getIconName(getSafeType(n.type)) }}</mat-icon>
+                        </div>
+
+                        <div class="flex flex-col flex-1">
+                            <p class="font-semibold text-gray-800 dark:text-gray-100">{{ n.title | titlecase}}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5 line-clamp-3">{{ n.message }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Category and delete -->
+                    <div class="flex items-center justify-end mt-4">
+                        <button mat-icon-button (click)="deleteNotification(n._id!, n.title); $event.stopPropagation()"
+                            class="p-1 rounded-full hover:bg-red-500/40 transition-colors mb-2">
+                            <mat-icon
+                                class="text-red-500 dark:text-red-400 hover:text-red-700 hover:dark:text-red-600 scale-125 justify-center">delete</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t border-gray-300 dark:border-gray-700">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                            [ngClass]="getCategoryBadgeClass(getSafeCategory(n.category)) + ' bg-opacity-80'">
+                            {{ getSafeCategory(n.category) }}
+                        </span>
+
+                        <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-400 italic">{{ n.createdAt |
+                            date:'mediumTime' }}
+                            on {{ n.createdAt | date:'MMM d' }}</p>
+                    </div>
+                </div>
+            </div>
+
+        </ng-container>
+
+    <ng-template #noData>
+        <div class="flex flex-col items-center justify-center text-center py-20 px-4 sm:px-0">
+            <!-- Icon Container -->
+            <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full
+           bg-gradient-to-br from-yellow-100 via-amber-200 to-orange-300
+           dark:from-yellow-800 dark:via-amber-700 dark:to-orange-800
+           shadow-xl ring-4 ring-yellow-300/40 dark:ring-amber-400/30 animate-pulse">
+                <mat-icon class="text-yellow-700 dark:text-yellow-100 scale-150 drop-shadow-md">warning</mat-icon>
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+                No Notifications Found
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-800 dark:text-gray-300 mb-6">
+                Your {{ currentFilter() }} feed is clean! Time to relax.
+            </p>
+
+            <!-- Action Buttons -->
+            <button *ngIf="currentFilter() !== 'all'" (click)="filterNotifications('all')"
+                class="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md hover:scale-105 active:scale-95">
+                <mat-icon class="text-white">list</mat-icon>
+                View All Notifications
+            </button>
+
+        </div>
+    </ng-template>
+
+</div>
+
+
+<mat-paginator *ngIf="notifications().length !== 0" [length]="length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+    [pageSizeOptions]="[6, 12, 24, 50, 100]" (page)="handlePageEvent($event)" showFirstLastButtons>
+</mat-paginator>
+
+</div>

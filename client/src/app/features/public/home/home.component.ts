@@ -56,13 +56,9 @@ export class HomeComponent implements OnInit {
 
 
     async ngOnInit(): Promise<void> {
-        try {
-            this.settings = await this.settingsEffects.loadSettings();
-            if (this.settings) {
-                this.applyAdminSettings(this.settings);
-            }
-        } catch (error) {
-            console.error('Failed to load admin settings', error);
+        this.settings = await this.settingsEffects.loadSettings();
+        if (this.settings) {
+            this.applyAdminSettings(this.settings);
         }
     }
 

@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { User } from '../../../../models/user/user.model';
 import { SharedModule } from '../../../shared.module';
 import { ValidationErrorComponent } from '../../forms/validation-error/validation-error.component';
+import { noWhitespaceValidator } from '../../../utils/noWhitespaceValidator';
 
 @Component({
   selector: 'app-admin-user-dialog',
@@ -27,18 +28,21 @@ export class AdminUserDialogComponent implements OnInit {
       username: new FormControl(this.data.user?.username || '', [
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(20)
+        Validators.maxLength(20),
+        noWhitespaceValidator
       ]),
       email: new FormControl(this.data.user?.email || '', [
         Validators.required,
-        Validators.email
+        Validators.email,
+        noWhitespaceValidator
       ]),
       role: new FormControl(this.data.user?.role || 'user', Validators.required),
       password: new FormControl('', this.data.mode === 'add' ? [
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(16),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/),
+        noWhitespaceValidator
       ] : [])
     });
   }

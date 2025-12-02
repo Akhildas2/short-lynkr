@@ -5,6 +5,7 @@ import { MyUrlListComponent } from './my-url-list/my-url-list.component';
 import { ShortUrlResultComponent } from './short-url-result/short-url-result.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { UserLayoutComponent } from '../../shared/components/layouts/user/user-layout/user-layout.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'analytics/:id', component: AnalyticsComponent },
       { path: 'profile', component: ProfileComponent },
+      { path: 'notifications', component: NotificationsComponent },
       { path: 'my-urls', component: MyUrlListComponent },
       { path: 'shortened/:id', component: ShortUrlResultComponent },
     ]

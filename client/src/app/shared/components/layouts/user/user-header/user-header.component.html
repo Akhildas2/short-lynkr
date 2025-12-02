@@ -5,19 +5,40 @@
       <div class="flex items-center gap-4 ml-2">
         <img src="/assets/logo-light.png" alt="ShortLynkr logo light" class="h-10 w-10 object-contain dark:hidden">
         <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark" class="h-10 w-10 object-contain hidden dark:block">
-        <span class="text-2xl font-extrabold"> {{ appName }} </span>
+        <span class="text-xl lg:text-2xl font-extrabold"> {{ appName }} </span>
       </div>
 
       <!-- Desktop Links -->
-      <div class="hidden sm:flex items-center space-x-8 text-lg sm:text-xl font-semibold">
-        <a routerLink="/" class="hover:text-primary transition-colors">Home</a>
-        <a routerLink="/pricing" class="hover:text-primary transition-colors">Pricing</a>
-        <a routerLink="/features" class="hover:text-primary transition-colors">Features</a>
+      <div class="hidden sm:flex items-center space-x-8 text-base lg:text-xl font-semibold">
+        <a *ngFor="let item of menuItems" [routerLink]="item.link" class="hover:text-primary transition-colors">
+          {{ item.label }}
+        </a>
       </div>
 
       <!-- Right Section -->
       <div class="flex items-center space-x-3">
         <app-theme-toggle class="hidden sm:block"></app-theme-toggle>
+
+        <!-- Notification Button -->
+        <button *ngIf="user" mat-icon-button (click)="showNotificationsMenu = !showNotificationsMenu"
+          class="hidden sm:block relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
+
+          <mat-icon [ngClass]="{'animate-slow-ring': totalUnread() > 0}">
+            notifications_active
+          </mat-icon>
+
+          <span *ngIf="totalUnread() > 0"
+            class="absolute top-0 right-0 -mt-1 -mr-1 px-1 sm:px-2 py-1 text-xs font-bold bg-red-600 text-white rounded-full animate-bounce">
+            {{ totalUnread() }}
+          </span>
+        </button>
+
+        <!-- Notification Menu Component -->
+        <div *ngIf="showNotificationsMenu" (appClickOutside)="showNotificationsMenu = false"
+          class="absolute top-20 right-3 z-50">
+
+          <app-notification-menu [role]="'user'" (menuClosed)="showNotificationsMenu = false"></app-notification-menu>
+        </div>
 
         <!-- Authenticated User -->
         <ng-container *ngIf="user; else guest">
@@ -50,10 +71,17 @@
                 Profile
               </a>
 
-              <a routerLink="/qr" class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+              <a routerLink="/my-qrs" class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
                 (click)="mobileDropdownOpen = false">
                 <mat-icon class="text-inherit transition-colors">qr_code</mat-icon>
-                QR Generator
+                My QRs
+              </a>
+
+              <a routerLink="/user/notifications"
+                class="flex items-center gap-2 px-4 py-2 hover:text-primary transition-colors"
+                (click)="mobileDropdownOpen = false">
+                <mat-icon class="text-inherit transition-colors">notifications</mat-icon>
+                Notifications
               </a>
 
               <button (click)="logout(); mobileDropdownOpen = false"
@@ -88,18 +116,45 @@
   <!-- Mobile Menu -->
   <div *ngIf="mobileMenuOpen" (appClickOutside)="mobileMenuOpen = false"
     class="sm:hidden absolute p-5 left-5 right-5 rounded-2xl shadow-2xl  bg-white dark:bg-gray-800 z-50">
-    <div class="flex items-center justify-between px-4">
-      <a routerLink="/" (click)="mobileMenuOpen = false" class="block hover:text-primary transition-colors ">Home</a>
-      <app-theme-toggle></app-theme-toggle>
+    <div class="flex flex-col px-4">
+      <app-theme-toggle class="absolute top-0 right-0 pt-4 pr-4"></app-theme-toggle>
+
+      <!-- Notification Button -->
+      <button *ngIf="user" mat-icon-button (click)="showNotificationsMenu = !showNotificationsMenu"
+        class="absolute bottom-0 right-0 mb-5 mr-4">
+
+        <mat-icon [ngClass]="{'animate-slow-ring': totalUnread() > 0}">
+          notifications_active
+        </mat-icon>
+
+        <span *ngIf="totalUnread() > 0"
+          class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 text-xs font-bold bg-red-600 text-white rounded-full animate-bounce">
+          {{ totalUnread() }}
+        </span>
+      </button>
+
+      <!-- Notification Menu Component -->
+      <div *ngIf="showNotificationsMenu" (appClickOutside)="showNotificationsMenu = false"
+        class="absolute top-20 right-3 z-50">
+
+        <app-notification-menu [role]="'admin'" (menuClosed)="showNotificationsMenu = false"></app-notification-menu>
+      </div>
+
+      <a *ngFor="let item of menuItems" [routerLink]="item.link" (click)="mobileMenuOpen = false"
+        class="block px-4 py-2 hover:text-primary transition-colors">
+        {{ item.label }}
+      </a>
+
+      <!-- If unauthenticated -->
+      <ng-container *ngIf="!user">
+        <a *ngFor="let guestItem of guestMenuItems" [routerLink]="guestItem.link" (click)="mobileMenuOpen = false"
+          class="block px-4 py-2 hover:text-primary transition-colors">
+          {{ guestItem.label }}
+        </a>
+      </ng-container>
+
     </div>
-    <a routerLink="/pricing" (click)="mobileMenuOpen = false"
-      class="block px-4 py-2 hover:text-primary transition-colors ">Pricing</a>
-    <a routerLink="/features" (click)="mobileMenuOpen = false"
-      class="block px-4 py-2 hover:text-primary transition-colors ">Features</a>
-    <a routerLink="/auth/sign-in" *ngIf="!user" (click)="mobileMenuOpen = false"
-      class="block px-4 py-2 hover:text-primary transition-colors ">Sign In</a>
-    <a routerLink="/auth/sign-up" *ngIf="!user" (click)="mobileMenuOpen = false"
-      class="block px-4 py-2 hover:text-primary transition-colors">Sign Up</a>
+
   </div>
 
 </nav>

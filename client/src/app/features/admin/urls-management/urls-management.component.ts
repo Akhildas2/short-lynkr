@@ -2,18 +2,20 @@ import { Component, computed, effect, inject, OnInit, signal } from '@angular/co
 import { AdminEffects } from '../../../state/admin/admin.effects';
 import { AdminStore } from '../../../state/admin/admin.store';
 import { SharedModule } from '../../../shared/shared.module';
-import { filter, firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, single, Subject, takeUntil } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { UrlEntry } from '../../../models/url/url.model';
 import { PageEvent } from '@angular/material/paginator';
 import { GlobalSearchService } from '../../../shared/services/global-search/global-search.service';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
+import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
+import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
 
 @Component({
     selector: 'app-urls-management',
-    imports: [SharedModule,ScrollButtonsComponent],
+    imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent],
     templateUrl: './urls-management.component.html',
     styleUrl: './urls-management.component.scss'
 })
@@ -32,6 +34,9 @@ export class UrlsManagementComponent implements OnInit {
     filterStatus = signal<'all' | 'active' | 'blocked'>('all');
     searchTerm = signal('');
     private destroy$ = new Subject<void>();
+
+    isLoading = signal(true);
+    error = computed(() => this.adminStore.error());
 
     constructor(private dialog: MatDialog) {
         effect(() => {
@@ -78,8 +83,13 @@ export class UrlsManagementComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.isLoading.set(true);
+
         await this.adminEffect.fetchAllUrls();
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         this.totalItems.set(this.urls().length);
+        this.isLoading.set(false);
 
         this.globalSearchService.searchTerm$
             .pipe(takeUntil(this.destroy$))
@@ -144,6 +154,11 @@ export class UrlsManagementComponent implements OnInit {
         if (confirmed) {
             await this.adminEffect.deleteUrl(url._id);
         }
+    }
+
+    reloadUrls() {
+        this.adminStore.setLoading();
+        this.adminEffect.fetchAllUrls();
     }
 
 }

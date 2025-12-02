@@ -1,26 +1,21 @@
-import { Component, computed, EventEmitter, HostListener, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, computed, EventEmitter, HostListener, inject, Input, Output } from '@angular/core';
 import { SharedModule } from '../../../../shared.module';
 import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntil } from 'rxjs';
 import { GlobalSearchService } from '../../../../services/global-search/global-search.service';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AuthEffects } from '../../../../../state/auth/auth.effects';
-import { AuthStore } from '../../../../../state/auth/auth.store';
-import { NotificationService } from '../../../../../core/services/api/notification/notification.service';
-import { Notification } from '../../../../../models/notification/notification.interface';
-import { MatDialog } from '@angular/material/dialog';
-import { NotificationDialogComponent } from '../../../dialogs/notification-dialog/notification-dialog.component';
-import { AlertDialogComponent } from '../../../dialogs/alert-dialog/alert-dialog.component';
+import { BaseNotificationComponent } from '../../../../base/base-notification.component';
+import { NotificationMenuComponent } from '../../../ui/notification-menu/notification-menu.component';
 
 @Component({
   selector: 'app-admin-header',
-  imports: [SharedModule, ThemeToggleComponent, ReactiveFormsModule, RouterModule],
+  imports: [SharedModule, ThemeToggleComponent, ReactiveFormsModule, RouterModule, NotificationMenuComponent],
   templateUrl: './admin-header.component.html',
   styleUrl: './admin-header.component.scss'
 })
-export class AdminHeaderComponent implements OnInit, OnDestroy {
-  private authStore = inject(AuthStore);
+export class AdminHeaderComponent extends BaseNotificationComponent {
   @Output() toggleSidebar = new EventEmitter<void>();
   @Input() sidebarState: 0 | 1 | 2 = 1;
   @Input() collapsed = false;
@@ -36,14 +31,15 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
   readonly isAdmin = computed(() => this.role() === 'admin');
 
   searchControl = new FormControl(''); // FormControl for the search input
-  notifications: Notification[] = [];
-  unreadCount = 0;
-  private destroy$ = new Subject<void>(); // Subject to manage subscriptions
+  readonly latestFiveNotifications = this.latestFive;
 
-  constructor(private globalSearchService: GlobalSearchService, private authEffects: AuthEffects, private notificationService: NotificationService, private router: Router, private dialog: MatDialog) { }
-  ngOnInit(): void {
+  constructor(private globalSearchService: GlobalSearchService, private authEffects: AuthEffects) {
+    super();
+  }
+
+  override ngOnInit(): void {
+    super.ngOnInit();
     this.checkScreenSize();
-    this.loadNotifications();
 
     // Subscribe to search term changes from the service to pre-fill the input if navigated back
     this.globalSearchService.searchTerm$
@@ -63,9 +59,8 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 
   @HostListener('window:resize')
@@ -73,88 +68,8 @@ export class AdminHeaderComponent implements OnInit, OnDestroy {
     this.checkScreenSize();
   }
 
-  loadNotifications(): void {
-    this.notificationService.getNotifications().subscribe(data => {
-      this.notifications = data.slice(0, 5); // Show only latest 5
-      this.unreadCount = data.filter(n => !n.read).length;
-    });
-  }
-
   toggleNotifications(): void {
     this.showNotificationsMenu = !this.showNotificationsMenu;
-  }
-
-  markAsRead(notification: Notification): void {
-    if (!notification.read && notification._id) {
-      this.notificationService.markAsRead(notification._id).subscribe(() => this.loadNotifications());
-    }
-
-    const dialogRef = this.dialog.open(NotificationDialogComponent, {
-      width: '500px',
-      data: notification,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.deleted && result.id) {
-        // Show confirmation before deleting
-        const confirmDialog = this.dialog.open(AlertDialogComponent, {
-          data: {
-            title: 'Delete Notification?',
-            content: `Are you sure you want to delete this notification: "${notification.title}"? This action cannot be undone.`,
-            actionText: 'Delete',
-            actionIcon: 'delete',
-            confirmOnly: true
-          },
-        });
-
-        confirmDialog.afterClosed().subscribe((confirmed: boolean) => {
-          if (confirmed) {
-            this.notificationService.deleteNotification(result.id)
-              .subscribe(() => this.loadNotifications());
-          }
-        });
-      }
-    });
-  }
-
-  viewAll(): void {
-    this.router.navigate(['/admin/notifications']); // Navigate to full notifications page
-  }
-
-  toggleAllReadUnread(): void {
-    if (!this.notifications.length) return;
-
-    // Determine new state: mark read if there are unread, else mark unread
-    const markAsRead = this.notifications.some(n => !n.read);
-
-    const ids = this.notifications.map(n => n._id!);
-
-    this.notificationService.toggleReadStatus(ids, markAsRead)
-      .subscribe(() => {
-        this.notifications = this.notifications.map(n => ({ ...n, read: markAsRead }));
-        this.unreadCount = markAsRead ? 0 : this.notifications.length;
-      });
-  }
-
-
-  deleteNotification(id: string, notificationTitle: string) {
-
-    const dialog = this.dialog.open(AlertDialogComponent, {
-      data: {
-        title: 'Delete Notification?',
-        content: `Are you sure you want to delete this notification: "${notificationTitle}"? This action cannot be undone.`,
-        actionText: 'Delete',
-        actionIcon: 'delete',
-        confirmOnly: true
-      },
-    });
-
-    dialog.afterClosed().subscribe((confirmed: boolean) => {
-      if (confirmed) {
-        this.notificationService.deleteNotification(id)
-          .subscribe(() => this.loadNotifications());
-      }
-    });
   }
 
   private checkScreenSize() {

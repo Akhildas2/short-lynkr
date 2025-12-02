@@ -9,7 +9,6 @@ import { ClickOutsideDirective } from './directives/click-outside.directive';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 
 
-
 @NgModule({
   providers: [
     { provide: MatPaginatorIntl, useFactory: getCustomPaginatorIntl }

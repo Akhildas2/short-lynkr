@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import UrlModel from '../models/url.model';
 import { generateQRCode } from '../utils/qrCodeGenerator';
 import SettingsModel from '../models/settings.model';
+import SocialQrModel from "../models/socialQr.model";
 import { AuthRequest } from '../types/auth';
+
 
 export const getQrCode = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -37,6 +39,103 @@ export const getQrCode = async (req: AuthRequest, res: Response, next: NextFunct
             res.setHeader('Content-Type', mimeType);
             res.send(imgBuffer);
         }
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const createSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { platform, accountUrl, size = 300, format = "PNG", foregroundColor = "#000000", backgroundColor = "#FFFFFF" } = req.body;
+        const qrCodeData = await generateQRCode(accountUrl, { size, format, foregroundColor, backgroundColor });
+console.log("req",req.body);
+
+        const qr = await SocialQrModel.create({
+            platform,
+            accountUrl,
+            qrCodeUrl: qrCodeData,
+            size,
+            format,
+            foregroundColor,
+            backgroundColor,
+        });
+
+        res.status(201).json(qr);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const getAllSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const list = await SocialQrModel.find();
+        res.json(list);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const getSocialQrById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const qr = await SocialQrModel.findById(id);
+        if (!qr) {
+            res.status(404).json({ message: "QR not found" });
+            return;
+        }
+
+        res.json(qr);
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+export const updateSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const { platform, accountUrl, size, format, foregroundColor, backgroundColor } = req.body;
+
+        const updateData: any = {
+            ...(platform && { platform }),
+            ...(accountUrl && { accountUrl }),
+            ...(size && { size }),
+            ...(format && { format }),
+            ...(foregroundColor && { foregroundColor }),
+            ...(backgroundColor && { backgroundColor }),
+        };
+
+        const qr = await SocialQrModel.findByIdAndUpdate(id, updateData, { new: true });
+        if (!qr) {
+            res.status(404).json({ message: "QR not found" });
+            return;
+        }
+
+        res.json(qr);
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+
+export const deleteSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        const { id } = req.params;
+        const qr = await SocialQrModel.findByIdAndDelete(id);
+        if (!qr) {
+            res.status(404).json({ message: "QR not found" });
+            return;
+        }
+
+        res.json({ message: "QR deleted successfully" });
 
     } catch (err) {
         next(err);

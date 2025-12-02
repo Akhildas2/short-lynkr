@@ -46,6 +46,10 @@ export class NotificationService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  deleteMultipleNotifications(ids: string[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/delete-multiple`, { ids });
+  }
+
   createNotification(data: Partial<Notification>): Observable<Notification> {
     return this.http.post<Notification>(this.apiUrl, data);
   }

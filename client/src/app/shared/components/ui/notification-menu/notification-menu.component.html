@@ -1,0 +1,86 @@
+<div class="w-72 sm:w-96 max-h-[28rem] overflow-y-auto bg-white dark:bg-gray-800 
+         rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center p-3 border-b border-gray-200 dark:border-gray-700">
+        <!-- Title -->
+        <h3 class="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-200">Notifications</h3>
+
+        <!-- Actions -->
+        <div class="flex align-bottom items-center">
+            <!-- Mark All Button -->
+            <button *ngIf="latestFive().length > 0"
+                class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                (click)="toggleAllReadUnread()">
+                {{ totalUnread() > 0 ? 'Mark All as Read' : 'Mark All as Unread' }}
+            </button>
+
+            <!-- Close Button -->
+            <button (click)="closeMenu()"
+                class="flex align-middle text-gray-700 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-400">
+                <mat-icon
+                    class="hover:bg-red-600 hover:text-white scale-110 rounded-full align-middle ml-3">close</mat-icon>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- List -->
+    <div *ngIf="latestFive().length; else emptyState" class="divide-y divide-gray-200 dark:divide-gray-700">
+
+        <div *ngFor="let n of latestFive()"
+            class="flex flex-col p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl cursor-pointer"
+            (click)="markAsRead(n)">
+
+            <!-- Top line: icon, title, dot at end -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <mat-icon class="mt-1 shrink-0" [ngClass]="getIconClass(getSafeType(n.type))">
+                        {{ getIconName(getSafeType(n.type)) }}
+                    </mat-icon>
+                    <p class="text-sm font-semibold">{{ n.title }}</p>
+                </div>
+
+                <!-- Dot at the far right -->
+                <span *ngIf="!n.read" class="w-3 sm:w-4 h-3 sm:h-4 bg-blue-500 rounded-full animate-pulse"></span>
+            </div>
+
+            <!-- Message -->
+            <p class="text-xs mt-2 line-clamp-2">{{ n.message }}</p>
+
+            <!-- Bottom line: date, category, delete -->
+            <div class="flex items-center justify-between mt-3">
+                <p class="text-[10px]">{{ n.createdAt | date:'short' }}</p>
+
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-1 text-xs rounded-full text-white"
+                        [ngClass]="getCategoryBadgeClass(getSafeCategory(n.category))">
+                        {{ getSafeCategory(n.category) | titlecase }}
+                    </span>
+
+                    <mat-icon class="text-red-600 cursor-pointer"
+                        (click)="deleteNotification(n._id!, n.title!); $event.stopPropagation()">
+                        delete
+                    </mat-icon>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Empty -->
+    <ng-template #emptyState>
+        <div class="p-6 text-center text-gray-700 dark:text-gray-300">
+            <mat-icon class="scale-150 mb-2">notifications_off</mat-icon>
+            <p class="text-sm">No notifications yet.</p>
+        </div>
+    </ng-template>
+
+    <!-- View More -->
+    <div *ngIf="latestFive().length === 5" class="text-center p-3 border-t border-gray-200 dark:border-gray-700">
+        <button class="text-sm text-blue-600 dark:text-blue-400 hover:underline" (click)="viewAll()">
+            View More
+        </button>
+    </div>
+
+</div>

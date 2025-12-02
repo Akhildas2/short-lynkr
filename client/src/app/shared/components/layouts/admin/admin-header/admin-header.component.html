@@ -35,98 +35,25 @@
     <!-- Toggle Theme Button -->
     <app-theme-toggle></app-theme-toggle>
 
-    <!-- Notifications Button -->
-    <button mat-icon-button (click)="toggleNotifications()"
+    <!-- Notification Button -->
+    <button mat-icon-button (click)="showNotificationsMenu = !showNotificationsMenu"
       class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-      <mat-icon class="flex items-center" matTooltip="Show Notifications" matTooltipPosition="below"
-        [ngClass]="{'animate-slow-ring':unreadCount > 0}">notifications_active</mat-icon>
-      <span *ngIf="unreadCount > 0"
-        class="absolute top-0 right-0 -mt-1 -mr-1 px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full animate-pulse">
-        {{ unreadCount }}</span>
+
+      <mat-icon [ngClass]="{'animate-slow-ring': totalUnread() > 0}">
+        notifications_active
+      </mat-icon>
+
+      <span *ngIf="totalUnread() > 0"
+        class="absolute top-0 right-0 -mt-1 -mr-1 px-1 sm:px-2 py-1 text-xs font-bold bg-red-600 text-white rounded-full animate-bounce">
+        {{ totalUnread() }}
+      </span>
     </button>
 
-    <!-- Notifications Dropdown -->
+    <!-- Notification Menu Component -->
     <div *ngIf="showNotificationsMenu" (appClickOutside)="showNotificationsMenu = false"
-      class="absolute top-20 right-3 w-72 sm:w-96 max-h-[28rem] overflow-y-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50">
+      class="absolute top-20 right-3 z-50">
 
-      <!-- Header -->
-      <div class="flex justify-between items-center p-3 border-b border-gray-200 dark:border-gray-700">
-        <h3 class="text-sm sm:text-base font-semibold text-gray-700 dark:text-gray-200">Notifications</h3>
-        <button class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline"
-          (click)="toggleAllReadUnread()">
-          {{ unreadCount > 0 ? 'Mark All as Read' : 'Mark All as Unread' }}
-        </button>
-      </div>
-
-      <!-- Notifications List -->
-      <div *ngIf="notifications.length; else emptyState" class="divide-y divide-gray-200 dark:divide-gray-700">
-
-        <div *ngFor="let n of notifications"
-          class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all rounded-xl cursor-pointer"
-          (click)="markAsRead(n)">
-
-          <!-- Notification Icon -->
-          <div class="flex-shrink-0 mt-1 scale-125">
-            <mat-icon [ngClass]="{
-          'text-green-600 dark:text-green-400': n.type === 'success',
-          'text-red-600 dark:text-red-400': n.type === 'error',
-          'text-yellow-600 dark:text-yellow-400': n.type === 'warning',
-          'text-blue-600 dark:text-blue-400': n.type === 'info'
-          }">{{ n.type === 'success' ? 'done_outline' : n.type }}</mat-icon>
-          </div>
-
-          <!-- Notification Content -->
-          <div class="flex-1">
-            <div class="flex items-center justify-between">
-              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ n.title }}</p>
-              <!-- Unread indicator -->
-              <span *ngIf="!n.read"
-                class="w-4 h-3 sm:h-4 bg-blue-500 dark:bg-blue-300 rounded-full animate-pulse"></span>
-            </div>
-
-            <p class="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{{ n.message }}</p>
-
-            <div class="flex justify-between items-center mt-2">
-              <p class="text-[10px] text-gray-500 dark:text-gray-400">{{ n.createdAt | date:'short' }}</p>
-
-              <!-- Actions -->
-              <div class="flex items-center gap-2">
-                <!-- Category Badge -->
-                <span class="text-sm sm:text-base px-2 py-1 rounded-full font-bold text-white" [ngClass]="{
-                'bg-green-600 dark:bg-green-400': n.category === 'user',
-                'bg-red-600 dark:bg-red-400': n.category === 'url',
-                'bg-yellow-600 dark:bg-yellow-400': n.category === 'settings',
-                'bg-blue-600 dark:bg-blue-400': n.category === 'system',
-                'bg-indigo-600 dark:bg-indigo-400': n.category === 'qr'
-                }">
-                  {{ n.category }}
-                </span>
-
-                <!-- Delete icon -->
-                <mat-icon class="text-red-600 dark:text-red-400 cursor-pointer"
-                  (click)="deleteNotification(n._id!, n.title!); $event.stopPropagation()">
-                  delete
-                </mat-icon>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Empty State -->
-      <ng-template #emptyState>
-        <div class="p-6 text-center text-gray-400 dark:text-gray-500">
-          <mat-icon class="text-4xl mb-2 text-gray-300 dark:text-gray-600">notifications_off</mat-icon>
-          <p class="text-sm">No notifications yet.</p>
-        </div>
-      </ng-template>
-
-      <!-- View More -->
-      <div *ngIf="notifications.length >= 5" class="text-center p-3 border-t border-gray-200 dark:border-gray-700">
-        <button class="text-sm text-blue-600 dark:text-blue-400 hover:underline" (click)="viewAll()">
-          View More
-        </button>
-      </div>
+      <app-notification-menu [role]="'admin'" (menuClosed)="showNotificationsMenu = false"></app-notification-menu>
     </div>
 
     <!-- Profile Dropdown -->
