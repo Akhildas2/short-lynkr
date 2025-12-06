@@ -76,6 +76,8 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
       link.click();
       window.URL.revokeObjectURL(url);
     });
+    
+    this.showQrOptions = !this.showQrOptions;
   }
 
   calculateDaysRemaining(expiryDate: string | Date): number {

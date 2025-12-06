@@ -4,6 +4,7 @@ import { SocialQrCodeDocument } from "../types/socialQr.interface";
 const socialQrSchema = new Schema<SocialQrCodeDocument>({
     platform: { type: String, required: true },
     accountUrl: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
     qrCodeUrl: { type: String, required: true },
     format: { type: String, enum: ["PNG", "SVG", "JPEG"], default: "PNG" },
     size: { type: Number, default: 300 },

@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SocialQrEffects } from '../../../state/qr/social-qr.effects';
 import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
 import { SharedModule } from '../../../shared/shared.module';
-import QRCode from 'qrcode';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
-import { sameColorValidator } from '../../../shared/utils/differentColorsValidator';
 import { UserHeaderComponent } from '../../../shared/components/layouts/user/user-header/user-header.component';
 import { UserFooterComponent } from '../../../shared/components/layouts/user/user-footer/user-footer.component';
 import { AuthEffects } from '../../../state/auth/auth.effects';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { noWhitespaceValidator } from '../../../shared/utils/noWhitespaceValidator';
+import { PLATFORM_BASE_URL, PLATFORM_ICONS, PLATFORMS } from '../../../shared/utils/platform.helper';
+import { getProfileHint, usernameFullUrlValidator } from '../../../shared/utils/username.helper';
+import { uppercaseColor } from '../../../shared/utils/color.helper';
+import { generateQr } from '../../../shared/utils/generateQr.helper';
+import { colorContrastValidator } from '../../../shared/utils/colorValidator';
 
 @Component({
   selector: 'app-social-qr-generator',
@@ -28,57 +31,9 @@ export class SocialQrGeneratorComponent implements OnInit {
   lastSubmittedQr: any = null;
   lastSubmittedName: string | null = null;
 
-  platforms = [
-    'Facebook',
-    'Instagram',
-    'Twitter',
-    'LinkedIn',
-    'YouTube',
-    'GitHub',
-    'WhatsApp',
-    'Telegram',
-    'TikTok',
-    'Snapchat',
-    'Pinterest',
-    'Reddit',
-    'Discord',
-    'Other'
-  ];
-
-  platformIcons: Record<string, string> = {
-    Facebook: 'fab fa-facebook-f',
-    Instagram: 'fab fa-instagram',
-    Twitter: 'fab fa-twitter',
-    LinkedIn: 'fab fa-linkedin-in',
-    YouTube: 'fab fa-youtube',
-    GitHub: 'fab fa-github',
-    WhatsApp: 'fab fa-whatsapp',
-    Telegram: 'fab fa-telegram-plane',
-    TikTok: 'fab fa-tiktok',
-    Snapchat: 'fab fa-snapchat-ghost',
-    Pinterest: 'fab fa-pinterest-p',
-    Reddit: 'fab fa-reddit-alien',
-    Discord: 'fab fa-discord',
-    Other: 'fas fa-globe'
-  };
-
-  platformBaseUrl: Record<string, string> = {
-    Facebook: 'https://facebook.com/',
-    Instagram: 'https://instagram.com/',
-    LinkedIn: 'https://linkedin.com/in/',
-    YouTube: 'https://youtube.com/@',
-    Twitter: 'https://twitter.com/',
-    GitHub: 'https://github.com/',
-    WhatsApp: 'https://wa.me/',
-    Telegram: 'https://t.me/',
-    TikTok: 'https://www.tiktok.com/@',
-    Snapchat: 'https://www.snapchat.com/add/',
-    Pinterest: 'https://www.pinterest.com/',
-    Reddit: 'https://www.reddit.com/user/',
-    Discord: 'https://discord.com/users/',
-    Other: ''
-  };
-
+  platforms = PLATFORMS;
+  platformIcons = PLATFORM_ICONS;
+  platformBaseUrl = PLATFORM_BASE_URL;
   formats = ['PNG', 'JPEG', 'SVG'];
   QR_SIZES = [300, 500, 750, 1024];
 
@@ -93,13 +48,11 @@ export class SocialQrGeneratorComponent implements OnInit {
       format: ['PNG', Validators.required],
       foregroundColor: ['#000000', [Validators.required, Validators.pattern(/^#[0-9A-Fa-f]{6}$/)]],
       backgroundColor: ['#ffffff', [Validators.required, Validators.pattern(/^#[0-9A-Fa-f]{6}$/)]]
-    }, { validators: sameColorValidator });
+    }, { validators: colorContrastValidator });
 
     // Uppercase colors
     ['foregroundColor', 'backgroundColor'].forEach(colorField => {
-      this.socialQrForm.get(colorField)!.valueChanges.subscribe(value => {
-        this.socialQrForm.get(colorField)!.setValue(value.toUpperCase(), { emitEvent: false });
-      });
+      this.socialQrForm.get(colorField)!.valueChanges.subscribe(value => uppercaseColor(this.socialQrForm.get(colorField)!));
     });
 
     // Platform change
@@ -108,7 +61,7 @@ export class SocialQrGeneratorComponent implements OnInit {
       if (platform !== 'Other') {
         this.socialQrForm.get('accountUrl')!.setValue(baseUrl);
         this.socialQrForm.get('accountUrl')!.disable({ emitEvent: false });
-        this.socialQrForm.get('username')!.setValidators([Validators.required, Validators.maxLength(20), this.usernameFullUrlValidator, noWhitespaceValidator]);
+        this.socialQrForm.get('username')!.setValidators([Validators.required, Validators.maxLength(20), usernameFullUrlValidator, noWhitespaceValidator]);
       } else {
         this.socialQrForm.get('accountUrl')!.setValue('');
         this.socialQrForm.get('accountUrl')!.enable({ emitEvent: false });
@@ -130,11 +83,6 @@ export class SocialQrGeneratorComponent implements OnInit {
 
   }
 
-  usernameFullUrlValidator(control: AbstractControl) {
-    if (!control.value) return null;
-    const urlPattern = /^https?:\/\/.+/;
-    return urlPattern.test(control.value) ? { fullUrl: true } : null;
-  }
 
   getUsernameError(): string | null {
     const control = this.socialQrForm.get('username');
@@ -158,20 +106,10 @@ export class SocialQrGeneratorComponent implements OnInit {
 
 
   getProfileHint(): string | null {
-    const platform = this.socialQrForm.value.platform;
-    const username = this.socialQrForm.value.username;
-
-    if (!platform) return null;
-
-    if (platform === 'Other') {
-      return 'Enter the full URL of your profile (must start with http:// or https://)';
-    }
-
-    if (!username) {
-      return `Base URL auto-filled: ${this.platformBaseUrl[platform]}`;
-    }
-
-    return null;
+    return getProfileHint(
+      this.socialQrForm.value.platform,
+      this.socialQrForm.value.username
+    );
   }
 
 
@@ -179,8 +117,6 @@ export class SocialQrGeneratorComponent implements OnInit {
     if (this.socialQrForm.invalid) {
       return this.socialQrForm.markAllAsTouched();
     }
-
-    console.log("form", this.socialQrForm.value);
 
     const isAuthenticated = await this.authEffects.checkAuthStatus();
     if (!isAuthenticated) {
@@ -209,7 +145,6 @@ export class SocialQrGeneratorComponent implements OnInit {
       accountUrl: finalUrl
     };
 
-
     this.isLoading = true;
 
     try {
@@ -231,33 +166,25 @@ export class SocialQrGeneratorComponent implements OnInit {
   }
 
   async generateQr(url?: string) {
-    const { size, format, foregroundColor, backgroundColor } = this.socialQrForm.value;
-
-
-    // Use getRawValue() to include disabled fields
     const formValues = this.socialQrForm.getRawValue();
     const finalUrl = url || (formValues.accountUrl + (formValues.username || ''));
     if (!finalUrl) return;
 
-    const opts: QRCode.QRCodeToDataURLOptions = {
-      width: size,
-      margin: 2,
-      color: { dark: foregroundColor, light: backgroundColor }
-    };
-
     try {
-      if (format === 'SVG') {
-        const svgString = await QRCode.toString(finalUrl, { ...opts, type: 'svg' });
-        this.qrRaw = svgString;
-        this.qrPreview = this.sanitizer.bypassSecurityTrustHtml(svgString);
-      } else {
-        const dataUrl = await QRCode.toDataURL(finalUrl, opts);
-        this.qrRaw = dataUrl;
-        this.qrPreview = dataUrl;
-      }
+      const { qrPreview, qrRaw } = await generateQr({
+        url: finalUrl,
+        size: formValues.size,
+        format: formValues.format,
+        foregroundColor: formValues.foregroundColor,
+        backgroundColor: formValues.backgroundColor,
+        sanitizer: this.sanitizer
+      });
+
+      this.qrPreview = qrPreview;
+      this.qrRaw = qrRaw;
 
     } catch (err: any) {
-      this.snackbarService.showError(err)
+      this.snackbarService.showError(err);
     }
   }
 
@@ -271,6 +198,11 @@ export class SocialQrGeneratorComponent implements OnInit {
       foregroundColor: '#000000',
       backgroundColor: '#ffffff'
     });
+
+    this.socialQrForm.get('accountUrl')!.enable({ emitEvent: false });
+    this.socialQrForm.get('username')!.clearValidators();
+    this.socialQrForm.get('username')!.updateValueAndValidity();
+
     this.qrPreview = null;
     this.lastSubmittedQr = null;
     this.lastSubmittedName = null;

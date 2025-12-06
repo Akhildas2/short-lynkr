@@ -120,7 +120,6 @@ export const getUrlById = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const deleteUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-
         const userId = req.user?.id;
         const { id } = req.params;
 
@@ -136,3 +135,20 @@ export const deleteUrl = async (req: AuthRequest, res: Response, next: NextFunct
         next(error);
     }
 }
+
+export const toggleBlockUrl = async (req: AuthRequest, res: Response, next: NextFunction) : Promise<void> => {
+    try {
+        const userId = req.user?.id;
+        const { id } = req.params;
+        const { isBlocked } = req.body;
+
+        const url = await urlService.toggleBlockUrl(id, isBlocked, userId);
+
+        res.status(200).json({
+            message: `URL ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
+            url
+        });
+    } catch (err: any) {
+        next(err);
+    }
+};

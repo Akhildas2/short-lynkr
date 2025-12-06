@@ -88,4 +88,21 @@ export class CustomizeUrlDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  get isFormInvalid(): boolean {
+    // Short Code validation
+    const shortIdInvalid = this.settings?.urlSettings?.allowCustomSlugs
+      && (!this.updatedUrl.shortId
+        || this.updatedUrl.shortId.length < 4
+        || this.updatedUrl.shortId.length > (this.settings.urlSettings.defaultLength || 8));
+
+    // Click Limit validation
+    const clickInvalid = this.clickLimitInvalid;
+
+    // Expiry Days validation
+    const maxExpiry = this.settings?.urlSettings?.expirationDaysLimit || 100;
+    const expiryInvalid = this.expiryDays < 0 || this.expiryDays > maxExpiry;
+
+    return shortIdInvalid || clickInvalid || expiryInvalid;
+  }
+
 }

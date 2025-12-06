@@ -1,0 +1,131 @@
+<div class="px-4 sm:px-8 md:px-12">
+
+    <div class="max-w-7xl mx-auto mb-4 px-4">
+
+        <!-- Header -->
+        <app-user-page-header [title]="'My Social QR Codes'" [isLoading]="isLoading" [showSearch]="filteredQrs().length > 0"
+            [searchTerm]="searchTerm()" (searchTermChange)="searchTerm.set($event)" [showFilter]="filteredQrs().length > 0"
+            [filterStatusLabel]="filterStatusLabel()" [filterOptions]="filterOptions"
+            (filterChange)="changeFilter($event)" [createButtonText]="'Create Qr'" [createButtonLink]="'/qr-generator'">
+        </app-user-page-header>
+
+        <div *ngIf="isLoading" class="flex flex-col items-center justify-center flex-1 min-h-[calc(100vh-7rem-7rem)]">
+            <app-spinner></app-spinner>
+            <p class="text-gray-400 animate-pulse">Loading your QR codes...</p>
+        </div>
+
+        <!-- Empty state when no QR codes exist -->
+        <app-empty-state *ngIf="!isLoading && socialQrs().length === 0" icon="fas fa-qrcode" title="No QR Codes Found"
+            description="You haven’t created any social QR codes yet. Get started by creating your first QR code."
+            actionIcon="fas fa-plus-circle" actionText="Create Your First QR" actionRoute="/qr-generator">
+        </app-empty-state>
+
+        <!-- Empty state when search yields no results -->
+        <app-empty-state
+            *ngIf="!isLoading && socialQrs().length > 0 && filteredQrs().length === 0 && searchTerm() && !filterStatus()"
+            icon="fas fa-search" title="No QR Codes Found for Your Search"
+            description="No QR codes match your search term. Try refining or clearing your search."
+            clearText="Clear Search" clearIcon="fas fa-times" [clearCallback]="clearSearch.bind(this)">
+        </app-empty-state>
+
+        <!-- Empty state when filter yields no results -->
+        <app-empty-state
+            *ngIf="!isLoading && socialQrs().length > 0 && filteredQrs().length === 0 && !searchTerm() && filterStatus()"
+            icon="fas fa-filter" title="No QR Codes Match This Filter"
+            description="No QR codes match your selected status filter. Try changing or clearing the filter."
+            clearText="Clear Filter" clearIcon="fas fa-filter-circle-xmark" [clearCallback]="clearFilter.bind(this)">
+        </app-empty-state>
+
+        <!-- Empty state when both search and filter yield no results -->
+        <app-empty-state
+            *ngIf="!isLoading && socialQrs().length > 0 && filteredQrs().length === 0 && searchTerm() && filterStatus()"
+            icon="fas fa-search-minus" title="No QR Codes Match Search and Filter"
+            description="No QR codes match your search term and selected status filter. Try refining or clearing them."
+            clearText="Clear Search & Filter" clearIcon="fas fa-times-circle"
+            [clearCallback]="clearSearchAndFilter.bind(this)">
+        </app-empty-state>
+
+        <!-- QR Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" *ngIf="!isLoading">
+            <div *ngFor="let qr of paginatedQrs()"
+                class="relative bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100 dark:border-gray-700">
+
+                <div class="bg-gray-50 dark:bg-gray-800 flex justify-between align-middle px-2 pt-2">
+                    <i [class]="getPlatformIcon(qr.platform)" [ngClass]="getPlatformColor(qr.platform)"
+                        class="text-lg"></i>
+
+                    <div class="flex items-center gap-2 px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-opacity-10 backdrop-blur-md border border-opacity-20"
+                        [ngClass]="getFormatClasses(qr.format)">
+                        <span class="w-2 h-2 rounded-full" [ngClass]="getFormatDotClasses(qr.format)"></span>
+                        {{ qr.format | uppercase }}
+                    </div>
+                </div>
+
+                <!-- QR Image -->
+                <div class="p-2 flex flex-col items-center bg-gray-50 dark:bg-gray-800 relative group cursor-pointer"
+                    (click)="viewOrEditQr(qr, 'view')">
+                    <img [src]="qr.qrCodeUrl" class="w-full h-full object-contain rounded shadow-sm" alt="QR Code">
+                    <div
+                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition duration-300 flex items-center justify-center">
+                        <span
+                            class="opacity-0 group-hover:opacity-100 bg-white px-3 py-1 rounded-full text-base font-extrabold shadow text-blue-700">View</span>
+                    </div>
+                </div>
+
+                <!-- QR Info -->
+                <div class="p-4 flex flex-col">
+                    <div class="flex items-center justify-between mb-2 flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <i [class]="getPlatformIcon(qr.platform)"
+                                class="text-lg text-gray-700 dark:text-gray-300"></i>
+                            <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 truncate">{{ qr.platform }}
+                            </h3>
+                        </div>
+                        <span class="text-xs sm:text-sm font-bold px-2 py-1 rounded"
+                            [ngClass]="QR_SIZE_COLORS[qr.size].bg + ' ' + QR_SIZE_COLORS[qr.size].text">
+                            {{ qr.size }}
+                        </span>
+
+                    </div>
+
+                    <p class="text-gray-500 dark:text-gray-400 text-sm truncate mb-4 font-semibold">{{ qr.accountUrl }}
+                    </p>
+
+                    <!-- Actions -->
+                    <div
+                        class="flex justify-between border-t border-gray-400 dark:border-gray-600 pt-4 flex-wrap gap-2">
+                        <button (click)="viewOrEditQr(qr, 'view')"
+                            class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-sm font-bold">
+                            <i class="far fa-eye mr-1 text-sm"></i> Details
+                        </button>
+
+                        <div class="flex gap-3 flex-wrap">
+                            <!-- Edit / Delete -->
+                            <button matTooltip="Edit QR" (click)="viewOrEditQr(qr, 'edit')"
+                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                <i class="fas fa-pen text-lg"></i>
+                            </button>
+                            <button matTooltip="Delete QR" (click)="deleteQr(qr)"
+                                class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600">
+                                <i class="fas fa-trash text-lg"></i>
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <mat-paginator *ngIf="paginatedQrs().length > 8 && !isLoading" class="mt-4 flex justify-end"
+            [length]="filteredQrs().length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+            [pageSizeOptions]="[ 8, 16, 32, 50, 100]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+    </div>
+
+
+    <!-- Scroll Buttons -->
+    <app-scroll-buttons *ngIf="filteredQrs().length > 8 && !isLoading" [isLoading]="isLoading"></app-scroll-buttons>
+
+</div>

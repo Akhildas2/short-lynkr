@@ -48,9 +48,9 @@ export const getQrCode = async (req: AuthRequest, res: Response, next: NextFunct
 
 export const createSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
+        const userId = req.user?.id;
         const { platform, accountUrl, size = 300, format = "PNG", foregroundColor = "#000000", backgroundColor = "#FFFFFF" } = req.body;
         const qrCodeData = await generateQRCode(accountUrl, { size, format, foregroundColor, backgroundColor });
-console.log("req",req.body);
 
         const qr = await SocialQrModel.create({
             platform,
@@ -60,6 +60,7 @@ console.log("req",req.body);
             format,
             foregroundColor,
             backgroundColor,
+            userId
         });
 
         res.status(201).json(qr);
@@ -72,7 +73,15 @@ console.log("req",req.body);
 
 export const getAllSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const list = await SocialQrModel.find();
+        const userId = req.user?.id;
+        if (!userId) {
+            res.status(401).json({ message: 'Invalid or expired authentication token.' });
+            return;
+        }
+
+        const list = await SocialQrModel.find({ userId })
+            .sort({ createdAt: -1 });
+
         res.json(list);
 
     } catch (err) {
@@ -103,6 +112,24 @@ export const updateSocialQr = async (req: AuthRequest, res: Response, next: Next
         const { id } = req.params;
         const { platform, accountUrl, size, format, foregroundColor, backgroundColor } = req.body;
 
+        const qr = await SocialQrModel.findById(id);
+        if (!qr) {
+            res.status(404).json({ message: "QR not found" });
+            return;
+        }
+
+        const newUrl = accountUrl || qr.accountUrl;
+        const newSize = size || qr.size;
+        const newFormat = format || qr.format;
+        const newFg = foregroundColor || qr.foregroundColor;
+        const newBg = backgroundColor || qr.backgroundColor;
+        const qrCodeData = await generateQRCode(newUrl, {
+            size: newSize,
+            format: newFormat,
+            foregroundColor: newFg,
+            backgroundColor: newBg,
+        });
+
         const updateData: any = {
             ...(platform && { platform }),
             ...(accountUrl && { accountUrl }),
@@ -110,20 +137,16 @@ export const updateSocialQr = async (req: AuthRequest, res: Response, next: Next
             ...(format && { format }),
             ...(foregroundColor && { foregroundColor }),
             ...(backgroundColor && { backgroundColor }),
+            qrCodeUrl: qrCodeData,
         };
 
-        const qr = await SocialQrModel.findByIdAndUpdate(id, updateData, { new: true });
-        if (!qr) {
-            res.status(404).json({ message: "QR not found" });
-            return;
-        }
+        const updated = await SocialQrModel.findByIdAndUpdate(id, updateData, { new: true });
 
-        res.json(qr);
+        res.json(updated);
     } catch (err) {
         next(err);
     }
 };
-
 
 
 export const deleteSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {

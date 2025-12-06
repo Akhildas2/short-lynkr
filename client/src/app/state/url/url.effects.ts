@@ -85,4 +85,23 @@ export class UrlEffects {
         }
     }
 
+    async toggleBlockUrl(id: string, isBlocked: boolean): Promise<void> {
+        this.store.setLoading();
+        try {
+            const response = await firstValueFrom(this.api.toggleBlockUrl(id, isBlocked));
+            const updatedUrl: UrlEntry = response.url; // unwrap
+
+            this.store.updateUrl(updatedUrl);
+
+            const action = isBlocked ? 'blocked' : 'unblocked';
+            this.snackbar.showSuccess(`URL ${action} successfully.`);
+
+        } catch (err: any) {
+            const message = err?.error?.message || 'Failed to update URL status.';
+            this.store.setError(message);
+            this.snackbar.showError(message);
+        }
+    }
+
+
 }

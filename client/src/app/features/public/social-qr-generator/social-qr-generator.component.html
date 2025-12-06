@@ -94,7 +94,7 @@
                     <mat-form-field
                         *ngIf="!socialQrForm.get('platform')?.value || socialQrForm.get('platform')?.value === 'Other'"
                         appearance="outline" class="w-full">
-                         <mat-icon matPrefix>public</mat-icon>
+                        <mat-icon matPrefix>public</mat-icon>
                         <mat-label>Profile URL</mat-label>
                         <input matInput formControlName="accountUrl" placeholder="https://example.com/your-profile" />
                         <mat-hint class="truncate">{{ getProfileHint() }}</mat-hint>
@@ -169,14 +169,31 @@
                         </mat-form-field>
                     </div>
 
-                    <!-- Contrast Error -->
+                    <!-- Contrast Error: Same Color -->
                     <div *ngIf="socialQrForm.hasError('sameColor') && (socialQrForm.dirty || socialQrForm.touched)"
                         class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-start gap-3">
-                        <mat-icon
-                            class="text-red-600 dark:text-red-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">error_outline</mat-icon>
+
+                        <mat-icon class="text-red-600 dark:text-red-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">
+                            error_outline
+                        </mat-icon>
+
                         <div class="text-xs sm:text-sm text-red-600 dark:text-red-400">
                             <span class="font-semibold">Contrast Issue:</span>
                             Foreground and Background colors cannot be the same. The QR code will be unreadable.
+                        </div>
+                    </div>
+
+                    <!-- Contrast Error: Low Contrast -->
+                    <div *ngIf="socialQrForm.hasError('lowContrast') && (socialQrForm.dirty || socialQrForm.touched)"
+                        class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3 flex items-start gap-3">
+
+                        <mat-icon class="text-yellow-600 dark:text-yellow-400 text-lg sm:text-xl flex-shrink-0">
+                            warning_amber
+                        </mat-icon>
+
+                        <div class="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400">
+                            <span class="font-semibold">Low Contrast Warning:</span>
+                            Foreground and Background colors are too similar — the QR code may not be scannable.
                         </div>
                     </div>
 

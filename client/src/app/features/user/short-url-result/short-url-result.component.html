@@ -5,90 +5,38 @@
 
       <!-- Main Card Grid -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-        <!-- QR Code Card  -->
-        <div class="lg:col-span-1 flex justify-center items-center">
+        <!-- QR Code Card -->
+        <div class="lg:col-span-1 flex justify-center align-middle items-center">
           <div class="bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-4 w-full sm:max-w-md">
-            <div class="space-y-3">
-              <h2
-                class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
-                Your Shortened URL is Ready!</h2>
 
-              <div class="p-4 transition-transform hover:scale-105">
-                <ng-container *ngIf="url.qrCode as qr; else fallback">
-                  <img [src]="qr.qrCodeUrl" [alt]="'QR Code for ' + url.shortUrl"
-                    class="w-full h-full object-contain animate-fade-in rounded-2xl">
-                </ng-container>
-                <ng-template #fallback>
-                  <p class="text-center text-sm text-red-500">QR code unavailable</p>
-                </ng-template>
-              </div>
+            <!-- FULL VIEW: Heading + QR + Download Button + Short URL -->
+            <ng-container *ngIf="!showQrOptions; else optionsView">
+              <div class="space-y-3">
+                <h2
+                  class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
+                  Your Shortened URL is Ready!
+                </h2>
 
-              <!-- Download QR Options -->
-              <div class="space-y-4">
+                <div class="p-4 transition-transform hover:scale-105">
+                  <ng-container *ngIf="url.qrCode as qr; else fallback">
+                    <img [src]="qr.qrCodeUrl" [alt]="'QR Code for ' + url.shortUrl"
+                      class="w-full h-80 object-contain animate-fade-in rounded-2xl">
+                  </ng-container>
+                  <ng-template #fallback>
+                    <p class="text-center text-sm text-red-500">QR code unavailable</p>
+                  </ng-template>
+                </div>
 
-                <button mat-stroked-button *ngIf="!showQrOptions  && url.qrCode?.qrCodeUrl" (click)="toggleQrOptions()"
-                  class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
+                <!-- Download QR Button -->
+                <button mat-stroked-button *ngIf="url.qrCode?.qrCodeUrl" (click)="toggleQrOptions()"
+                  class="w-full transition-all duration-300 hover:-translate-y-1 shadow-md hover:shadow-lg rounded-md border border-[var(--primary-color)]">
                   <span
-                    class="text-lg font-semibold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+                    class="text-lg font-semibold bg-gradient-to-r from-[var(--error-color)] to-[var(--primary-color)] bg-clip-text text-transparent">
                     Download QR
                   </span>
                   <mat-icon class="ml-2 text-[var(--primary-color)]">download</mat-icon>
                 </button>
 
-                <!-- Size & Format Options -->
-                <div *ngIf="showQrOptions"
-                  class="mt-2 p-4 rounded-2xl bg-white/70 dark:bg-gray-900/60 backdrop-blur-md shadow-2xl border border-gray-300 dark:border-gray-700 space-y-4 transition-all duration-300">
-
-                  <!-- Section Title -->
-                  <h3 class="text-center text-lg font-semibold">
-                    Select QR Size & Format
-                  </h3>
-
-                  <!-- Size Selection -->
-                  <div class="grid grid-cols-2 md:grid-cols-2 sm:grid-cols-4 gap-3">
-                    <button mat-flat-button *ngFor="let size of QR_SIZES" (click)="selectedSize = size" [ngClass]="{
-                      'bg-[var(--primary-color)] text-white shadow-lg scale-105': size === selectedSize,
-                      'bg-gray-300 text-black dark:text-white dark:bg-gray-700 hover:bg-blue-400 dark:hover:bg-blue-500 hover:text-white': size !== selectedSize
-                     }" class="w-full px-4 py-2 rounded-xl font-semibold transition-all duration-300 ease-out">
-                      {{ size }}x{{ size }}
-                    </button>
-                  </div>
-
-                  <!-- Format Selection -->
-                  <div class="grid grid-cols-3 gap-3">
-                    <button mat-stroked-button *ngFor="let format of QR_FORMATS" (click)="selectedFormat = format"
-                      [ngClass]="{
-                        'border-[var(--error-color)] bg-[var(--error-color)]  shadow-md scale-105 white-text': format === selectedFormat,
-                        'border-gray-400 hover:border-[var(--error-color)] hover:text-[var(--error-color)] dark:hover:text-[var(--error-color)]': format !== selectedFormat
-                      }" class="px-3 py-2 rounded-xl font-medium transition-all duration-300 ease-out">
-                      {{ format }}
-                    </button>
-                  </div>
-
-                  <!-- Action Buttons -->
-                  <div class="flex flex-col sm:flex-row gap-3 mt-3">
-                    <!-- Cancel Button -->
-                    <button mat-stroked-button
-                      class="w-full py-2 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
-                      (click)="toggleQrOptions()">
-                      <mat-icon class="mr-1">close</mat-icon>
-                      Cancel
-                    </button>
-
-                    <!-- Download Button -->
-                    <button mat-flat-button
-                      class="w-full py-2 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
-                      bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                      [disabled]="!selectedSize || !selectedFormat"
-                      (click)="downloadQrImage(url._id, selectedSize!, selectedFormat!, url.shortId)">
-                      <mat-icon class="mr-1 text-white">download</mat-icon>
-                      Download
-                    </button>
-                  </div>
-                </div>
-
-
-                <!-- Short URL text -->
                 <div class="text-center text-sm">
                   <span>Scan QR code to visit</span>
                   <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
@@ -97,7 +45,73 @@
                   </span>
                 </div>
               </div>
-            </div>
+            </ng-container>
+
+            <!-- OPTIONS VIEW: QR Size & Format -->
+            <ng-template #optionsView>
+              <h2
+                class="text-xl font-semibold text-center bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
+                Your Shortened URL is Ready!
+              </h2>
+
+              <div
+                class="h-96 space-y-4 mt-5 p-6 rounded-2xl bg-white/70 dark:bg-gray-900/60 backdrop-blur-md shadow-2xl border border-gray-300 dark:border-gray-700 transition-all duration-300">
+
+                <!-- Section Title -->
+                <h3 class="text-center text-lg font-semibold">
+                  Select QR Size & Format
+                </h3>
+
+                <!-- Size Selection -->
+                <div class="grid grid-cols-2 md:grid-cols-2 sm:grid-cols-4 gap-3">
+                  <button mat-flat-button *ngFor="let size of QR_SIZES" (click)="selectedSize = size" [ngClass]="{
+              'bg-[var(--primary-color)] text-white shadow-lg scale-105': size === selectedSize,
+              'bg-gray-300 text-black dark:text-white dark:bg-gray-700 hover:bg-blue-400 dark:hover:bg-blue-500 hover:text-white': size !== selectedSize
+            }" class="w-full px-4 py-2 rounded-xl font-semibold transition-all duration-300 ease-out">
+                    {{ size }}x{{ size }}
+                  </button>
+                </div>
+
+                <!-- Format Selection -->
+                <div class="grid grid-cols-3 gap-3">
+                  <button mat-stroked-button *ngFor="let format of QR_FORMATS" (click)="selectedFormat = format"
+                    [ngClass]="{
+              'border-[var(--error-color)] bg-[var(--error-color)]  shadow-md scale-105 white-text': format === selectedFormat,
+              'border-gray-400 hover:border-[var(--error-color)] hover:text-[var(--error-color)] dark:hover:text-[var(--error-color)]': format !== selectedFormat
+            }" class="px-3 py-2 rounded-xl font-medium transition-all duration-300 ease-out">
+                    {{ format }}
+                  </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button mat-stroked-button
+                    class="w-full py-2 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+                    (click)="toggleQrOptions()">
+                    <mat-icon class="mr-1">close</mat-icon>
+                    Cancel
+                  </button>
+
+                  <button mat-flat-button
+                    class="w-full py-2 rounded-xl font-semibold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
+            bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="!selectedSize || !selectedFormat"
+                    (click)="downloadQrImage(url._id, selectedSize!, selectedFormat!, url.shortId)">
+                    <mat-icon class="mr-1 text-white">download</mat-icon>
+                    Download
+                  </button>
+                </div>
+              </div>
+
+              <div class="text-center text-sm mt-5">
+                <span>Scan QR code to visit</span>
+                <span class="cursor-pointer text-[var(--primary-color)] hover:text-[var(--accent-color)] text-lg"
+                  (click)="openUrlHandler(url.shortUrl, false)">
+                  {{ url.shortUrl }}
+                </span>
+              </div>
+            </ng-template>
+
           </div>
         </div>
 
@@ -224,32 +238,36 @@
             'grid-cols-1 md:grid-cols-2': !adminSettings?.urlSettings?.urlCustomization
           }">
             <!-- Home Button -->
-            <button mat-stroked-button [routerLink]="['/home']"
-              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
-              <span
-                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
-                Home
-              </span>
+            <button mat-stroked-button [routerLink]="['/home']" class="w-full transition-all duration-300 hover:translate-y-[-2px] 
+           shadow-md hover:shadow-lg rounded-md border border-[var(--primary-color)]">
+              <span class="text-base font-bold text-[var(--primary-color)]">Home</span>
               <mat-icon class="ml-2 text-[var(--primary-color)]">home</mat-icon>
             </button>
 
-            <!-- Customize Url Button -->
+            <!-- Customize URL -->
             <button *ngIf="adminSettings?.urlSettings?.urlCustomization" mat-stroked-button (click)="customizeUrl(url)"
-              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border ">
-              <span
-                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+              class="w-full transition-all duration-300 hover:translate-y-[-2px] 
+           shadow-md hover:shadow-lg rounded-md border border-[var(--accent-color)]">
+
+              <span class="text-base font-bold
+          bg-gradient-to-r from-[var(--accent-color)] to-[var(--primary-color)]
+          bg-clip-text text-transparent">
                 Customize URL
               </span>
-              <mat-icon class="ml-2 text-[var(--primary-color)]">edit</mat-icon>
+
+              <mat-icon class="ml-2 text-[var(--accent-color)]">edit</mat-icon>
             </button>
 
-            <!-- Analytics Button -->
-            <button mat-stroked-button [routerLink]="['/user/analytics',url._id]"
-              class="w-full transition-all duration-300 hover:-translate-y-1 rounded-lg border">
-              <span
-                class="text-base font-bold bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)] bg-clip-text text-transparent">
+            <!-- Analytics -->
+            <button mat-stroked-button [routerLink]="['/user/analytics', url._id]" class="w-full transition-all duration-300 hover:translate-y-[-2px] 
+           shadow-md hover:shadow-lg rounded-md border border-[var(--primary-color)]">
+
+              <span class="text-base font-bold
+        bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]
+        bg-clip-text text-transparent">
                 Analytics
               </span>
+
               <mat-icon class="ml-2 text-[var(--primary-color)]">bar_chart</mat-icon>
             </button>
 

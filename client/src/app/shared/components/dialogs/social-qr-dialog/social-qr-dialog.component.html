@@ -1,0 +1,161 @@
+<h2 mat-dialog-title>
+    {{ isEditMode ? 'Edit Social QR' : 'View Social QR' }}
+</h2>
+
+<mat-dialog-content [formGroup]="qrForm" class="space-y-3">
+
+    <!-- QR Preview + Colors -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-start">
+
+        <!-- QR Preview -->
+        <ng-container *ngIf="qrPreview; else defaultQr">
+            <img *ngIf="qrForm.value.format !== 'SVG'; else svgQr" [src]="qrPreview" alt="QR preview"
+                class="qr-preview-box" />
+
+            <ng-template #svgQr>
+                <div [innerHTML]="qrPreview" class="qr-preview-box"></div>
+            </ng-template>
+        </ng-container>
+
+        <ng-template #defaultQr>
+            <div
+                class="qr-preview-box mx-auto flex flex-col justify-center items-center text-gray-400 border p-3 rounded-lg">
+                <i class="fas fa-qrcode text-6xl mb-2"></i>
+                <span class="text-sm text-center">
+                    QR code will appear here after you generate or save it.
+                </span>
+            </div>
+        </ng-template>
+
+        <!-- Colors -->
+        <div class="flex flex-col gap-4 flex-1 w-full p-2">
+            <!-- Foreground Color -->
+            <mat-form-field appearance="outline" class="w-full" floatLabel="always">
+                <mat-label>Foreground Color</mat-label>
+                <div class="flex items-center gap-3 w-full">
+                    <label class="w-10 h-10 rounded-lg cursor-pointer shadow-md hover:scale-110 transition-transform"
+                        [style.backgroundColor]="qrForm.get('foregroundColor')?.value || '#000000'">
+                        <input type="color" formControlName="foregroundColor"
+                            class="opacity-0 w-full h-full cursor-pointer" />
+                    </label>
+                    <input matInput type="text" formControlName="foregroundColor" placeholder="#000000"
+                        class="flex-1 dark:disabled:text-gray-300 font-mono uppercase" maxlength="7" />
+                </div>
+            </mat-form-field>
+
+            <!-- Background Color -->
+            <mat-form-field appearance="outline" class="w-full" floatLabel="always">
+                <mat-label>Background Color</mat-label>
+                <div class="flex items-center gap-3 w-full">
+                    <label class="w-10 h-10 rounded-lg cursor-pointer shadow-md hover:scale-110 transition-transform"
+                        [style.backgroundColor]="qrForm.get('backgroundColor')?.value || '#FFFFFF'">
+                        <input type="color" formControlName="backgroundColor"
+                            class="opacity-0 w-full h-full cursor-pointer" />
+                    </label>
+                    <input matInput type="text" formControlName="backgroundColor" placeholder="#FFFFFF"
+                        class="flex-1 dark:disabled:text-gray-300 font-mono uppercase" maxlength="7" />
+                </div>
+            </mat-form-field>
+        </div>
+
+    </div>
+
+    <!-- Contrast Error: Same Color -->
+    <div *ngIf="qrForm.hasError('sameColor') && (qrForm.dirty || qrForm.touched)"
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-start gap-3">
+
+        <mat-icon class="text-red-600 dark:text-red-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">
+            error_outline
+        </mat-icon>
+
+        <div class="text-xs sm:text-sm text-red-600 dark:text-red-400">
+            <span class="font-semibold">Contrast Issue:</span>
+            Foreground and Background colors cannot be the same. The QR code will be unreadable.
+        </div>
+    </div>
+
+    <!-- Contrast Error: Low Contrast -->
+    <div *ngIf="qrForm.hasError('lowContrast') && (qrForm.dirty || qrForm.touched)"
+        class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3 flex items-start gap-3">
+
+        <mat-icon class="text-yellow-600 dark:text-yellow-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">
+            warning_amber
+        </mat-icon>
+
+        <div class="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400">
+            <span class="font-semibold">Low Contrast Warning:</span>
+            These colors are too similar — the QR code may not be scannable.
+        </div>
+    </div>
+
+    <!-- Platform -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Platform</mat-label>
+        <mat-select formControlName="platform">
+            <mat-select-trigger>
+                <div class="flex items-center gap-2">
+                    <i [class]="platformIcons[qrForm.value.platform]"></i>
+                    <span class="align-middle">{{ qrForm.value.platform }}</span>
+                </div>
+            </mat-select-trigger>
+
+            <mat-option *ngFor="let p of platforms" [value]="p">
+                <div class="flex items-center gap-2">
+                    <i [class]="platformIcons[p]"></i>
+                    <span>{{ p }}</span>
+                </div>
+            </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="qrForm.get('platform')?.hasError('required')">
+            Platform is required.
+        </mat-error>
+    </mat-form-field>
+
+    <!-- Full URL accountUrl -->
+    <mat-form-field appearance="outline" class="w-full">
+        <mat-icon class="fa fa-link text-base" [ngClass]="[
+        !isEditMode ? 'text-gray-400 dark:text-gray-200' : 'text-gray-800 dark:text-gray-200'
+        ]" matPrefix></mat-icon>
+        <mat-label>Profile URL</mat-label>
+        <input matInput formControlName="accountUrl" class="dark:disabled:text-gray-200"
+            placeholder="https://example.com/your-profile" />
+        <mat-hint class="truncate" *ngIf="isEditMode">{{ getProfileHint() }}</mat-hint>
+
+        <mat-error *ngIf="getProfileUrlError()">
+            {{ getProfileUrlError() }}
+        </mat-error>
+    </mat-form-field>
+
+
+    <!-- Size & Format -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>QR Size</mat-label>
+            <mat-select formControlName="size">
+                <mat-option *ngFor="let q of QR_SIZES" [value]="q">{{ q }} px</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Format</mat-label>
+            <mat-select formControlName="format">
+                <mat-option *ngFor="let f of formats" [value]="f">{{ f }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="space-x-2">
+    <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
+        (click)="close()">
+        <span class="text-lg font-medium text-[var(--secondary-color)]">Cancel</span>
+        <mat-icon class="ml-2 text-[var(--secondary-color)]">cancel</mat-icon>
+    </button>
+    <button mat-stroked-button class="transition-all duration-300 hover:-translate-y-1 rounded-lg border"
+        *ngIf="isEditMode" (click)="save()">
+        <span class="text-lg font-medium text-[var(--primary-color)]">Save</span>
+        <mat-icon class="ml-2 text-[var(--primary-color)]">save</mat-icon>
+    </button>
+</mat-dialog-actions>

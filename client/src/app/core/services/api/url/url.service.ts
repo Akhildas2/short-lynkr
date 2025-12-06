@@ -36,4 +36,8 @@ export class UrlService {
     });
   }
 
+  toggleBlockUrl(urlId: string, isBlocked: boolean): Observable<{ url: UrlEntry }> {
+    return this.http.patch<{ url: UrlEntry }>(`${this.urlApiUrl}/${urlId}/block`, { isBlocked })
+  }
+
 }

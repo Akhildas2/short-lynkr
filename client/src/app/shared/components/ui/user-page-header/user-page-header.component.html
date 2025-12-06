@@ -1,0 +1,87 @@
+<div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 w-full">
+
+    <!-- Compact Header (loading) -->
+    <div *ngIf="isLoading" class="flex flex-wrap justify-between items-center w-full gap-2">
+        <h2 class="text-3xl font-bold bg-clip-text text-transparent 
+       bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]">
+            {{ title }}
+        </h2>
+
+        <ng-container *ngIf="createButtonText">
+            <button [routerLink]="createButtonLink"
+                class="bg-blue-600 dark:bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600 flex items-center whitespace-nowrap text-sm sm:text-base">
+                <mat-icon class="mr-1 text-white text-base">add_circle</mat-icon>
+                {{ createButtonText }}
+            </button>
+        </ng-container>
+    </div>
+
+    <!-- Full Header (loaded) -->
+    <div *ngIf="!isLoading" class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 w-full">
+
+        <!-- Title + Search -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 w-full">
+            <h2
+                class="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary-color)] to-[var(--accent-color)]">
+                {{ title }}
+            </h2>
+
+            <!-- Search -->
+            <div *ngIf="showSearch" class="relative w-full sm:max-w-xs flex-1">
+                <input type="text" id="floating_outlined" [value]="searchTerm"
+                    (input)="onSearchChange($any($event.target).value)"
+                    class="peer block w-full px-4 py-2.5 text-sm text-heading bg-transparent rounded-md border border-blue-400 appearance-none focus:outline-none focus:ring-0 focus:border-brand"
+                    placeholder=" " />
+                <label for="floating_outlined"
+                    class="absolute bg-white dark:bg-gray-900 left-2.5 text-sm text-body duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-neutral-primary px-1 peer-focus:px-1 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 flex items-center gap-1">
+                    <mat-icon class="me-2">search</mat-icon> Search Here...
+                </label>
+                <button mat-icon-button *ngIf="searchTerm" (click)="onSearchChange('')"
+                    class="absolute flex justify-center right-2 top-1/2 transform -translate-y-1/2 z-10">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Filter + Create + Actions -->
+        <div class="flex flex-row items-center justify-end gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+
+            <!-- Filter Dropdown -->
+            <div *ngIf="showFilter && filterOptions.length > 0"
+                class="border border-gray-300 dark:border-gray-600 rounded-md flex items-center gap-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 w-full sm:w-auto">
+                <button [matMenuTriggerFor]="statusMenu"
+                    class="flex items-center justify-between gap-2 text-gray-800 dark:text-gray-200 font-bold px-4 py-2 rounded-md w-full sm:w-auto">
+                    {{ filterStatusLabel }}
+                    <mat-icon class="text-gray-600 dark:text-gray-300">arrow_drop_down</mat-icon>
+                </button>
+                <mat-menu #statusMenu="matMenu">
+                    <button mat-menu-item *ngFor="let opt of filterOptions" (click)="onFilterChange(opt.value)">
+                        {{ opt.label }}
+                    </button>
+                </mat-menu>
+            </div>
+
+            <!-- Create Button -->
+            <ng-container *ngIf="createButtonText">
+                <button [routerLink]="createButtonLink"
+                    class="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600 w-full sm:w-auto flex items-center whitespace-nowrap">
+                    <mat-icon class="mr-1 text-white">add_circle</mat-icon>
+                    {{ createButtonText }}
+                </button>
+            </ng-container>
+
+            <!-- Custom Action Buttons -->
+            <ng-container *ngFor="let btn of actionButtons">
+                <button (click)="btn.click()"
+                    class="flex items-center justify-center gap-2 px-3 py-2 lg:px-4 lg:py-2 rounded-lg text-sm lg:text-base font-medium transition-all shadow-md w-full sm:w-auto hover:scale-100 active:scale-90"
+                    [ngClass]="btn.color ? btn.color : 'bg-gray-600 text-white hover:bg-gray-700'">
+                    <mat-icon *ngIf="btn.icon" class="text-white">{{ btn.icon }}</mat-icon>
+                    {{ btn.label }}
+                </button>
+            </ng-container>
+
+        </div>
+    </div>
+
+</div>

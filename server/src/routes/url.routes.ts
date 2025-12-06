@@ -1,5 +1,5 @@
 import express from 'express';
-import { createUrl, deleteUrl, getUrlById, getUserUrls, redirectToOriginal, updateUrl } from '../controllers/url.controller';
+import { createUrl, deleteUrl, getUrlById, getUserUrls, redirectToOriginal, toggleBlockUrl, updateUrl } from '../controllers/url.controller';
 import { validateUrl } from '../middleware/validateUrl';
 import { authenticate } from '../middleware/auth';
 import { getQrCode } from '../controllers/qrCode.controller';
@@ -15,7 +15,7 @@ router.get('/my-urls', getUserUrls);
 router.get('/:id', getUrlById);
 router.patch('/update/:id', updateUrl);
 router.delete('/:id', deleteUrl);
-
+router.patch('/:id/block', authenticate, toggleBlockUrl);
 router.get('/qr/:id', authenticate, maintenanceMiddleware, getQrCode);
 
 // Public redirect route

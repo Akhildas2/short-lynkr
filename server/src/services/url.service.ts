@@ -248,7 +248,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
         } else if (
             Number.isInteger(clickLimit) &&
             clickLimit > (url.clicks ?? 0) &&
-            clickLimit <= 1000
+            clickLimit <= urlSettings.maxClickPerUrl
         ) {
             url.clickLimit = clickLimit;
         } else {
@@ -496,4 +496,29 @@ export const getUrlById = async (id: string, range: string) => {
             data: timelineData
         }
     };
+};
+
+export const toggleBlockUrl = async (id: string, isBlocked: boolean, userId?: string) => {
+    const url = await UrlModel.findByIdAndUpdate(
+        id,
+        { isBlocked, isActive: !isBlocked },
+        { new: true }
+    ).populate('qrCode');
+
+    if (!url) {
+        throw new Error('URL not found');
+    }
+
+    //  send notifications if needed
+    if (userId) {
+        await sendNotification({
+            userId: toObjectId(userId),
+            title: `URL ${isBlocked ? 'Blocked' : 'Unblocked'}`,
+            message: `Your short link (${url.shortUrl}) has been ${isBlocked ? 'blocked' : 'unblocked'} by admin.`,
+            type: isBlocked ? 'warning' : 'success',
+            category: 'url',
+        });
+    }
+
+    return url;
 };

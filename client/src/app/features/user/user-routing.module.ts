@@ -6,6 +6,7 @@ import { ShortUrlResultComponent } from './short-url-result/short-url-result.com
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { UserLayoutComponent } from '../../shared/components/layouts/user/user-layout/user-layout.component';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { SocialQrListComponent } from './social-qr-list/social-qr-list.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,8 @@ const routes: Routes = [
       { path: 'notifications', component: NotificationsComponent },
       { path: 'my-urls', component: MyUrlListComponent },
       { path: 'shortened/:id', component: ShortUrlResultComponent },
+      { path: 'my-urls', component: MyUrlListComponent },
+      { path: 'my-qrs', component: SocialQrListComponent },
     ]
   }
 ];
