@@ -24,11 +24,9 @@ export class NotificationMenuComponent extends BaseNotificationComponent {
   }
 
   viewAll(): void {
-    if (this.role === 'admin') {
-      this.router.navigate(['/admin/notifications']);
-    } else {
-      this.router.navigate(['/user/notifications']);
-    }
+    this.router.navigate([
+      this.role === 'admin' ? '/admin/notifications' : '/user/notifications'
+    ]);
 
     this.menuClosed.emit();
   }

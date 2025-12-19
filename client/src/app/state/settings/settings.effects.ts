@@ -1,4 +1,4 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, computed, inject } from "@angular/core";
 import { AdminApiService } from "../../core/services/api/admin/admin-api.service";
 import { SnackbarService } from "../../shared/services/snackbar/snackbar.service";
 import { firstValueFrom } from "rxjs";
@@ -11,6 +11,15 @@ export class AdminSettingsEffects {
     private api = inject(AdminApiService);
     private store = inject(AdminSettingsStore);
     private snackbar = inject(SnackbarService);
+    readonly settings = this.store.settings;
+
+    readonly appName = computed(() =>
+        this.settings()?.systemSettings?.appName ?? 'Short Lynkr'
+    );
+
+    readonly supportEmail = computed(() =>
+        this.settings()?.systemSettings?.supportEmail ?? 'support@example.com'
+    );
 
     async loadSettings() {
         this.store.setLoading();

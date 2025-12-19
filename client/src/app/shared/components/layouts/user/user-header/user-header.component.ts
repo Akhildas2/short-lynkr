@@ -1,6 +1,6 @@
 import { Component, effect, inject, OnDestroy, OnInit } from '@angular/core';
 import { SharedModule } from '../../../../shared.module';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.component';
 import { AuthEffects } from '../../../../../state/auth/auth.effects';
 import { AdminSettingsEffects } from '../../../../../state/settings/settings.effects';
@@ -9,24 +9,25 @@ import { NotificationMenuComponent } from '../../../ui/notification-menu/notific
 
 @Component({
   selector: 'app-user-header',
-  imports: [SharedModule, RouterLink, ThemeToggleComponent, NotificationMenuComponent],
+  imports: [SharedModule, RouterLink, RouterModule, ThemeToggleComponent, NotificationMenuComponent],
   templateUrl: './user-header.component.html',
   styleUrl: './user-header.component.scss'
 })
 export class UserHeaderComponent extends BaseNotificationComponent implements OnInit, OnDestroy {
   private authEffects = inject(AuthEffects);
-  private settingsEffect = inject(AdminSettingsEffects);
+  private settingsEffects = inject(AdminSettingsEffects);
 
   mobileMenuOpen: boolean = false;
   mobileDropdownOpen: boolean = false;
   isMobile: boolean = false;
   showNotificationsMenu = false;
+  dropdownOpen = false;
 
   appName: string = 'Short Lynkr';
   menuItems = [
     { label: 'Home', link: '/' },
     { label: 'QR Generator', link: '/qr-generator' },
-    { label: 'Features', link: '/features' }
+    { label: 'About', link: '/about' }
   ];
 
   guestMenuItems = [
@@ -34,30 +35,34 @@ export class UserHeaderComponent extends BaseNotificationComponent implements On
     { label: 'Sign Up', link: '/auth/sign-up' }
   ];
 
+  userMenu = [
+    { label: 'Profile', icon: 'person', link: '/user/profile' },
+    { label: 'My URLs', icon: 'link', link: '/user/my-urls' },
+    { label: 'My QRs', icon: 'qr_code', link: '/user/my-qrs' },
+    { label: 'Notifications', icon: 'notifications', link: '/user/notifications' },
+  ];
+
   constructor() {
     super();
 
     this.authEffects.checkAuthStatus();
-
     effect(() => {
       const isAuth = this.authStore.isAuthenticated();
       if (isAuth) {
         this.notificationEffects.loadNotifications();
       }
 
-      // Also update app name
-      const settings = this.settingsEffect['store'].settings();
-      this.appName = settings?.systemSettings?.appName || 'Short Lynkr';
+      this.appName = this.settingsEffects.appName();
     });
 
   }
 
-  get user(): boolean {
+  get isAuth(): boolean {
     return this.authStore.isAuthenticated();
   }
 
-  get username(): string {
-    return this.authStore.username();
+  get user() {
+    return this.authStore.user() || { username: '', email: '', role: '' };
   }
 
   logout(): void {
@@ -88,6 +93,10 @@ export class UserHeaderComponent extends BaseNotificationComponent implements On
     if (this.isMobile) {
       this.mobileDropdownOpen = !this.mobileDropdownOpen
     }
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
   }
 
 }

@@ -1,10 +1,8 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value || '';
-    // Check if value contains any spaces
-    if (/\s/.test(value)) {
-        return { whitespace: true };
-    }
-    return null;
+    if (control.value == null) return null;
+
+    const isWhitespace = control.value.trim().length === 0;
+    return isWhitespace ? { whitespace: true } : null;
 }

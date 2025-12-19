@@ -6,16 +6,16 @@ import { Notification } from '../../../models/notification/notification.interfac
 import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
+import { EmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-admin-notification',
-  imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent],
+  imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent, EmptyStateComponent],
   templateUrl: './admin-notification.component.html',
   styleUrl: './admin-notification.component.scss'
 })
 export class AdminNotificationComponent extends BaseNotificationComponent {
   pageTitle = 'Notifications';
-  // Use WritableSignal for something you want to update
   override isLoading: WritableSignal<boolean> = signal(true);
 
   override ngOnInit(): void {

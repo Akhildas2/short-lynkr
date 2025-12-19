@@ -3,16 +3,18 @@
     <!-- Logo -->
     <div class="flex items-center justify-center p-5 w-full border-b border-gray-300 dark:border-gray-700"
         [ngClass]="{ 'justify-center': collapsed, 'justify-start': !collapsed }">
-        <div class="flex-shrink-0">
-            <img src="/assets/logo-light.png" alt="ShortLynkr logo light"
-                class="h-10 w-auto scale-125 object-contain dark:hidden" />
-            <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark"
-                class="h-10 w-auto scale-125 object-contain hidden dark:block" />
-        </div>
-        <span *ngIf="!collapsed"
-            class="ml-3 text-2xl font-bold text-gray-800 dark:text-gray-100 transition-opacity duration-300">
-            {{ appName }}
-        </span>
+        <a [routerLink]="['/']" class="flex items-center">
+            <div class="flex-shrink-0">
+                <img src="/assets/logo-light.png" alt="ShortLynkr logo light"
+                    class="h-10 w-auto scale-125 object-contain dark:hidden" />
+                <img src="/assets/logo-dark.png" alt="ShortLynkr logo dark"
+                    class="h-10 w-auto scale-125 object-contain hidden dark:block" />
+            </div>
+            <span *ngIf="!collapsed"
+                class="ml-3 text-2xl font-bold text-gray-800 dark:text-gray-100 transition-opacity duration-300">
+                {{ appName }}
+            </span>
+        </a>
     </div>
 
     <!-- Nav Links -->

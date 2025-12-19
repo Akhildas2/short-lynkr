@@ -55,7 +55,7 @@ export const resetToDefaultSettings = async (): Promise<ISettings> => {
 
     //  Notify admins
     await sendNotification({
-        title: " System Settings Reset",
+        title: "System Settings Reset",
         message: "All system settings have been reset to their default values. Please review and reconfigure if needed.",
         forAdmin: true,
         type: "warning",
@@ -99,7 +99,6 @@ export const resetSectionToDefault = async (section: string): Promise<ISettings>
         type: "warning",
         category: "settings",
     });
-
 
     return settings;
 

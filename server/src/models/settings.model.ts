@@ -40,13 +40,10 @@ const settingsSchema = new Schema<ISettings>({
 
     notificationSettings: {
         emailAlerts: { type: Boolean, default: true },
-        dailyReports: { type: Boolean, default: false },
         securityAlerts: { type: Boolean, default: true }
     },
 
     securitySettings: {
-        enforceHttps: { type: Boolean, default: true },
-        enableTwoFactor: { type: Boolean, default: false },
         blockMaliciousUrls: { type: Boolean, default: true },
     },
 
@@ -58,7 +55,6 @@ const settingsSchema = new Schema<ISettings>({
         maintenanceEnd: { type: Date, default: null },
         enableApiAccess: { type: Boolean, default: true },
         enableAutoCleanup: { type: Boolean, default: true },
-        themeMode: { type: String, default: "light" },
     },
 
 }, {

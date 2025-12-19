@@ -12,6 +12,7 @@ import { getAverageResponseTime, getDbStorageUsed, getErrorRate } from '../middl
 import { formatBytes } from '../utils/formatBytes';
 import { applyRetention } from '../utils/applyRetention.utils';
 import { sendNotification } from './sendNotifications.service';
+import SocialQrModel from '../models/socialQr.model';
 
 type UserId = string | Types.ObjectId;
 type UrlId = string | Types.ObjectId;
@@ -70,6 +71,15 @@ const AdminService = {
         // Update user
         const user = await User.findByIdAndUpdate(userId, data, { new: true });
         if (!user) throw new ApiError('User not found', 404);
+
+        await sendNotification({
+            userId: user.id,
+            title: 'Profile Updated',
+            message: 'Your account details were updated by an admin.',
+            type: 'info',
+            category: 'user'
+        });
+
         return user.toObject();
     },
 
@@ -164,6 +174,24 @@ const AdminService = {
     async deleteUrl(urlId: UrlId) {
         const result = await Urls.findByIdAndDelete(urlId);
         if (!result) throw new ApiError('URL not found', 404);
+        if (result.userId) {
+            await sendNotification({
+                userId: result.userId,
+                title: 'URL Deleted',
+                message: `Your URL (${result.shortUrl}) was deleted by an admin.`,
+                type: 'warning',
+                category: 'url'
+            });
+        }
+
+        await sendNotification({
+            title: 'URL Deleted',
+            message: `Short URL ${result.shortUrl} was deleted by admin.`,
+            forAdmin: true,
+            type: 'info',
+            category: 'system'
+        });
+
         return result.toObject();
     },
 
@@ -184,7 +212,9 @@ const AdminService = {
 
         const totalUrls = urls.length;
         const blockedUrls = urls.filter(u => u.isBlocked).length;
-        const totalQrs = await Urls.countDocuments();
+        const totalUrlQrs = await Urls.countDocuments();
+        const totalSocialQrs = await SocialQrModel.countDocuments();
+        const totalQrs = totalUrlQrs + totalSocialQrs;
 
         const users = await User.find({ role: 'user' }).lean();
         const totalUsers = users.length;
@@ -258,6 +288,12 @@ const AdminService = {
             u.isBlocked && u.blockedAt && (new Date(u.blockedAt) >= currentFromDate) && (new Date(u.blockedAt) < currentToDate)
         );
 
+        const socialQrs = await SocialQrModel.find().lean();
+        const currentSocialQrs = socialQrs.filter(qr =>
+            qr.createdAt >= currentFromDate && qr.createdAt < currentToDate
+        );
+
+
         // create timeline data
         const { timelineLabels: combinedLabels, timelineData: usersData } = generateTimelineData(
             currentUsers.map(u => ({ timestamp: u.createdAt })), range
@@ -273,6 +309,11 @@ const AdminService = {
 
         const { timelineData: blockedUrlsData } = generateTimelineData(
             currentBlockedUrls.map(u => ({ timestamp: new Date(u.blockedAt as Date) })), range
+        );
+
+        const { timelineData: socialQrsData } = generateTimelineData(
+            currentSocialQrs.map(qr => ({ timestamp: qr.createdAt })),
+            range
         );
 
         return {
@@ -302,7 +343,8 @@ const AdminService = {
                 users: usersData,
                 blockedUsers: blockedUsersData,
                 urls: urlsData,
-                blockedUrls: blockedUrlsData
+                blockedUrls: blockedUrlsData,
+                qrs: socialQrsData
             },
             analytics: currentAnalytics
         }
@@ -330,7 +372,9 @@ const AdminService = {
         // === CORE METRICS ===
         const totalUrls = urls.length;
         const totalUsers = users.length;
-        const totalQrs = await Urls.countDocuments();
+        const totalUrlQrs = await Urls.countDocuments();
+        const totalSocialQrs = await SocialQrModel.countDocuments();
+        const totalQrs = totalUrlQrs + totalSocialQrs;
 
         // Active vs Inactive
         const activeUrls = urls.filter(u => !u.isBlocked).length;
@@ -513,7 +557,6 @@ const AdminService = {
     }
 
 };
-
 
 
 export default AdminService;

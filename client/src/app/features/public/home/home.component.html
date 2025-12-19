@@ -58,7 +58,7 @@
 
           <div *ngIf="urlForm.get('originalUrl')?.touched && urlForm.get('originalUrl')?.hasError('pattern')"
             class="mt-2 text-sm text-red-500">
-            Please enter a valid URL starting with http://www.google.com or https://www.google.com
+            Please enter a valid URL starting with http:// or https://
           </div>
 
           <div *ngIf="submitted && urlForm.errors?.['alreadyShort']" class="mt-2 text-sm text-red-500">
@@ -89,6 +89,9 @@
                 </mat-error>
                 <mat-error *ngIf="urlForm.get('customCode')?.hasError('maxlength')">
                   Maximum {{settings?.urlSettings?.defaultLength || 8}} characters allowed.
+                </mat-error>
+                <mat-error *ngIf="urlForm.get('customCode')?.hasError('pattern')">
+                  Only letters, numbers, underscores (_), or hyphens (-) are allowed.
                 </mat-error>
               </mat-form-field>
 

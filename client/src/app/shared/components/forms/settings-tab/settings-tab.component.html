@@ -192,6 +192,37 @@
                             </mat-form-field>
                         </div>
 
+                        <ng-container *ngIf="field.key === 'backgroundColor'">
+                            <!-- Same Color Error -->
+                            <div *ngIf="getFormError('sameColor')"
+                                class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 flex items-start gap-3">
+                                <mat-icon
+                                    class="text-red-600 dark:text-red-400 text-lg sm:text-xl mt-0.5 flex-shrink-0">
+                                    error_outline
+                                </mat-icon>
+                                <div class="text-xs sm:text-sm text-red-600 dark:text-red-400">
+                                    <span class="font-semibold">Contrast Issue:</span>
+                                    Foreground and Background colors cannot be the same. The QR code will be unreadable.
+                                </div>
+                            </div>
+
+                            <!-- Low Contrast Warning -->
+                            <div *ngIf="getFormError('lowContrast')" class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 
+                                rounded-lg p-3 flex items-center gap-3 mt-2">
+
+                                <mat-icon
+                                    class="text-yellow-600 dark:text-yellow-400 text-base sm:text-lg flex-shrink-0 !leading-none flex items-center">
+                                    warning_amber
+                                </mat-icon>
+
+                                <div class="text-xs sm:text-sm text-yellow-600 dark:text-yellow-400 leading-tight">
+                                    <span class="font-semibold">Low Contrast Warning:</span>
+                                    These colors are too similar — the QR code may not be scannable.
+                                </div>
+                            </div>
+
+                        </ng-container>
+
                     </ng-container>
                 </ng-container>
             </div>

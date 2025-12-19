@@ -137,7 +137,6 @@ export const notificationFields = [
         title: 'Email Notifications',
         items: [
             { type: 'checkbox', label: 'Enable email alerts', key: 'emailAlerts', icon: 'notifications' },
-            { type: 'checkbox', label: 'Send daily analytics reports', key: 'dailyReports', icon: 'bar_chart' },
             { type: 'checkbox', label: 'Security alerts', key: 'securityAlerts', icon: 'security' },
         ],
     },
@@ -148,8 +147,6 @@ export const securityFields = [
     {
         title: 'Security Settings',
         items: [
-            { type: 'checkbox', label: 'Enforce HTTPS redirects', key: 'enforceHttps', icon: 'https' },
-            { type: 'checkbox', label: 'Enable two-factor authentication', key: 'enableTwoFactor', icon: 'verified_user' },
             { type: 'checkbox', label: 'Block malicious URLs', key: 'blockMaliciousUrls', icon: 'block' },
         ],
     }

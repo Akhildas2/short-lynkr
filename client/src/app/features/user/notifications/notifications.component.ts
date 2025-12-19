@@ -4,10 +4,11 @@ import { NotificationDialogComponent } from '../../../shared/components/dialogs/
 import { Notification } from '../../../models/notification/notification.interface';
 import { SharedModule } from '../../../shared/shared.module';
 import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
+import { EmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-notifications',
-  imports: [SharedModule, SpinnerComponent],
+  imports: [SharedModule, SpinnerComponent, EmptyStateComponent],
   templateUrl: './notifications.component.html',
   styleUrl: './notifications.component.scss'
 })

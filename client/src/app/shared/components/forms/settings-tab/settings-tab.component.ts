@@ -4,6 +4,8 @@ import { SnackbarService } from '../../../services/snackbar/snackbar.service';
 import { DateAdapter } from '@angular/material/core';
 import { combineDateAndTime, getFormattedTime, getTimeString, isToday, parseTime } from '../../../utils/date.helpers';
 import { zoomInAnimation } from '../../../utils/animations.util';
+import { FormControl, FormGroup } from '@angular/forms';
+import { colorContrastValidator } from '../../../utils/colorValidator';
 
 @Component({
   selector: 'app-settings-tab',
@@ -130,9 +132,44 @@ export class SettingsTabComponent implements OnChanges {
   }
 
 
+  getFormError(errorKey: string): boolean {
+    // Check if we have a FormGroup reference
+    if (!this.settings) return false;
+
+    // For color validation, we need to check both fields together
+    if (errorKey === 'sameColor' || errorKey === 'lowContrast') {
+      const fg = this.settings['foregroundColor'];
+      const bg = this.settings['backgroundColor'];
+
+      if (!fg || !bg) return false;
+
+      // Create a temporary FormGroup to validate
+      const tempGroup = new FormGroup({
+        foregroundColor: new FormControl(fg),
+        backgroundColor: new FormControl(bg)
+      }, { validators: colorContrastValidator });
+
+      return tempGroup.hasError(errorKey);
+    }
+
+    return false;
+  }
+
   onSave() {
     if (!this.validateDailyVsMonthly()) return;
+    // Check color contrast for QR settings
+    if (this.sectionKey === 'qrSettings') {
+      if (this.getFormError('sameColor')) {
+        this.snackbarService.showError('Foreground and Background colors cannot be the same.');
+        return;
+      }
 
+      if (this.getFormError('lowContrast')) {
+        this.snackbarService.showError('These colors are too similar — the QR code may not be scannable.');
+        return;
+      }
+      // Note: lowContrast is a warning, not blocking
+    }
     if (this.settings['maintenanceMode']) {
       if (!this.validateMaintenanceDates()) return;
     }

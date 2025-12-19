@@ -64,7 +64,6 @@ export const createSocialQr = async (req: AuthRequest, res: Response, next: Next
         });
 
         res.status(201).json(qr);
-
     } catch (err) {
         next(err);
     }
@@ -74,16 +73,16 @@ export const createSocialQr = async (req: AuthRequest, res: Response, next: Next
 export const getAllSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.user?.id;
+        const role = req.user?.role;
+
         if (!userId) {
             res.status(401).json({ message: 'Invalid or expired authentication token.' });
             return;
         }
-
-        const list = await SocialQrModel.find({ userId })
-            .sort({ createdAt: -1 });
+        const filter = role === 'admin' ? {} : { userId };
+        const list = await SocialQrModel.find(filter).populate('userId', 'username email').sort({ createdAt: -1 });
 
         res.json(list);
-
     } catch (err) {
         next(err);
     }
@@ -93,14 +92,22 @@ export const getAllSocialQr = async (req: AuthRequest, res: Response, next: Next
 export const getSocialQrById = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
+        const userId = req.user?.id;
+        const role = req.user?.role;
+
         const qr = await SocialQrModel.findById(id);
         if (!qr) {
             res.status(404).json({ message: "QR not found" });
             return;
         }
 
-        res.json(qr);
+        // Access control
+        if (role !== 'admin' && qr.userId?.toString() !== userId) {
+            res.status(403).json({ message: "You are not allowed to access this QR." });
+            return;
+        }
 
+        res.json(qr);
     } catch (err) {
         next(err);
     }
@@ -110,7 +117,8 @@ export const getSocialQrById = async (req: AuthRequest, res: Response, next: Nex
 export const updateSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
-        const { platform, accountUrl, size, format, foregroundColor, backgroundColor } = req.body;
+        const userId = req.user?.id;
+        const role = req.user?.role;
 
         const qr = await SocialQrModel.findById(id);
         if (!qr) {
@@ -118,29 +126,29 @@ export const updateSocialQr = async (req: AuthRequest, res: Response, next: Next
             return;
         }
 
-        const newUrl = accountUrl || qr.accountUrl;
-        const newSize = size || qr.size;
-        const newFormat = format || qr.format;
-        const newFg = foregroundColor || qr.foregroundColor;
-        const newBg = backgroundColor || qr.backgroundColor;
-        const qrCodeData = await generateQRCode(newUrl, {
-            size: newSize,
-            format: newFormat,
-            foregroundColor: newFg,
-            backgroundColor: newBg,
+        if (role !== 'admin' && qr.userId?.toString() !== userId) {
+            res.status(403).json({ message: "You cannot update this QR." });
+            return;
+        }
+
+        const { platform, accountUrl, size, format, foregroundColor, backgroundColor } = req.body;
+
+        const qrCodeData = await generateQRCode(accountUrl || qr.accountUrl, {
+            size: size || qr.size,
+            format: format || qr.format,
+            foregroundColor: foregroundColor || qr.foregroundColor,
+            backgroundColor: backgroundColor || qr.backgroundColor
         });
 
-        const updateData: any = {
-            ...(platform && { platform }),
-            ...(accountUrl && { accountUrl }),
-            ...(size && { size }),
-            ...(format && { format }),
-            ...(foregroundColor && { foregroundColor }),
-            ...(backgroundColor && { backgroundColor }),
-            qrCodeUrl: qrCodeData,
-        };
-
-        const updated = await SocialQrModel.findByIdAndUpdate(id, updateData, { new: true });
+        const updated = await SocialQrModel.findByIdAndUpdate(id, {
+            platform: platform ?? qr.platform,
+            accountUrl: accountUrl ?? qr.accountUrl,
+            size: size ?? qr.size,
+            format: format ?? qr.format,
+            foregroundColor: foregroundColor ?? qr.foregroundColor,
+            backgroundColor: backgroundColor ?? qr.backgroundColor,
+            qrCodeUrl: qrCodeData
+        }, { new: true });
 
         res.json(updated);
     } catch (err) {
@@ -152,14 +160,23 @@ export const updateSocialQr = async (req: AuthRequest, res: Response, next: Next
 export const deleteSocialQr = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
-        const qr = await SocialQrModel.findByIdAndDelete(id);
+        const userId = req.user?.id;
+        const role = req.user?.role;
+
+        const qr = await SocialQrModel.findById(id);
         if (!qr) {
             res.status(404).json({ message: "QR not found" });
             return;
         }
 
-        res.json({ message: "QR deleted successfully" });
+        if (role !== 'admin' && qr.userId?.toString() !== userId) {
+            res.status(403).json({ message: "You cannot delete this QR." });
+            return;
+        }
 
+        await SocialQrModel.findByIdAndDelete(id);
+
+        res.json({ message: "QR deleted successfully" });
     } catch (err) {
         next(err);
     }

@@ -1,10 +1,9 @@
-<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900" *ngIf="!error() && !isLoading()">
+<div class="flex flex-col min-h-screen bg-white dark:bg-gray-900 px-4" *ngIf="!error() && !isLoading()">
     <!-- header -->
     <header
         class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-3 px-4 sm:px-6 py-4 bg-gray-50 dark:bg-gray-800 shadow-lg">
         <!-- Title -->
-        <h1 class="text-xl sm:text-2xl font-bold flex items-center gap-2 w-full sm:w-auto">
-            <mat-icon class="text-blue-500">notifications</mat-icon>
+        <h1 class="text-lg sm:text-2xl lg:text-4xl font-bold flex items-center gap-2 w-full sm:w-auto">
             Notifications
         </h1>
 
@@ -155,40 +154,50 @@
         </ng-container>
 
         <ng-template #noData>
-            <div class="flex flex-col justify-center items-center flex-1 text-center">
-                <!-- Icon Container -->
-                <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full
-                        shadow-xl ring-4 animate-pulse bg-gray-300 dark:bg-gray-700">
-                    <mat-icon class="text-yellow-700 dark:text-yellow-200 scale-150 drop-shadow-md">
-                        warning
-                    </mat-icon>
-                </div>
+            <!-- No notifications at all -->
+            <app-empty-state *ngIf="!isLoading() && notifications().length === 0" icon="fas fa-bell-slash"
+                title="No Notifications Found" description="Your notification feed is empty. Time to relax!"
+                actionIcon="fas fa-home" actionText="Go Home" actionRoute="/home">
+            </app-empty-state>
 
-                <!-- Title -->
-                <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
-                    No Notifications Found
-                </h3>
+            <!-- Search yields no results -->
+            <app-empty-state *ngIf="!isLoading() 
+              && notifications().length > 0
+              && filteredNotifications().length === 0
+              && searchTerm() 
+              && currentFilter() === 'all'" icon="fas fa-search" title="No Notifications Match Your Search"
+                description="Try adjusting your search term or clearing the search." clearText="Clear Search"
+                clearIcon="fas fa-times" [clearCallback]="clearSearch.bind(this)">
+            </app-empty-state>
 
-                <!-- Description -->
-                <p class="text-gray-800 dark:text-gray-300 mb-6">
-                    Your {{ currentFilter() }} feed is clean! Time to relax.
-                </p>
+            <!-- Filter yields no results -->
+            <app-empty-state *ngIf="!isLoading() 
+              && notifications().length > 0
+              && filteredNotifications().length === 0
+              && !searchTerm() 
+              && currentFilter() !== 'all'" icon="fas fa-filter" title="No Notifications Match This Filter"
+                description="Try changing or clearing the filter." clearText="Clear Filter"
+                clearIcon="fas fa-filter-circle-xmark" [clearCallback]="clearFilter.bind(this)">
+            </app-empty-state>
 
-                <!-- Action Buttons -->
-                <button *ngIf="currentFilter() !== 'all'" (click)="filterNotifications('all')"
-                    class="flex items-center justify-center gap-2 px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-sm sm:text-base font-medium bg-blue-600 hover:bg-blue-700 text-white transition-all shadow-md hover:scale-105 active:scale-95">
-                    <mat-icon class="text-white">list</mat-icon>
-                    View All Notifications
-                </button>
-
-            </div>
+            <!-- Both search & filter yield no results -->
+            <app-empty-state *ngIf="!isLoading() 
+              && notifications().length > 0
+              && filteredNotifications().length === 0
+              && searchTerm() 
+              && currentFilter() !== 'all'" icon="fas fa-search-minus" title="No Notifications Match Search & Filter"
+                description="Try modifying or clearing search and filter." clearText="Clear All"
+                clearIcon="fas fa-times-circle" [clearCallback]="clearSearchAndFilter.bind(this)">
+            </app-empty-state>
         </ng-template>
+
 
     </div>
 
 
-    <mat-paginator [length]="length" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
-        [pageSizeOptions]="[6, 12, 24, 50, 100]" (page)="handlePageEvent($event)" showFirstLastButtons>
+    <mat-paginator *ngIf="filteredNotifications().length > 6 && !isLoading()" [length]="length" [pageSize]="pageSize()"
+        [pageIndex]="pageIndex()" [pageSizeOptions]="[6, 12, 24, 50, 100]" (page)="handlePageEvent($event)"
+        showFirstLastButtons>
     </mat-paginator>
 
 </div>

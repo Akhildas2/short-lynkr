@@ -33,12 +33,9 @@ export interface AdminSettings {
     };
     notificationSettings: {
         emailAlerts: boolean;
-        dailyReports: boolean;
         securityAlerts: boolean;
     };
     securitySettings: {
-        enforceHttps: boolean;
-        enableTwoFactor: boolean;
         blockMaliciousUrls: boolean;
     };
     systemSettings: {

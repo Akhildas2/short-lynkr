@@ -33,7 +33,7 @@
     </button>
 
     <!-- Toggle Theme Button -->
-    <app-theme-toggle></app-theme-toggle>
+    <app-theme-toggle [mode]="'adminMode'"></app-theme-toggle>
 
     <!-- Notification Button -->
     <button mat-icon-button (click)="showNotificationsMenu = !showNotificationsMenu"
@@ -67,7 +67,7 @@
 
         <!-- Name -->
         <span *ngIf="!isSmallDevice" class="text-sm font-medium truncate max-w-[120px]">
-          {{ u.username }}
+          {{ u.username | slice:0:5 | titlecase }}
         </span>
 
         <!-- Dropdown Icon -->
@@ -78,45 +78,57 @@
 
       <!-- Dropdown Menu -->
       <div *ngIf="showProfileMenu" (appClickOutside)="showProfileMenu = false"
-        class="absolute right-0 mt-3 w-52 sm:w-60  bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 transition-all duration-300 ease-in-out">
-        <!-- User Info -->
-        <div class="px-4 py-3">
-          <!-- User Name -->
-          <p class="text-lg text-center font-semibold text-gray-700 dark:text-gray-300 truncate">
-            {{ u.username }}
-          </p>
+        class="absolute right-0 mt-2 w-52 xs:w-56 sm:w-60 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 z-50 transform origin-top-right transition-all duration-200 ease-out">
 
-          <!-- Email with Icon -->
-          <p class="flex items-center justify-center text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
-            <mat-icon class="text-base text-gray-600 dark:text-gray-400">email</mat-icon>
-            <span class="truncate">{{ u.email }}</span>
-          </p>
+        <div class="p-2">
+          <div class="flex items-center px-3 py-2 space-x-3 text-sm bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <img class="w-9 h-9 rounded-full flex-shrink-0"
+              [src]="'https://api.dicebear.com/7.x/initials/svg?seed=' + u.username" alt="{{ u.username }}">
+
+            <div class="min-w-0 flex-grow">
+              <div class="flex items-center justify-between">
+                <div class="font-medium text-sm font-sans truncate pr-1">
+                  {{ u.username | slice:0:5 | titlecase }}
+                </div>
+                <span
+                  class="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-1.5 py-0.5 rounded flex-shrink-0 ms-auto">
+                  {{ u.role }}
+                </span>
+              </div>
+
+              <div class="text-xs text-gray-700 dark:text-gray-300 truncate">{{ u.email }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-2 pb-2 space-y-1">
+
+          <a *ngFor="let item of adminMenu" [routerLink]="item.link" routerLinkActive="bg-blue-100 dark:bg-blue-900/60"
+            [queryParams]="item.label === 'Profile' ? { tab: 'profile' } : null" class="group flex items-center gap-2 px-3 py-2 text-sm rounded-lg w-full
+            text-gray-700 dark:text-gray-300
+            hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+            <mat-icon
+              class="text-xl text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-500 flex-shrink-0">
+              {{ item.icon }}
+            </mat-icon>
+            <span
+              class="text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-500 truncate">
+              {{ item.label }}
+            </span>
+          </a>
+
+          <mat-divider></mat-divider>
+
+          <a (click)="logout()" class="group flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer w-full
+          hover:bg-red-100 dark:hover:bg-red-700/30 transition">
+            <mat-icon class="text-red-600 dark:text-red-500 text-xl flex-shrink-0">logout</mat-icon>
+            <span class="text-red-600 dark:text-red-500 ">Logout</span>
+          </a>
 
         </div>
 
-        <mat-divider></mat-divider>
-
-        <!-- Menu Items -->
-        <a [routerLink]="['/admin/settings']" [queryParams]="{ tab: 'profile' }"
-          class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-          <mat-icon class="text-base">person</mat-icon>
-          <span>Profile</span>
-        </a>
-        <a (click)="logout()" *ngIf="isMobile" role="button" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 
-         hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all duration-200 cursor-pointer select-none">
-          <mat-icon class="text-red-600 dark:text-red-400 text-base">logout</mat-icon>
-          <span>Logout</span>
-        </a>
-
       </div>
     </div>
-
-
-    <!-- Logout Button -->
-    <button *ngIf="!isMobile" mat-icon-button (click)="logout()"
-      class="relative text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700">
-      <mat-icon class="flex items-center">logout</mat-icon>
-    </button>
 
   </div>
 </header>

@@ -6,7 +6,7 @@ import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.
 import { MapChartComponent } from '../../../shared/components/charts/map-chart/map-chart.component';
 import { AnalyticsChartComponent } from '../../../shared/components/charts/analytics-chart/analytics-chart.component';
 import { SummaryCardComponent } from '../../../shared/components/dashboard-widgets/summary-card/summary-card.component';
-import { BaseAnalyticsComponent } from '../../../shared/utils/base-analytics.component';
+import { BaseAnalyticsComponent } from '../../../shared/base/base-analytics.component';
 import { AdminApiService } from '../../../core/services/api/admin/admin-api.service';
 import { AdminAnalytics } from '../../../models/analytic/adminAnalytics.interface';
 import { ActivityTableComponent } from '../../../shared/components/dashboard-widgets/activity-table/activity-table.component';
@@ -69,10 +69,32 @@ export class AdminAnalyticsComponent extends BaseAnalyticsComponent implements O
 
   get combinedTimelineData() {
     return [
-      { label: 'Users', data: this.analyticsData?.combinedTimeline?.users ?? [], borderColor: '#4f46e5' },
-      { label: 'Blocked Users', data: this.analyticsData?.combinedTimeline?.blockedUsers ?? [], borderColor: '#ef4444' },
-      { label: 'URLs', data: this.analyticsData?.combinedTimeline?.urls ?? [], borderColor: '#10b981' },
-      { label: 'Blocked URLs', data: this.analyticsData?.combinedTimeline?.blockedUrls ?? [], borderColor: '#f59e0b' }
+      {
+        label: 'Users',
+        data: this.analyticsData?.combinedTimeline?.users ?? [],
+        borderColor: '#4f46e5', // indigo
+      },
+      {
+        label: 'Blocked Users',
+        data: this.analyticsData?.combinedTimeline?.blockedUsers ?? [],
+        borderColor: '#ef4444', // red
+      },
+      {
+        label: 'URLs',
+        data: this.analyticsData?.combinedTimeline?.urls ?? [],
+        borderColor: '#10b981', // emerald
+      },
+      {
+        label: 'Blocked URLs',
+        data: this.analyticsData?.combinedTimeline?.blockedUrls ?? [],
+        borderColor: '#f59e0b', // amber
+      },
+      {
+        label: 'QRs',
+        data: this.analyticsData?.combinedTimeline?.qrs ?? [],
+        borderColor: '#06b6d4', // cyan 
+      },
+
     ];
   }
 

@@ -3,15 +3,17 @@
     <div class="max-w-7xl mx-auto mb-4 px-4">
 
         <!-- Header -->
-        <app-user-page-header [title]="'My Social QR Codes'" [isLoading]="isLoading" [showSearch]="filteredQrs().length > 0"
-            [searchTerm]="searchTerm()" (searchTermChange)="searchTerm.set($event)" [showFilter]="filteredQrs().length > 0"
+        <app-user-page-header [title]="'My Social QR Codes'" [isLoading]="isLoading"
+            [showSearch]="socialQrs().length > 0" [searchTerm]="searchTerm()"
+            (searchTermChange)="searchTerm.set($event)" [showFilter]="socialQrs().length > 0"
             [filterStatusLabel]="filterStatusLabel()" [filterOptions]="filterOptions"
-            (filterChange)="changeFilter($event)" [createButtonText]="'Create Qr'" [createButtonLink]="'/qr-generator'">
+            (filterChange)="onFilterChange($event)" [createButtonText]="'Create Qr'"
+            [createButtonLink]="'/qr-generator'">
         </app-user-page-header>
 
         <div *ngIf="isLoading" class="flex flex-col items-center justify-center flex-1 min-h-[calc(100vh-7rem-7rem)]">
             <app-spinner></app-spinner>
-            <p class="text-gray-400 animate-pulse">Loading your QR codes...</p>
+            <p class="text-gray-400 animate-pulse">Loading your qr codes...</p>
         </div>
 
         <!-- Empty state when no QR codes exist -->
@@ -60,6 +62,7 @@
                         {{ qr.format | uppercase }}
                     </div>
                 </div>
+                
 
                 <!-- QR Image -->
                 <div class="p-2 flex flex-col items-center bg-gray-50 dark:bg-gray-800 relative group cursor-pointer"
@@ -126,6 +129,6 @@
 
 
     <!-- Scroll Buttons -->
-    <app-scroll-buttons *ngIf="filteredQrs().length > 8 && !isLoading" [isLoading]="isLoading"></app-scroll-buttons>
+    <app-scroll-buttons *ngIf="filteredQrs().length >= 15 && !isLoading" [isLoading]="isLoading"></app-scroll-buttons>
 
 </div>

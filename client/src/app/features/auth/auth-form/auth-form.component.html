@@ -163,32 +163,37 @@
         </div>
 
         <!-- Toggle Panel (Hidden on mobile) -->
-        <div class="absolute top-0 left-0 sm:left-1/2 w-full sm:w-1/2 h-full hidden sm:flex flex-col items-center justify-center text-center px-8 transition-transform duration-700 ease-in-out"
+        <div class="absolute top-0 left-0 sm:left-1/2 w-full sm:w-1/2 h-full hidden sm:flex flex-col items-center justify-between text-center px-8 transition-transform duration-700 ease-in-out bg-[var(--surface-color)]"
             [ngClass]="{ '-translate-x-full': isActive }">
 
-            <div class="max-w-md flex flex-col items-center">
-                <!-- Title -->
-                <h2 class="text-2xl sm:text-3xl font-bold">
-                    {{ isActive ? 'Join ' + appName() + ' Today!' : 'Welcome Back to ' + appName() + '!' }}
+            <div class="w-full h-full flex flex-col items-center py-10">
+
+                <h2 class="text-2xl sm:text-3xl font-bold mb-4">
+                    {{ isActive ? 'Join ' + appName + ' Today!' : 'Welcome Back to ' + appName + '!' }}
                 </h2>
 
-                <!-- Illustration Image -->
-                <img *ngIf="isActive" src="assets/Signup-light.gif" alt="Signup Illustration - Light"
-                    class="max-w-full object-contain dark:hidden">
-                <img *ngIf="isActive" src="assets/Signup-dark.gif" alt="Signup Illustration - Dark"
-                    class="max-w-full object-contain hidden dark:block">
+                <div class="flex-1 w-full flex items-center justify-center overflow-hidden">
+                    <img *ngIf="isActive" src="assets/Signup-light.gif" alt="Signup Illustration"
+                        class="h-full w-full object-contain dark:hidden">
+                    <img *ngIf="isActive" src="assets/Signup-dark.gif" alt="Signup Illustration"
+                        class="h-full w-full object-contain hidden dark:block">
 
-                <img *ngIf="!isActive" src="assets/Login-light.gif" alt="Login Illustration - Light"
-                    class="max-w-full object-contain dark:hidden">
-                <img *ngIf="!isActive" src="assets/Login-dark.gif" alt="Login Illustration - Dark"
-                    class="max-w-full object-contain hidden dark:block">
+                    <img *ngIf="!isActive" src="assets/Login-light.gif" alt="Login Illustration"
+                        class="h-full w-full object-contain dark:hidden">
+                    <img *ngIf="!isActive" src="assets/Login-dark.gif" alt="Login Illustration"
+                        class="h-full w-full object-contain hidden dark:block">
+                </div>
 
-                <!-- Toggle Button -->
-                <button mat-stroked-button (click)="toggleForm()"
-                    class="rounded-md px-6 py-2 flex items-center gap-2 hover:bg-blue-200 dark:hover:bg-blue-700">
-                    <mat-icon> {{ isActive ? 'login' : 'person_add' }} </mat-icon> {{ isActive ? 'Go To Sign In' : 'Go
-                    To Sign Up'
-                    }}</button>
+                <button mat-stroked-button (click)="toggleForm()" class="group px-6 py-3 flex items-center gap-2 rounded-full font-semibold border-2 border-blue-600
+           dark:border-blue-500 hover:bg-blue-100 dark:hover:bg-blue-600 hover:text-blue-700 dark:hover:text-white
+           shadow-md transform hover:-translate-y-1 hover:scale-105 transition-all duration-300">
+
+                    <mat-icon class="group-hover:text-blue-700 dark:group-hover:text-white">
+                        {{ isActive ? 'login' : 'person_add' }}
+                    </mat-icon>
+                    {{ isActive ? 'Go To Sign In' : 'Go To Sign Up' }}
+                </button>
+
             </div>
         </div>
 

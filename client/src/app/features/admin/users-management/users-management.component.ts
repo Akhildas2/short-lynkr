@@ -14,22 +14,24 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
+import { EmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-users-management',
-  imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent],
+  imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent, EmptyStateComponent],
   templateUrl: './users-management.component.html',
   styleUrl: './users-management.component.scss'
 })
 export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   private adminStore = inject(AdminStore);
   private adminEffects = inject(AdminEffects);
-  private globalSearchService = inject(GlobalSearchService);
   private dialog = inject(MatDialog);
+  public globalSearchService = inject(GlobalSearchService);
 
   displayedColumns: string[] = ['username', 'email', 'role', 'isBlocked', 'actions'];
   dataSource = new MatTableDataSource<User>([]);
   statusFilter = '';
+  statusFilterLabel = 'All';
   private destroy$ = new Subject<void>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -99,6 +101,17 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
 
   }
 
+  changeStatusFilter(value: string) {
+    this.statusFilter = value;
+
+    this.statusFilterLabel =
+      value === '' ? 'All' :
+        value === 'false' ? 'Active' :
+          'Blocked';
+
+    this.applyStatusFilter(value);
+  }
+
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
@@ -122,8 +135,21 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  clearFilters() {
+  clearSearch() {
+    this.globalSearchService.setSearchTerm('');
+    this.applyFilter('', this.statusFilter);
+  }
+
+  clearStatusFilter() {
     this.statusFilter = '';
+    this.statusFilterLabel = 'All';
+    const search = this.globalSearchService.currentSearchTerm.trim().toLowerCase();
+    this.applyFilter(search, '');
+  }
+
+  clearSearchAndFilter() {
+    this.statusFilter = '';
+    this.statusFilterLabel = 'All';
     this.globalSearchService.setSearchTerm('');
     this.applyFilter('', '');
   }
@@ -205,8 +231,11 @@ export class UsersManagementComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   reloadUsers() {
-    this.adminStore.setLoading();
+    this.isLoading.set(true);
     this.adminEffects.fetchAllUsers();
+    setTimeout(() => {
+      this.isLoading.set(false);
+    }, 1000);
   }
 
 }

@@ -1,4 +1,4 @@
-<div class="px-2 sm:px-4 max-w-screen-2xl" *ngIf="!error && !isLoading">
+<div class="px-4" *ngIf="!error && !isLoading">
 
     <!-- Header Section -->
     <app-page-header [title]="'Analytics Dashboard'" [subtitle]="'Overview of key metrics and data'"
@@ -9,8 +9,8 @@
     <!-- Summary Cards 1-->
     <div class="grid md:[grid-template-columns:repeat(auto-fill,minmax(17rem,1fr))] gap-6 mb-10">
         <!-- Total QR -->
-        <app-summary-card title="Total QR" [value]="analyticsData?.totalQrs ?? 0" icon="qr_code" [change]="0"
-            [changeText]="''" [iconBgClass]="getIconClasses('Total QR').bg"
+        <app-summary-card title="Total QRs (URL + Social)" [value]="analyticsData?.totalQrs ?? 0" icon="qr_code"
+            [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Total QR').bg"
             [iconColorClass]="getIconClasses('Total QR').color">
         </app-summary-card>
 

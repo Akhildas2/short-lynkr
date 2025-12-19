@@ -3,12 +3,13 @@ import { Notification, NotificationCategory, NotificationType } from '../../mode
 import { NotificationStore } from '../../state/notification/notification.store';
 import { NotificationEffects } from '../../state/notification/notification.effects';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { getCategoryBadgeClass, getCategoryClass, getCategoryIcon, getIconClass, getIconName } from '../utils/notification.utils';
 import { NotificationDialogComponent } from '../components/dialogs/notification-dialog/notification-dialog.component';
 import { AlertDialogComponent } from '../components/dialogs/alert-dialog/alert-dialog.component';
 import { AddNotificationDialogComponent } from '../components/dialogs/add-notification-dialog/add-notification-dialog.component';
 import { AuthStore } from '../../state/auth/auth.store';
+import { GlobalSearchService } from '../services/global-search/global-search.service';
 
 @Directive()
 export abstract class BaseNotificationComponent {
@@ -18,11 +19,13 @@ export abstract class BaseNotificationComponent {
     protected dialog = inject(MatDialog);
     protected destroy$ = new Subject<void>();
     protected authStore = inject(AuthStore);
+    protected globalSearchService = inject(GlobalSearchService);
 
     // Signals
     currentFilter = signal<'all' | 'unread' | 'read' | NotificationCategory>('all');
     pageIndex = signal(0);
     pageSize = signal(6);
+    searchTerm = signal('');
 
     // store-derived observables / signals
     notifications = this.notificationStore.notifications;
@@ -52,6 +55,13 @@ export abstract class BaseNotificationComponent {
         if (this.authStore.isAuthenticated()) {
             this.notificationEffects.loadNotifications();
         }
+
+        this.globalSearchService.searchTerm$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(term => {
+                this.searchTerm.set(term.trim().toLowerCase());
+                this.pageIndex.set(0);
+            });
     }
 
     ngOnDestroy(): void {
@@ -65,7 +75,9 @@ export abstract class BaseNotificationComponent {
     filteredNotifications(): Notification[] {
         let filtered = this.notifications();
         const filter = this.currentFilter();
+        const search = this.searchTerm().trim().toLowerCase();
 
+        // ---- STATUS FILTERS ----
         if (filter === 'read') {
             filtered = filtered.filter(n => n.read);
         } else if (filter === 'unread') {
@@ -73,6 +85,29 @@ export abstract class BaseNotificationComponent {
         } else if (filter !== 'all') {
             filtered = filtered.filter(n => n.category === filter);
         }
+
+        // ---- GLOBAL SEARCH FILTER ----
+        if (search) {
+            filtered = filtered.filter(n => {
+                const title = n.title?.toLowerCase() ?? '';
+                const msg = n.message?.toLowerCase() ?? '';
+                const cat = n.category ? n.category.toString().toLowerCase() : '';
+                const type = n.type ? n.type.toString().toLowerCase() : '';
+                const date = n.createdAt
+                    ? new Date(n.createdAt).toLocaleString().toLowerCase()
+                    : '';
+
+                return (
+                    title.includes(search) ||
+                    msg.includes(search) ||
+                    cat.includes(search) ||
+                    type.includes(search) ||
+                    date.includes(search)
+                );
+            });
+        }
+
+
         return filtered;
     }
 
@@ -82,6 +117,31 @@ export abstract class BaseNotificationComponent {
         const start = this.pageIndex() * this.pageSize();
         return filtered.slice(start, start + this.pageSize());
     }
+
+    clearFilter() {
+        this.filterNotifications('all');
+    }
+
+    clearSearch() {
+        this.globalSearchService.setSearchTerm('');
+        this.searchTerm.set('');
+        this.pageIndex.set(0);
+    }
+
+    clearSearchAndFilter() {
+        // Clear the search term
+        this.searchTerm.set('');
+        if (this.globalSearchService) {
+            this.globalSearchService.setSearchTerm('');
+        }
+
+        // Reset filter to 'all'
+        this.currentFilter.set('all');
+
+        // Reset pagination
+        this.pageIndex.set(0);
+    }
+
 
     /** Total for paginator */
     get length(): number {

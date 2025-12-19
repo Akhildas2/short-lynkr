@@ -16,8 +16,6 @@ interface MenuItem {
   styleUrl: './admin-sidebar.component.scss'
 })
 export class AdminSidebarComponent {
-  private settingsEffect = inject(AdminSettingsEffects);
-
   @Input() collapsed = false;
   @Output() toggleSidebar = new EventEmitter<void>();
   @Output() linkClicked = new EventEmitter<void>();
@@ -26,17 +24,17 @@ export class AdminSidebarComponent {
 
   items: MenuItem[] = [
     { icon: 'dashboard', label: 'Dashboard', routeLink: '/admin/dashboard' },
-    { icon: 'groups', label: 'Users', routeLink: '/admin/users' },
-    { icon: 'link', label: 'Urls', routeLink: '/admin/urls' },
+    { icon: 'groups', label: 'Users List', routeLink: '/admin/users' },
+    { icon: 'link', label: 'Urls List', routeLink: '/admin/urls' },
+    { icon: 'qr_code_2', label: 'Qrs List', routeLink: '/admin/qrs' },
     { icon: 'analytics', label: 'Analytics', routeLink: '/admin/analytics' },
+    { icon: 'question_answer', label: 'Inquiries', routeLink: '/admin/inquiries' },
     { icon: 'notifications', label: 'Notifications', routeLink: '/admin/notifications' },
-    // { icon: 'security', label: 'Security', routeLink: '/admin/security' }
   ];
 
-  constructor() {
+  constructor(private settingsEffects: AdminSettingsEffects) {
     effect(() => {
-      const settings = this.settingsEffect['store'].settings();
-      this.appName = settings?.systemSettings?.appName || 'Short Lynkr';
+      this.appName = this.settingsEffects.appName();
     });
   }
 

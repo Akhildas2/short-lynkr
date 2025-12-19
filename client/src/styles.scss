@@ -16,6 +16,7 @@ body {
   font-family: "Inter", sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  scroll-behavior: smooth;
 }
 
 // Optional Tailwind layer example

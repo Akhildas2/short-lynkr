@@ -68,6 +68,15 @@ export const registerUser = async (username: string, email: string, password: st
             category: "user",
         });
 
+        // Notify user
+        await sendNotification({
+            userId: user.id,
+            title: 'Welcome!',
+            message: `Welcome to ${appName}, ${user.username}!`,
+            type: 'success',
+            category: 'user'
+        });
+
         return { message: "Logged in successfully.", user: userData, token, requireEmailVerification: false, isActive: true };
     }
 
@@ -107,6 +116,15 @@ export const registerUser = async (username: string, email: string, password: st
         category: "user"
     });
 
+    // Notify user
+    await sendNotification({
+        userId: user.id,
+        title: 'Welcome!',
+        message: `Welcome to ${appName}, ${user.username}!`,
+        type: 'success',
+        category: 'user'
+    });
+
     const token = generateToken(user);
     const { password: _, ...userData } = user.toObject();
     return { message: 'Registration successful. Logged in successfully.', user: userData, token, requireEmailVerification: false, isActive: true };
@@ -125,6 +143,19 @@ export const loginUser = async (email: string, password: string) => {
 
     user.lastLoginAt = new Date();
     await user.save();
+
+    const settings = await SettingsModel.findOne();
+    if (!settings) throw new ApiError('Settings not found', 500);
+
+    if (settings.notificationSettings.securityAlerts && user.role !== 'admin') {
+        // Send a login notification
+        await sendEmail({
+            to: user.email,
+            subject: 'New Login Detected',
+            text: `Hi ${user.username}, a login to your account was just detected at ${new Date().toLocaleString()}. If this wasn't you, please secure your account immediately.`,
+            html: `<p>Hi ${user.username},</p><p>A login to your account was just detected at <b>${new Date().toLocaleString()}</b>.</p><p>If this wasn't you, please secure your account immediately.</p>`
+        });
+    }
 
     const token = generateToken(user);
     const { password: _, otp: __, otpExpiresAt: ___, ...userData } = user.toObject();
@@ -200,6 +231,14 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
                 type: "success",
                 category: "user",
             });
+            // Notify user
+            await sendNotification({
+                userId: user.id,
+                title: 'Welcome!',
+                message: `Welcome to ${appName}, ${user.username}!`,
+                type: 'success',
+                category: 'user'
+            });
 
             return {
                 message: "Registered and logged in successfully.",
@@ -250,6 +289,15 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
             forAdmin: true,
             type: "success",
             category: "user",
+        });
+
+        // Notify user
+        await sendNotification({
+            userId: user.id,
+            title: 'Welcome!',
+            message: `Welcome to ${appName}, ${user.username}!`,
+            type: 'success',
+            category: 'user'
         });
 
         return {
@@ -359,6 +407,15 @@ export const resetPasswordWithOtp = async (email: string, otp: string, newPasswo
     user.isEmailVerified = true;
 
     await user.save();
+
+    await sendNotification({
+        userId: user.id,
+        title: 'Password Changed',
+        message: 'Your password was successfully updated.',
+        type: 'success',
+        category: 'security'
+    });
+
     return { message: 'Password reset successfully. You can now log in.' };
 };
 

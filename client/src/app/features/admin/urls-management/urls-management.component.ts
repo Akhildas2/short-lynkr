@@ -2,7 +2,7 @@ import { Component, computed, effect, inject, OnInit, signal } from '@angular/co
 import { AdminEffects } from '../../../state/admin/admin.effects';
 import { AdminStore } from '../../../state/admin/admin.store';
 import { SharedModule } from '../../../shared/shared.module';
-import { firstValueFrom, single, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from '../../../shared/components/dialogs/alert-dialog/alert-dialog.component';
 import { UrlEntry } from '../../../models/url/url.model';
@@ -12,10 +12,11 @@ import { ClipboardService } from '../../../shared/services/clipboard/clipboard.s
 import { ErrorMessageComponent } from '../../../shared/components/ui/error-message/error-message.component';
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
+import { EmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
 
 @Component({
     selector: 'app-urls-management',
-    imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent],
+    imports: [SharedModule, SpinnerComponent, ScrollButtonsComponent, ErrorMessageComponent, EmptyStateComponent],
     templateUrl: './urls-management.component.html',
     styleUrl: './urls-management.component.scss'
 })
@@ -32,10 +33,11 @@ export class UrlsManagementComponent implements OnInit {
 
     // Filter property
     filterStatus = signal<'all' | 'active' | 'blocked'>('all');
+    statusFilterLabel = 'All';
     searchTerm = signal('');
     private destroy$ = new Subject<void>();
 
-    isLoading = signal(true);
+    isLoading = signal(false);
     error = computed(() => this.adminStore.error());
 
     constructor(private dialog: MatDialog) {
@@ -50,7 +52,7 @@ export class UrlsManagementComponent implements OnInit {
     filteredUrls = computed(() => {
         const allUrls = this.urls();
         const currentFilter = this.filterStatus();
-        const search = this.searchTerm().toLowerCase();
+        const search = this.searchTerm().toLowerCase().trim();
 
         return allUrls.filter(url => {
             const matchesStatus =
@@ -82,6 +84,18 @@ export class UrlsManagementComponent implements OnInit {
         this.pageIndex.set(0);
     }
 
+    changeStatusFilter(value: 'all' | 'active' | 'blocked') {
+        this.filterStatus.set(value);
+        this.pageIndex.set(0);
+
+        // Update label dynamically
+        switch (value) {
+            case 'all': this.statusFilterLabel = 'All'; break;
+            case 'active': this.statusFilterLabel = 'Active'; break;
+            case 'blocked': this.statusFilterLabel = 'Blocked'; break;
+        }
+    }
+
     async ngOnInit(): Promise<void> {
         this.isLoading.set(true);
 
@@ -104,11 +118,24 @@ export class UrlsManagementComponent implements OnInit {
         this.pageSize.set(event.pageSize);
     }
 
-    clearFilters() {
-        this.filterStatus.set('all');
+    // Clear only search
+    clearSearch() {
         this.searchTerm.set('');
         this.globalSearchService.setSearchTerm('');
         this.pageIndex.set(0);
+    }
+
+    // Clear only filter
+    clearFilter() {
+        this.filterStatus.set('all');
+        this.statusFilterLabel = 'All';
+        this.pageIndex.set(0);
+    }
+
+    // Clear both search & filter
+    clearSearchAndFilter() {
+        this.clearSearch();
+        this.clearFilter();
     }
 
     copyUrl(url: string): void {

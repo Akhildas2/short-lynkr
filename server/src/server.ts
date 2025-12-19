@@ -10,6 +10,7 @@ import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import socialQrRoutes from './routes/socialQr.routes';
 import adminRoutes from './routes/admin.routes';
+import contactRoutes from './routes/contact.routes';
 import notificationRoutes from './routes/notification.routes';
 import { errorHandler } from "./middleware/errorHandler";
 import { apiAccessMiddleware } from "./middleware/api-access";
@@ -57,6 +58,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/social-qr', socialQrRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/', redirectRouter);
 app.use(errorHandler);
 

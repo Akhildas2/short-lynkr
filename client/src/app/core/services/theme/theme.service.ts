@@ -9,18 +9,20 @@ export class ThemeService {
   private isDarkSubject = new BehaviorSubject<boolean>(false);
   isDarkTheme$ = this.isDarkSubject.asObservable();
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
-    const saved = localStorage.getItem('theme');
-    this.setDarkTheme(saved === 'dark');
+  constructor(@Inject(DOCUMENT) private document: Document) { }
+
+  initTheme(mode: 'adminMode' | 'userMode') {
+    const saved = localStorage.getItem(`${mode}-theme`);
+    this.setDarkTheme(saved === 'dark', mode);
   }
 
-  setDarkTheme(isDark: boolean) {
+  setDarkTheme(isDark: boolean, mode: 'adminMode' | 'userMode') {
     this.isDarkSubject.next(isDark);
     this.document.body.classList.toggle('dark', isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    localStorage.setItem(`${mode}-theme`, isDark ? 'dark' : 'light');
   }
 
-  toggleTheme(): void {
-    this.setDarkTheme(!this.isDarkSubject.value);
+  toggleTheme(mode: 'adminMode' | 'userMode') {
+    this.setDarkTheme(!this.isDarkSubject.value, mode);
   }
 }

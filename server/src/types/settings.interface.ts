@@ -43,14 +43,11 @@ export interface ISettings extends Document {
     // Notification Settings
     notificationSettings: {
         emailAlerts: boolean;
-        dailyReports: boolean;
         securityAlerts: boolean;
     };
 
     // Security Settings
     securitySettings: {
-        enforceHttps: boolean;
-        enableTwoFactor: boolean;
         blockMaliciousUrls: boolean;
     };
 
@@ -61,7 +58,6 @@ export interface ISettings extends Document {
         maintenanceMode: boolean;
         enableApiAccess: boolean;
         enableAutoCleanup: boolean;
-        themeMode: string;
         maintenanceStart: Date | null;
         maintenanceEnd: Date | null;
     };

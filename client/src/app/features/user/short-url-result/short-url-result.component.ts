@@ -1,21 +1,22 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { QrCode, UrlEntry } from '../../../models/url/url.model';
+import { UrlEntry } from '../../../models/url/url.model';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { openUrl } from '../../../shared/utils/url.utils';
 import { ClipboardService } from '../../../shared/services/clipboard/clipboard.service';
 import { UrlDialogService } from '../../../shared/services/url-dialog/url-dialog.service';
-import { SnackbarService } from '../../../shared/services/snackbar/snackbar.service';
 import { SocketService } from '../../../core/services/socket/socket.service';
 import { SharedModule } from '../../../shared/shared.module';
 import { AdminSettings } from '../../../models/settings/adminSettings.interface';
 import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 import { UrlService } from '../../../core/services/api/url/url.service';
+import { EmptyStateComponent } from '../../../shared/components/ui/empty-state/empty-state.component';
+import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.component';
 
 @Component({
   selector: 'app-short-url-result',
-  imports: [SharedModule, RouterLink],
+  imports: [SharedModule, RouterLink, EmptyStateComponent, SpinnerComponent],
   templateUrl: './short-url-result.component.html',
   styleUrl: './short-url-result.component.scss'
 })
@@ -27,13 +28,14 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
   showQrOptions = false;
   selectedSize: number | null = null;
   selectedFormat: 'PNG' | 'SVG' | 'JPEG' | null = null;
+  isLoading: boolean = true;
 
   QR_SIZES: number[] = [];
   QR_FORMATS: ('PNG' | 'SVG' | 'JPEG')[] = [];
   adminSettings: AdminSettings | null = null;
   selectedUrl = this.urlStore.selectedUrl;
 
-  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private snackbar: SnackbarService, private socketService: SocketService, private settingsEffects: AdminSettingsEffects, private urlService: UrlService) { }
+  constructor(private clipboardService: ClipboardService, private urlDialogService: UrlDialogService, private socketService: SocketService, private settingsEffects: AdminSettingsEffects, private urlService: UrlService) { }
 
   async ngOnInit(): Promise<void> {
     this.socketService.connect();
@@ -53,6 +55,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
     if (id) {
       await this.urlEffects.fetchUrlById(id);
     }
+    this.isLoading = false;
   }
 
   openUrlHandler(url: string, newTab: boolean = true): void {
@@ -76,7 +79,7 @@ export class ShortUrlResultComponent implements OnInit, OnDestroy {
       link.click();
       window.URL.revokeObjectURL(url);
     });
-    
+
     this.showQrOptions = !this.showQrOptions;
   }
 

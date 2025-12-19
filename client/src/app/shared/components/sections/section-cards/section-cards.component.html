@@ -1,0 +1,39 @@
+<section class="space-y-12 pt-12">
+    <!-- Section Title -->
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white text-center">
+        {{ title }}
+    </h2>
+
+    <!-- Cards Grid -->
+    <div [ngClass]="'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-' + columns + ' gap-8'">
+        <div *ngFor="let card of cards" class="group p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-xl
+            border border-gray-100 dark:border-gray-700
+            transition-all duration-300 hover:shadow-2xl
+            hover:border-[var(--card-border)]
+            dark:hover:border-[var(--card-border)]" [style.--card-border]="card.borderColor">
+
+            <!-- Icon -->
+            <i [ngClass]="card.icon + ' text-4xl mb-4 transition-transform group-hover:scale-105'"
+                [ngStyle]="{'color': card.iconHex}"></i>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">
+                {{ card.title }}
+            </h3>
+
+            <!-- Description OR List -->
+            <ng-container *ngIf="card.description; else itemsList">
+                <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {{ card.description }}
+                </p>
+            </ng-container>
+
+            <ng-template #itemsList>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 text-sm pl-4">
+                    <li *ngFor="let item of card.items">{{ item }}</li>
+                </ul>
+            </ng-template>
+        </div>
+
+    </div>
+</section>

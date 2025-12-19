@@ -17,6 +17,7 @@ export class EmptyStateComponent {
   @Input() actionText?: string;
   @Input() actionRoute?: string;
   @Input() actionIcon: string = 'fas fa-plus';
+  @Input() actionCallback?: () => void;
 
   // Optional secondary clear button
   @Input() clearText?: string;
@@ -27,7 +28,9 @@ export class EmptyStateComponent {
   constructor(private router: Router) { }
 
   navigate() {
-    if (this.actionRoute) {
+    if (this.actionCallback) {
+      this.actionCallback();
+    } else if (this.actionRoute) {
       this.router.navigate([this.actionRoute]);
     }
   }

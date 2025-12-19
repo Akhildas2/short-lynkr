@@ -1,3 +1,5 @@
+import { User } from "../user/user.model";
+
 export interface SocialQrEntry {
     _id: string;
     platform: string;
@@ -7,7 +9,7 @@ export interface SocialQrEntry {
     foregroundColor: string;
     backgroundColor: string;
     qrCodeUrl?: string;
-    userId: string;
+    userId: User;
     createdAt: string;
     updatedAt: string;
 }

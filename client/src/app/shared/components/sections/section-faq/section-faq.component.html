@@ -1,0 +1,29 @@
+<section class="space-y-10 pt-12">
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white text-center">Frequently Asked Questions
+    </h2>
+
+    <div class="max-w-5xl mx-auto space-y-4">
+        <details *ngFor="let faq of faqs"
+            class="group p-5 rounded-xl bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-800 transition duration-300 open:ring-2 open:ring-blue-500">
+            <summary
+                class="flex justify-between items-center cursor-pointer text-lg font-semibold text-gray-800 dark:text-white">
+                <span>{{ faq.question }}</span>
+                <i
+                    class="fa-solid fa-chevron-down group-open:rotate-180 transition-transform text-blue-600 dark:text-blue-400"></i>
+            </summary>
+            <p class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400">
+                {{ faq.answer }}
+            </p>
+        </details>
+    </div>
+
+    <!-- Contact Button -->
+    <div class="text-center">
+        <a routerLink="/contact"
+            class="inline-flex items-center px-6 py-3 border-2 border-blue-600 text-blue-600 font-semibold rounded-lg hover:bg-blue-100 dark:border-blue-500 dark:text-blue-500 dark:hover:bg-blue-600 dark:hover:text-white transition">
+            <i class="fa-solid fa-paper-plane mr-2"></i>
+            Contact Us
+        </a>
+    </div>
+
+</section>

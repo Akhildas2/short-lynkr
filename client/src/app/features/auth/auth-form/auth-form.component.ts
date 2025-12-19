@@ -18,7 +18,7 @@ import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
   styleUrl: './auth-form.component.scss'
 })
 export class AuthFormComponent {
-  appName = signal('Short Lynkr');
+  appName = 'Short Lynkr';
   loginForm: FormGroup;
   registerForm: FormGroup;
   isActive = false;
@@ -26,7 +26,7 @@ export class AuthFormComponent {
   showLoginPassword = signal(false);
   showRegisterPassword = signal(false);
 
-  constructor(private fb: FormBuilder, private authEffects: AuthEffects, private googleAuthEffects: GoogleAuthEffects, private route: ActivatedRoute, private router: Router, private settingsEffect: AdminSettingsEffects) {
+  constructor(private fb: FormBuilder, private authEffects: AuthEffects, private googleAuthEffects: GoogleAuthEffects, private route: ActivatedRoute, private router: Router, private settingsEffects: AdminSettingsEffects) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
@@ -43,8 +43,7 @@ export class AuthFormComponent {
     });
 
     effect(() => {
-      const settings = this.settingsEffect['store'].settings();
-      this.appName.set(settings?.systemSettings?.appName || 'Short Lynkr');
+      this.appName = this.settingsEffects.appName();
     });
 
   }

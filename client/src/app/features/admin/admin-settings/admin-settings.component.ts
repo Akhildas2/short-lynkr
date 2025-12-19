@@ -18,7 +18,7 @@ import { zoomInAnimation } from '../../../shared/utils/animations.util';
   imports: [SharedModule, SettingsTabComponent],
   templateUrl: './admin-settings.component.html',
   styleUrl: './admin-settings.component.scss',
-  animations:[zoomInAnimation]
+  animations: [zoomInAnimation]
 })
 export class AdminSettingsComponent implements OnInit {
   tabs = [
@@ -63,12 +63,13 @@ export class AdminSettingsComponent implements OnInit {
   qrFieldsWithSettings = qrFields(this.qrSettings);
 
   constructor(private route: ActivatedRoute, private router: Router, private themeService: ThemeService) {
+    // Initialize admin theme
+    this.themeService.initTheme('adminMode');
+
+    // Subscribe to global theme changes
     this.themeService.isDarkTheme$.subscribe(dark => {
       this.isDark = dark;
-
-      if (this.systemSettings) {
-        this.systemSettings.themeMode = dark ? 'dark' : 'light';
-      }
+      this.systemSettings.themeMode = dark ? 'dark' : 'light';
     });
 
     effect(() => {
@@ -82,8 +83,6 @@ export class AdminSettingsComponent implements OnInit {
       this.notificationSettings = { ...defaultAdminSettings.notificationSettings, ...settings.notificationSettings };
       this.securitySettings = { ...defaultAdminSettings.securitySettings, ...settings.securitySettings };
       this.systemSettings = { ...defaultAdminSettings.systemSettings, ...settings.systemSettings };
-
-      this.themeService.setDarkTheme(this.systemSettings.themeMode === 'dark');
     });
   }
 
@@ -134,6 +133,11 @@ export class AdminSettingsComponent implements OnInit {
 
   // Save URL settings
   saveSettings(section?: string): void {
+    if (section === 'systemSettings') {
+      const themeMode = this.systemSettings.themeMode || 'light';
+      this.themeService.setDarkTheme(themeMode === 'dark', 'adminMode'); // module-specific
+      return;
+    }
 
     const allSettings: Partial<AdminSettings> = {
       urlSettings: this.urlSettings,
@@ -147,11 +151,6 @@ export class AdminSettingsComponent implements OnInit {
 
     this.settingsEffect.saveSettings(allSettings, section)
       .then(() => {
-        if (section === 'system-settings' || !section) {
-          const themeMode = this.systemSettings.themeMode || 'light';
-          this.themeService.setDarkTheme(themeMode === 'dark');
-        }
-
         this.settingsEffect.loadSettings(); // reload after save
       })
       .catch((err: any) => console.error(err));

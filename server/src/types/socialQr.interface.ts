@@ -9,4 +9,6 @@ export interface SocialQrCodeDocument extends Document {
     foregroundColor: string;
     backgroundColor: string;
     qrCodeUrl: string;
+    createdAt: Date;
+    updatedAt: Date;
 }

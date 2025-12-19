@@ -177,8 +177,9 @@
     </div>
 
     <div *ngIf="isLoading"
-        class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 rounded-2xl">
+        class="absolute inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/60 z-10 flex-1">
         <app-spinner></app-spinner>
+        <p class="text-gray-400 animate-pulse">Loading your analytics dashboard...</p>
     </div>
 
     <!-- Scroll Buttons -->

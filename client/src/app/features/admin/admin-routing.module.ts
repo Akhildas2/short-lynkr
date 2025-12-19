@@ -7,6 +7,8 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 import { AdminNotificationComponent } from './admin-notification/admin-notification.component';
 import { UsersManagementComponent } from './users-management/users-management.component';
+import { AdminSocialQrComponent } from './admin-social-qr/admin-social-qr.component';
+import { AdminContactComponent } from './admin-contact/admin-contact.component';
 
 const routes: Routes = [
   {
@@ -17,9 +19,11 @@ const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'users', component: UsersManagementComponent },
       { path: 'urls', component: UrlsManagementComponent },
+      { path: 'qrs', component: AdminSocialQrComponent },
       { path: 'analytics', component: AdminAnalyticsComponent },
       { path: 'notifications', component: AdminNotificationComponent },
       { path: 'settings', component: AdminSettingsComponent },
+      { path: 'inquiries', component: AdminContactComponent },
     ]
   }
 ];

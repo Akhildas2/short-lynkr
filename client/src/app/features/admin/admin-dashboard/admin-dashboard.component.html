@@ -1,4 +1,4 @@
-<div class="px-4 max-w-screen-2xl" *ngIf="!error && !isLoading">
+<div class="px-4" *ngIf="!error && !isLoading">
 
   <!-- Header Section -->
   <app-page-header [title]="'Executive Dashboard'" [subtitle]="'Real-time insights and key performance indicators'"
@@ -54,16 +54,16 @@
       [iconColorClass]="getIconClasses('Active URLs').color">
     </app-summary-card>
 
+    <!-- Total QRs -->
+    <app-summary-card title='Total QRs (URL + Social)' [value]="dashboardData?.overview?.totalQrs ?? 0" icon="qr_code_2"
+      [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Total QRs').bg"
+      [iconColorClass]="getIconClasses('Total QRs').color">
+    </app-summary-card>
+
     <!-- Blocked URLs -->
     <app-summary-card title="Blocked URLs" [value]="dashboardData?.overview?.blockedUrls ?? 0" icon="link_off"
       [change]="0" [changeText]="''" [iconBgClass]="getIconClasses('Blocked URLs').bg"
       [iconColorClass]="getIconClasses('Blocked URLs').color">
-    </app-summary-card>
-
-    <!-- Total QRs -->
-    <app-summary-card title="Total QRs" [value]="dashboardData?.overview?.totalQrs ?? 0" icon="qr_code" [change]="0"
-      [changeText]="''" [iconBgClass]="getIconClasses('Total QRs').bg"
-      [iconColorClass]="getIconClasses('Total QRs').color">
     </app-summary-card>
 
     <!-- System Health -->
@@ -177,10 +177,10 @@
   </div>
 
 
-  <!-- Recent Activity Summary -->
+  <!-- Activity Summary -->
   <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 mb-8">
     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
-      Recent Activity Summary
+      Activity Summary
     </h3>
 
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
@@ -324,7 +324,7 @@
       <a routerLink="/admin/urls"
         class="flex flex-col items-center justify-center gap-2 bg-green-50 dark:bg-green-900/30 border border-green-100 dark:border-green-700 rounded-xl shadow hover:shadow-lg hover:bg-green-100 dark:hover:bg-green-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
         <mat-icon class="text-green-600 dark:text-green-400 scale-125">link</mat-icon>
-        <span class="font-medium">View All URLs</span>
+        <span class="font-medium">View All Urls</span>
       </a>
 
       <!-- Analytics -->
@@ -335,14 +335,14 @@
       </a>
 
       <!-- Reports -->
-      <a routerLink="/admin/reports"
+      <a routerLink="/admin/qrs"
         class="flex flex-col items-center justify-center gap-2 bg-purple-50 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-700 rounded-xl shadow hover:shadow-lg hover:bg-purple-100 dark:hover:bg-purple-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
-        <mat-icon class="text-purple-600 dark:text-purple-400 scale-125">assessment</mat-icon>
-        <span class="font-medium">Export Reports</span>
+        <mat-icon class="text-purple-600 dark:text-purple-400 scale-125">qr_code_2</mat-icon>
+        <span class="font-medium">View All Qrs</span>
       </a>
 
       <!-- My Profile -->
-      <a routerLink="/admin/"
+      <a routerLink="/admin/settings" [queryParams]="{ tab: 'profile' }"
         class="flex flex-col items-center justify-center gap-2 bg-pink-50 dark:bg-pink-900/30 border border-pink-100 dark:border-pink-700 rounded-xl shadow hover:shadow-lg hover:bg-pink-100 dark:hover:bg-pink-800 transform hover:scale-105 transition-all duration-200 p-5 text-gray-900 dark:text-gray-100 text-center">
         <mat-icon class="text-pink-600 dark:text-pink-400 scale-125">person</mat-icon>
         <span class="font-medium">My Profile</span>

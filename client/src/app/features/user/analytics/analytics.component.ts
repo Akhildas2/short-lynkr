@@ -10,7 +10,7 @@ import { UrlEffects } from '../../../state/url/url.effects';
 import { UrlStore } from '../../../state/url/url.store';
 import { zoomInAnimation } from '../../../shared/utils/animations.util';
 import { UrlEntry } from '../../../models/url/url.model';
-import { BaseAnalyticsComponent } from '../../../shared/utils/base-analytics.component';
+import { BaseAnalyticsComponent } from '../../../shared/base/base-analytics.component';
 import { TimeRangeKey } from '../../../models/analytic/adminAnalytics.interface';
 import { RangeContext } from '../../../shared/services/range/range.service';
 import { NoDataComponent } from '../../../shared/components/ui/no-data/no-data.component';

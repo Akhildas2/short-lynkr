@@ -1,4 +1,4 @@
-<div class="px-2 sm:px-4 max-w-screen-2xl">
+<div class="px-4">
 
     <div class="flex flex-col gap-6 mx-auto">
 
@@ -89,7 +89,8 @@
                                 </h3>
                                 <ul
                                     class="text-xs sm:text-base text-gray-900 dark:text-gray-400 space-y-1 sm:space-y-2">
-                                    <li class="text-green-800 dark:text-green-300"><strong>Role:</strong> {{ u.role | titlecase }}</li>
+                                    <li class="text-green-800 dark:text-green-300"><strong>Role:</strong> {{ u.role |
+                                        titlecase }}</li>
                                     <li><strong>Member Since:</strong> {{ u.createdAt | date }}</li>
                                 </ul>
                             </div>

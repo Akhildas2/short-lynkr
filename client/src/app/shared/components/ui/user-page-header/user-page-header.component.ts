@@ -41,5 +41,5 @@ export class UserPageHeaderComponent {
   onFilterChange(value: string) {
     this.filterChange.emit(value);
   }
-  
+
 }

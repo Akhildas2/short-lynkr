@@ -3,7 +3,6 @@ import { SharedModule } from '../../../../shared.module';
 import { ThemeToggleComponent } from '../../../ui/theme-toggle/theme-toggle.component';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { takeUntil } from 'rxjs';
-import { GlobalSearchService } from '../../../../services/global-search/global-search.service';
 import { RouterModule } from '@angular/router';
 import { AuthEffects } from '../../../../../state/auth/auth.effects';
 import { BaseNotificationComponent } from '../../../../base/base-notification.component';
@@ -26,14 +25,19 @@ export class AdminHeaderComponent extends BaseNotificationComponent {
   showMobileSearch = false;
   isSmallDevice = false;
 
+  adminMenu = [
+    { label: 'Profile', icon: 'person', link: '/admin/settings' },
+    { label: 'Notifications', icon: 'notifications', link: '/admin/notifications' },
+    { label: 'Settings', icon: 'settings', link: '/admin/settings' },
+  ];
+
   readonly admin = this.authStore.user;
   readonly role = this.authStore.userRole;
   readonly isAdmin = computed(() => this.role() === 'admin');
 
   searchControl = new FormControl(''); // FormControl for the search input
-  readonly latestFiveNotifications = this.latestFive;
 
-  constructor(private globalSearchService: GlobalSearchService, private authEffects: AuthEffects) {
+  constructor(private authEffects: AuthEffects) {
     super();
   }
 
@@ -95,7 +99,7 @@ export class AdminHeaderComponent extends BaseNotificationComponent {
     return ['menu', 'chevron_right', 'close'][this.sidebarState] || 'menu';
   }
 
-  clearSearch(): void {
+  override clearSearch(): void {
     this.searchControl.setValue('');
     this.globalSearchService.clearSearchTerm();
   }

@@ -1,4 +1,4 @@
-<div class="px-4 sm:px-1" *ngIf="!isLoading() && !error()">
+<div class="px-4 flex flex-col min-h-full" *ngIf="!isLoading() && !error()">
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
         <h2 class="text-2xl sm:text-4xl font-bold">User Management</h2>
 
@@ -6,19 +6,42 @@
         <div class="flex flex-row flex-wrap w-full sm:w-auto justify-between items-center gap-3">
 
             <!-- Filter Dropdown -->
-            <select [(ngModel)]="statusFilter" (ngModelChange)="applyStatusFilter($event)"
-                class="w-auto h-10 px-5 py-2 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm text-sm bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">All</option>
-                <option value="false">Active</option>
-                <option value="true">Blocked</option>
-            </select>
+            <div *ngIf="dataSource.data.length > 0" class="border border-gray-300 dark:border-gray-600 rounded-md flex items-center gap-1 
+            cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 w-full sm:w-auto">
+
+                <button [matMenuTriggerFor]="statusMenu" class="flex items-center justify-between gap-2 text-gray-800 dark:text-gray-200 font-bold px-4 py-2 
+               rounded-md w-full sm:w-auto">
+
+                    {{ statusFilterLabel }}
+                    <mat-icon class="text-gray-600 dark:text-gray-300">arrow_drop_down</mat-icon>
+                </button>
+
+            </div>
+
+            <!-- Menu -->
+            <mat-menu #statusMenu="matMenu">
+                <button mat-menu-item (click)="changeStatusFilter('')">All</button>
+                <button mat-menu-item (click)="changeStatusFilter('false')">Active</button>
+                <button mat-menu-item (click)="changeStatusFilter('true')">Blocked</button>
+            </mat-menu>
 
 
-            <!-- Add User Button -->
-            <button mat-raised-button class="dark:text-black px-4 py-2 w-auto" (click)="openAddUserDialog()">
-                <mat-icon class="dark:text-black">add</mat-icon>
-                Add User
+            <!-- Adaptive Action Button -->
+            <button mat-raised-button (click)="dataSource.data.length > 0 ? openAddUserDialog() : reloadUsers()"
+                [ngClass]="{
+          'bg-primary hover:bg-blue-800 font-semibold flex items-center gap-2 py-2 px-4 rounded-lg transition-colors duration-200 ease-in-out': true,
+          'opacity-50 cursor-not-allowed': isLoading()
+        }">
+
+                <mat-icon class="text-white" [ngClass]="{ 'animate-spin': isLoading() }">
+                    {{ dataSource.data.length > 0 ? 'person_add' : 'refresh' }}
+                </mat-icon>
+
+                <span class="text-white">
+                    {{ isLoading() ? 'Loading...' : (dataSource.data.length > 0 ? 'Add User' : 'Reload') }}
+                </span>
             </button>
+
         </div>
 
     </div>
@@ -28,6 +51,7 @@
         class="hidden md:block text-gray-500 dark:text-gray-300 text-sm sm:text-base font-medium">
         Total {{ dataSource.data.length || 0 }} user(s)
     </span>
+
 
     <div *ngIf="dataSource.filteredData.length > 0"
         class="hidden md:block mat-elevation-z8 overflow-x-auto rounded-md mt-5">
@@ -155,54 +179,42 @@
     </div>
 
     <!--  Paginator -->
-    <div [class.hidden]="dataSource.filteredData.length === 0" class="mt-6">
-        <mat-paginator class="mt-5 px-0" [pageSize]="5" [pageSizeOptions]="[2,5, 10, 25, 50, 100]" showFirstLastButtons>
+    <div *ngIf="dataSource.filteredData.length > 10" class="mt-auto">
+        <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 50, 100]" showFirstLastButtons>
         </mat-paginator>
     </div>
 
-    <!-- No Data -->
-    <div *ngIf="dataSource.filteredData.length === 0" class="text-center py-20">
-        <!-- Icon Container -->
-        <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full
-                        shadow-xl ring-4 animate-pulse bg-gray-300 dark:bg-gray-700">
-            <mat-icon class="text-yellow-700 dark:text-yellow-200 scale-150 drop-shadow-md">
-                warning
-            </mat-icon>
-        </div>
+    <!-- No users in database -->
+    <app-empty-state *ngIf="!isLoading() && dataSource.data.length === 0" icon="fas fa-users" title="No Users Found"
+        description="There are no users yet. Add a user to get started." actionIcon="fas fa-user-plus"
+        actionText="Add User" [actionCallback]="openAddUserDialog.bind(this)">
+    </app-empty-state>
 
-        <!-- Title -->
-        <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
-            No Users Found
-        </h3>
+    <!--  Search yields no results -->
+    <app-empty-state
+        *ngIf="!isLoading() && dataSource.data.length > 0 && dataSource.filteredData.length === 0 && globalSearchService.currentSearchTerm && !statusFilter"
+        icon="fas fa-search" title="No Users Match Your Search"
+        description="Try adjusting your search term or clear the search." clearText="Clear Search"
+        clearIcon="fas fa-times" [clearCallback]="clearSearch.bind(this)">
+    </app-empty-state>
 
-        <!-- Description -->
-        <p class="text-gray-800 dark:text-gray-300 mb-6">
-            No users found. Add your first user to begin using <b>ShortLynkr</b>.
-        </p>
+    <!--  Filter yields no results -->
+    <app-empty-state
+        *ngIf="!isLoading() && dataSource.data.length > 0 && dataSource.filteredData.length === 0 && !globalSearchService.currentSearchTerm && statusFilter"
+        icon="fas fa-filter" title="No Users Match This Filter"
+        description="Try changing or clearing the status filter." clearText="Clear Filter"
+        clearIcon="fas fa-filter-circle-xmark" [clearCallback]="clearStatusFilter.bind(this)">
+    </app-empty-state>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-row gap-4 justify-center flex-wrap w-full max-w-lg mx-auto">
+    <!--  Both search & filter yield no results -->
+    <app-empty-state
+        *ngIf="!isLoading() && dataSource.data.length > 0 && dataSource.filteredData.length === 0 && globalSearchService.currentSearchTerm && statusFilter"
+        icon="fas fa-search-minus" title="No Users Match Search & Filter"
+        description="Try modifying or clearing search and status filter." clearText="Clear All"
+        clearIcon="fas fa-times-circle" [clearCallback]="clearSearchAndFilter.bind(this)">
+    </app-empty-state>
 
-            <!-- Add User Button -->
-            <button (click)="openAddUserDialog()" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-tr from-[var(--primary-color)] to-[var(--accent-color)]
-        hover:from-blue-600 hover:to-purple-400 rounded-xl transition-all duration-200 transform
-        hover:scale-105 shadow-md hover:shadow-lg text-white">
-                <mat-icon class="text-white">person_add</mat-icon>
-                <span>Add User</span>
-            </button>
-
-            <!-- Clear Filters Button -->
-            <button (click)="clearFilters()" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-tr from-gray-400 to-gray-600
-        hover:from-gray-500 hover:to-gray-700 rounded-xl transition-all duration-200 transform
-        hover:scale-105 shadow-md hover:shadow-lg text-white">
-                <mat-icon class="text-white">clear_all</mat-icon>
-                <span>Clear</span>
-            </button>
-
-        </div>
-
-    </div>
-
+    <!-- Scroll Buttons -->
     <app-scroll-buttons *ngIf="dataSource.filteredData.length >= 10"></app-scroll-buttons>
 
 </div>

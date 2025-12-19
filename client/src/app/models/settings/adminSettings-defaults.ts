@@ -39,13 +39,10 @@ export const defaultAdminSettings: AdminSettings = {
 
     notificationSettings: {
         emailAlerts: true,
-        dailyReports: false,
         securityAlerts: true
     },
 
     securitySettings: {
-        enforceHttps: true,
-        enableTwoFactor: false,
         blockMaliciousUrls: true,
     },
 

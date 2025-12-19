@@ -5,7 +5,7 @@ export interface INotification extends Document {
   title: string;
   message: string;
   type: "info" | "success" | "warning" | "error";
-  category: "user" | "url" | "qr" | "system" | "settings";
+  category: "user" | "url" | "qr" | "system" | "settings" | "security";
   read: boolean;
   forAdmin: boolean;
   createdAt: Date;

@@ -6,6 +6,7 @@ export interface AuthUser {
     createdAt?: string;
     updatedAt?: string;
     isActive?: boolean;
+    isEmailVerified?: boolean;
 }
 
 export interface AuthResponse {

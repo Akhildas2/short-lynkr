@@ -19,6 +19,7 @@ export interface AdminAnalytics extends BaseAnalyticsData {
         blockedUsers: number[];
         urls: number[];
         blockedUrls: number[];
+        qrs: number[];
     };
 
     topUrls: { shortUrl: string; originalUrl: string; clicks: number }[];

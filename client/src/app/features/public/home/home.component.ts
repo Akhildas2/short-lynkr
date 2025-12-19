@@ -37,11 +37,12 @@ export class HomeComponent implements OnInit {
         private settingsEffects: AdminSettingsEffects
     ) {
         this.urlForm = this.fb.group({
-            originalUrl: ['', [Validators.required, Validators.pattern(
-                /^(https?:\/\/)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/
-            )]],
+            originalUrl: ['', [
+                Validators.required,
+                Validators.pattern(/^https?:\/\/.+/)
+            ]],
             customizeEnabled: [false],
-            customCode: ['', [Validators.minLength(4), Validators.maxLength(8)]],
+            customCode: ['', [Validators.minLength(4), Validators.maxLength(this.settings?.urlSettings?.defaultLength || 8), Validators.pattern(/^[a-zA-Z0-9_-]*$/)]],
             expiryDays: [0, [Validators.min(0), Validators.max(100)]],
             clickLimit: [0, [Validators.min(0), Validators.max(1000)]],
             tags: [[]]

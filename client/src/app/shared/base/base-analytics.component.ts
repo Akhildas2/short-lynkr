@@ -3,7 +3,7 @@ import { AnalyticsService } from "../services/analytics/analytics.service";
 import { ActivatedRoute } from "@angular/router";
 import { StatItem, TimeRangeKey } from "../../models/analytic/adminAnalytics.interface";
 import { BaseAnalyticsData } from "../../models/base-analytics-data/base-analytics.interface";
-import { LocationService } from "./location.service";
+import { LocationService } from "../utils/location.service";
 import { RangeContext, RangeService } from "../services/range/range.service";
 
 @Directive()
