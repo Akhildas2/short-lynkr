@@ -115,7 +115,6 @@ export class NotificationEffects {
                     this.store.updateNotification(notification);
                 } else {
                     this.store.addNotification(notification);
-                    this.snackbar.showInfo(`${notification.title}`);
                 }
             }
         });

@@ -272,7 +272,7 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
     const now = new Date();
     const notExpired = !url.expiresAt || url.expiresAt > now;
     const underLimit = !url.clickLimit || (url.clicks ?? 0) < url.clickLimit;
-    url.isActive = notExpired && underLimit;
+    url.isBlocked = notExpired && underLimit;
 
     const updatedUrl = await url.save();
 
@@ -365,7 +365,7 @@ export const getAndUpdateOriginalUrl = async (shortId: string, clientIp?: string
             const expired = url.expiresAt && url.expiresAt < new Date();
 
             if (overClickLimit || expired) {
-                url.isActive = false; // Block the URL immediately
+                url.isBlocked = false;
 
                 if (url.userId) {
                     const reason = overClickLimit ? 'reached its click limit' : 'expired';
@@ -501,7 +501,7 @@ export const getUrlById = async (id: string, range: string) => {
 export const toggleBlockUrl = async (id: string, isBlocked: boolean, userId?: string) => {
     const url = await UrlModel.findByIdAndUpdate(
         id,
-        { isBlocked, isActive: !isBlocked },
+        { isBlocked, blockedAt: isBlocked ? new Date() : null },
         { new: true }
     ).populate('qrCode');
 
@@ -509,7 +509,7 @@ export const toggleBlockUrl = async (id: string, isBlocked: boolean, userId?: st
         throw new Error('URL not found');
     }
 
-    //  send notifications if needed
+    //  send notifications 
     if (userId) {
         await sendNotification({
             userId: toObjectId(userId),

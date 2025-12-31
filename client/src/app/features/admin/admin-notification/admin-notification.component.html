@@ -1,7 +1,6 @@
 <div class="flex flex-col min-h-screen bg-white dark:bg-gray-900 px-4" *ngIf="!error() && !isLoading()">
     <!-- header -->
-    <header
-        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-3 px-4 sm:px-6 py-4 bg-gray-50 dark:bg-gray-800 shadow-lg">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-3 py-4">
         <!-- Title -->
         <h1 class="text-lg sm:text-2xl lg:text-4xl font-bold flex items-center gap-2 w-full sm:w-auto">
             Notifications
@@ -32,7 +31,7 @@
 
 
     <!-- Filter Bar -->
-    <div class="px-4 pt-4 w-full" *ngIf="notifications().length !== 0">
+    <div class="w-full" *ngIf="notifications().length !== 0">
 
         <!-- MOBILE VIEW: Dropdown only -->
         <div class="block sm:hidden">
@@ -102,11 +101,11 @@
 
 
     <!-- Main content -->
-    <div class="flex-1 flex flex-col justify-start px-4 py-6 overflow-y-auto">
+    <div class="flex-1 flex flex-col justify-start px-1 py-6 overflow-y-auto">
         <ng-container *ngIf="filteredNotifications().length > 0; else noData">
             <!-- Notification List -->
             <div
-                class="grid grid-cols-1 lg:[grid-template-columns:repeat(auto-fill,minmax(22rem,1fr))] sm:grid-cols-2 gap-5">
+                class="grid grid-cols-1 lg:[grid-template-columns:repeat(auto-fill,minmax(22rem,1fr))] sm:grid-cols-2 gap-4">
                 <div *ngFor="let n of paginatedNotifications()" (click)="markAsRead(n)" class="group relative p-5 rounded-2xl transition-all duration-200 cursor-pointer border border-gray-300 dark:border-gray-700 hover:shadow-xl hover:-translate-y-1
                 bg-white/80 dark:bg-gray-800/70 backdrop-blur-sm"
                     [ngClass]="{'ring-2 ring-blue-500 dark:ring-blue-300': !n.read}">
@@ -123,30 +122,44 @@
                                 getIconName(getSafeType(n.type)) }}</mat-icon>
                         </div>
 
-                        <div class="flex flex-col flex-1">
-                            <p class="font-semibold text-gray-800 dark:text-gray-100">{{ n.title | titlecase}}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5 line-clamp-3">{{ n.message }}</p>
+                        <div class="flex flex-col flex-1 min-w-0">
+                            <p class="font-semibold text-gray-800 dark:text-gray-100 break-words line-clamp-2">
+                                {{ n.title | titlecase}}
+                            </p>
+                            <p
+                                class="text-sm text-gray-600 dark:text-gray-300 mt-0.5 break-words break-all whitespace-normal leading-relaxed">
+                                {{ n.message }}</p>
                         </div>
                     </div>
 
-                    <!-- Category and delete -->
-                    <div class="flex items-center justify-end mt-4">
-                        <button mat-icon-button (click)="deleteNotification(n._id!, n.title); $event.stopPropagation()"
-                            class="p-1 rounded-full hover:bg-red-500/40 transition-colors mb-2">
-                            <mat-icon
-                                class="text-red-500 dark:text-red-400 hover:text-red-700 hover:dark:text-red-600 scale-125 justify-center">delete</mat-icon>
-                        </button>
-                    </div>
+                    <div class="flex items-center justify-between mt-4 border-t border-gray-300 dark:border-gray-700">
 
-                    <div class="flex justify-between items-center pt-3 border-t border-gray-300 dark:border-gray-700">
+                        <!-- Category Badge -->
                         <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
                             [ngClass]="getCategoryBadgeClass(getSafeCategory(n.category)) + ' bg-opacity-80'">
                             {{ getSafeCategory(n.category) }}
                         </span>
 
-                        <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-400 italic">{{ n.createdAt |
-                            date:'mediumTime' }}
-                            on {{ n.createdAt | date:'MMM d' }}</p>
+                        <!-- Date + Delete Row -->
+                        <div class="flex items-center gap-3">
+
+                            <!-- Date -->
+                            <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-400 italic">
+                                {{ n.createdAt | date: 'mediumTime' }} on {{ n.createdAt | date: 'MMM d' }}
+                            </p>
+
+                            <!-- Delete Button -->
+                            <button mat-icon-button
+                                (click)="deleteNotification(n._id!, n.title); $event.stopPropagation()"
+                                class="p-1 rounded-full hover:bg-red-500/40 transition-colors">
+                                <mat-icon
+                                    class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-600 scale-125">
+                                    delete
+                                </mat-icon>
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
             </div>

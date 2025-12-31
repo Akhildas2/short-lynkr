@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as urlService from '../services/url.service';
 import { AuthRequest } from '../types/auth';
 import geoip from 'geoip-lite';
+import { getSocketIO } from '../utils/socket.utils';
 
 export const createUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -14,8 +15,8 @@ export const createUrl = async (req: AuthRequest, res: Response, next: NextFunct
         }
 
         const urlData = await urlService.createShortUrl(originalUrl, userId, customCode, expiryDays, clickLimit, tags);
-        const io = req['io'];
-        io?.emit('urlCreated', urlData);
+        const io = getSocketIO();
+        io.emit('urlCreated', urlData);
 
         res.status(201).json(urlData);
 
@@ -42,8 +43,8 @@ export const updateUrl = async (req: AuthRequest, res: Response, next: NextFunct
             tags
         }, userId);
 
-        const io = req['io'];
-        io?.emit('urlUpdated', updatedUrl)
+        const io = getSocketIO();
+        io.emit('urlUpdated', updatedUrl)
 
         res.status(200).json({ url: updatedUrl });
 
@@ -70,8 +71,8 @@ export const redirectToOriginal = async (req: Request, res: Response, next: Next
             return res.redirect(302, `${process.env.CLIENT_URL}/error?code=404&message=URL not found`);
         }
 
-        const io = req['io'];
-        io?.emit("urlUpdated", urlData)
+        const io = getSocketIO();
+        io.emit("urlUpdated", urlData)
 
         res.redirect(302, urlData.originalUrl);
 
@@ -136,7 +137,7 @@ export const deleteUrl = async (req: AuthRequest, res: Response, next: NextFunct
     }
 }
 
-export const toggleBlockUrl = async (req: AuthRequest, res: Response, next: NextFunction) : Promise<void> => {
+export const toggleBlockUrl = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.user?.id;
         const { id } = req.params;

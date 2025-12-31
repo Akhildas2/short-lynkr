@@ -1,20 +1,39 @@
-import { Injectable } from '@angular/core';
+import { effect, inject, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { io, Socket } from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Notification } from '../../../../models/notification/notification.interface';
+import { AuthStore } from '../../../../state/auth/auth.store';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
   private apiUrl = `${environment.apiUrl}/notifications`;
+  private authStore = inject(AuthStore);
   private socket: Socket;
   private notificationSubject = new Subject<Notification>();
 
   constructor(private http: HttpClient) {
-    this.socket = io(environment.apiUrl);
+    this.socket = io(environment.baseApiUrl, {
+      transports: ['websocket']
+    });
+
+    effect(() => {
+      const user = this.authStore.user();
+      const role = this.authStore.userRole();
+
+      if (!user || !role) return;
+      if (!this.socket.connected) return;
+
+      this.socket.emit('join', {
+        userId: user._id,
+        role
+      });
+
+    });
+
     this.listenToSocket();
   }
 

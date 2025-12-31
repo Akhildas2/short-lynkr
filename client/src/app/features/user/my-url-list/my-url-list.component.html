@@ -3,8 +3,8 @@
   <div class="max-w-7xl mx-auto mb-4 px-4">
 
     <!-- Header -->
-    <app-user-page-header [title]="'URL Manager'" [isLoading]="isLoading" [showSearch]="filteredUrls().length > 0"
-      [searchTerm]="searchTerm()" (searchTermChange)="searchTerm.set($event)" [showFilter]="filteredUrls().length > 0"
+    <app-user-page-header [title]="'URL Manager'" [isLoading]="isLoading" [showSearch]="urlList().length > 0"
+      [searchTerm]="searchTerm()" (searchTermChange)="searchTerm.set($event)" [showFilter]="urlList().length > 0"
       [filterStatusLabel]="filterStatusLabel()" [filterOptions]="filterOptions" (filterChange)="changeFilter($event)"
       [createButtonText]="'Create New'" [createButtonLink]="'/qr-generator'">
     </app-user-page-header>
@@ -46,7 +46,6 @@
       [clearCallback]="clearSearchAndFilter.bind(this)">
     </app-empty-state>
 
-
     <!-- QR Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" *ngIf="!isLoading">
       <div *ngFor="let url of paginatedUrls(); trackBy: trackByUrlId" class="group h-full">
@@ -66,12 +65,10 @@
               <!-- status badge -->
               <div
                 class="flex items-center gap-2 px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-opacity-10 backdrop-blur-md border border-opacity-20"
-                [ngClass]="url.isActive 
-                  ? 'bg-emerald-500 text-emerald-700 dark:text-emerald-300 border-emerald-500' 
-                  : 'bg-rose-500 text-rose-700 dark:text-rose-300 border-rose-500'">
+                [ngClass]="url.isBlocked ? 'bg-rose-500 text-rose-700 dark:text-rose-300 border-rose-500': 'bg-emerald-500 text-emerald-700 dark:text-emerald-300 border-emerald-500'">
                 <span class="w-2 h-2 rounded-full"
-                  [ngClass]="url.isActive ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"></span>
-                {{url.isActive ? 'Active' : 'Blocked'}}
+                  [ngClass]="url.isBlocked ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500 animate-pulse'"></span>
+                {{url.isBlocked ? 'Blocked' : 'Active'}}
               </div>
 
 
@@ -132,14 +129,13 @@
 
                   <!-- Block/Unblock -->
                   <button (click)="toggleBlock(url)" class="w-full flex items-center px-3 py-2 text-sm 
-                   text-gray-800 dark:text-gray-200 
-                   hover:bg-red-100 dark:hover:bg-red-700/30 rounded-lg transition-colors">
-                    <mat-icon
-                      [ngClass]="url.isActive ? 'text-red-600 dark:text-red-400' : 'text-green-500 dark:text-green-400'"
-                      class="mr-2 icon-xs">
-                      {{ url.isActive ? 'block' : 'check_circle' }}
+                   text-gray-800 dark:text-gray-200 rounded-lg transition-colors"
+                    [ngClass]="url.isBlocked ? 'hover:bg-green-100 dark:hover:bg-green-700/30': 'hover:bg-red-100 dark:hover:bg-red-700/30'">
+                    <mat-icon class="mr-2 icon-xs"
+                      [ngClass]="url.isBlocked ? 'text-green-600 dark:text-green-400'  : 'text-red-600 dark:text-red-400'">
+                      {{ url.isBlocked ? 'check_circle' : 'block' }}
                     </mat-icon>
-                    {{ url.isActive ? 'Block' : 'Unblock' }}
+                    {{ url.isBlocked ? 'Unblock' : 'Block' }}
                   </button>
 
                   <!-- Edit Details -->

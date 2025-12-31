@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
 import { createServer } from "http";
+
 import connectDB from "./config/mongodb";
 import urlRoutes, { redirectRouter } from './routes/url.routes';
 import userRoutes from './routes/user.routes';
@@ -12,69 +14,93 @@ import socialQrRoutes from './routes/socialQr.routes';
 import adminRoutes from './routes/admin.routes';
 import contactRoutes from './routes/contact.routes';
 import notificationRoutes from './routes/notification.routes';
+
 import { errorHandler } from "./middleware/errorHandler";
 import { apiAccessMiddleware } from "./middleware/api-access";
 import { startMaintenanceStatusBroadcast } from "./services/maintenance.service";
+import { setSocketIO } from "./utils/socket.utils";
 
-// Extend Express Request interface
-declare global {
-    namespace Express {
-        interface Request {
-            io?: Server;
-        }
-    }
-}
-
+// ------------------------------------------------
+// Express app & HTTP server
+// ------------------------------------------------
 const app = express();
 const httpServer = createServer(app);
 
-// Middleware for handling CORS and JSON parsing
+// ------------------------------------------------
+// Middleware
+// ------------------------------------------------
 app.use(cors());
 app.use(express.json());
-
-const io = new Server(httpServer, {
-    cors: { origin: "*", methods: ["GET", "POST"] }
-});
-app.set("io", io);
-
-// Attach io to req 
-app.use((req, res, next) => {
-    req.io = io;
-    if (!io) {
-        console.error("Socket.io instance not found on request.");
-    }
-    next();
-});
-
-startMaintenanceStatusBroadcast(io);
-
-app.set('trust proxy', true);
+app.set("trust proxy", true);
 app.use(apiAccessMiddleware);
 
-// Route handling
-app.use('/api/auth', authRoutes);
-app.use('/api/url', urlRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/social-qr', socialQrRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/', redirectRouter);
-app.use(errorHandler);
-
-// Socket.IO
-io.on("connection", (socket) => {
-    console.log(`🟢 Client connected: ${socket.id}`);
-
-    socket.on("disconnect", () => {
-        console.log(`🔴 Client disconnected: ${socket.id}`);
-    });
-
+// ------------------------------------------------
+// Socket.IO setup
+// ------------------------------------------------
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
-const PORT: number = parseInt(process.env.PORT || "3000", 10);
+// Make io globally available to services
+setSocketIO(io);
 
-// Connect to the database and start the server
+// ------------------------------------------------
+// Socket.IO events
+// ------------------------------------------------
+io.on("connection", (socket) => {
+    /**
+     * Client should emit:
+     * socket.emit("join", { userId, role })
+     */
+    socket.on("join", ({ userId, role }) => {
+        if (role === "admin") {
+            socket.join("admins");
+            console.log(`👑 Admin joined room: admins`);
+        }
+
+        if (userId) {
+            socket.join(`user:${userId}`);
+            console.log(`👤 User joined room: user:${userId}`);
+        }
+    });
+
+    socket.on("disconnect", () => {
+        console.log(`🔴 Socket disconnected: ${socket.id}`);
+    });
+});
+
+// ------------------------------------------------
+// Start maintenance status broadcast (your service)
+// ------------------------------------------------
+startMaintenanceStatusBroadcast(io);
+
+// ------------------------------------------------
+// Routes
+// ------------------------------------------------
+app.use("/api/auth", authRoutes);
+app.use("/api/url", urlRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/social-qr", socialQrRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/", redirectRouter);
+
+// ------------------------------------------------
+// Error handler
+// ------------------------------------------------
+app.use(errorHandler);
+
+// ------------------------------------------------
+// Start server
+// ------------------------------------------------
+const PORT = parseInt(process.env.PORT || "3000", 10);
+
 connectDB().then(() => {
-    httpServer.listen(PORT, () => console.log(`🚀 Server running with WebSocket on port ${PORT}`));
+    httpServer.listen(PORT, () => {
+        console.log(`🚀 Server running with WebSocket on port ${PORT}`);
+    });
 });

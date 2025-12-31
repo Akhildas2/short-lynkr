@@ -26,7 +26,6 @@ const urlSchema = new mongoose.Schema<UrlDocument>({
     clickLimit: { type: Number },
     tags: { type: [String], default: [] },
     expiresAt: { type: Date },
-    isActive: { type: Boolean, default: true },
     analytics: [analyticsSchema],
     isBlocked: { type: Boolean, default: false },
     blockedAt: { type: Date, default: null }

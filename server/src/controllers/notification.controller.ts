@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import Notification from "../models/notification.model";
 import { AuthRequest } from "../types/auth";
 import { Types } from "mongoose";
+import { getSocketIO } from "../utils/socket.utils";
 
 
 // Get notifications (User & Admin)
@@ -34,8 +35,8 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
         const notification = await Notification.findByIdAndUpdate(id, { read: true }, { new: true });
         if (!notification) res.status(404).json({ message: "Notification not found" });
 
-        const io = req["io"];
-        io?.emit("notificationUpdated", notification);
+        const io = getSocketIO();
+        io.emit("notificationUpdated", notification);
 
         res.status(200).json(notification);
     } catch (error) {
@@ -61,8 +62,8 @@ export const toggleNotificationsRead = async (req: AuthRequest, res: Response, n
             { $set: { read: !!read } }
         );
 
-        const io = req["io"];
-        io?.emit("notificationUpdated", result);
+        const io = getSocketIO();
+        io.emit("notificationUpdated", result);
 
         res.status(200).json({ message: `Notifications marked as ${read ? 'read' : 'unread'}` });
 
@@ -86,8 +87,8 @@ export const createNotification = async (req: AuthRequest, res: Response, next: 
             forAdmin: forAdmin || false,
         });
 
-        const io = req["io"];
-        io?.emit("newNotification", notification);
+        const io = getSocketIO();
+        io.emit("newNotification", notification);
 
         res.status(201).json(notification);
     } catch (error) {
@@ -106,8 +107,8 @@ export const deleteNotification = async (req: AuthRequest, res: Response, next: 
             return;
         }
 
-        const io = req["io"];
-        io?.emit("notificationDeleted", notification);
+        const io = getSocketIO();
+        io.emit("notificationDeleted", notification);
 
         res.status(200).json({ message: "Notification deleted successfully" });
     } catch (error) {
@@ -127,7 +128,7 @@ export const deleteMultipleNotifications = async (req: AuthRequest, res: Respons
         // Delete all notifications with the given IDs
         const result = await Notification.deleteMany({ _id: { $in: ids } });
 
-        const io = req["io"];
+        const io = getSocketIO();
         io?.emit("notificationDeleted", result);
 
         res.status(200).json({ message: "Notifications deleted successfully" });

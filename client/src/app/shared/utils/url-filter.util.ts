@@ -3,7 +3,7 @@ import { UrlEntry } from "../../models/url/url.model";
 export function filterUrls(
   urls: UrlEntry[],
   searchTerm: string,
-  statusFilter: '' | 'active' | 'inactive'
+  statusFilter: '' | 'active' | 'blocked'
 ): UrlEntry[] {
   const term = searchTerm.toLowerCase().trim();
 
@@ -11,8 +11,8 @@ export function filterUrls(
     // No search term → only filter by status
     return urls.filter(url =>
       !statusFilter ||
-      (statusFilter === 'active' && url.isActive) ||
-      (statusFilter === 'inactive' && !url.isActive)
+      (statusFilter === 'active' && !url.isBlocked) ||
+      (statusFilter === 'blocked' && url.isBlocked)
     );
   }
 
@@ -24,8 +24,8 @@ export function filterUrls(
 
     const matchesStatus =
       !statusFilter ||
-      (statusFilter === 'active' && url.isActive) ||
-      (statusFilter === 'inactive' && !url.isActive);
+      (statusFilter === 'active' && !url.isBlocked) ||
+      (statusFilter === 'blocked' && url.isBlocked);
 
     return matchesSearch && matchesStatus;
   });

@@ -19,7 +19,7 @@ import { SpinnerComponent } from '../../../shared/components/ui/spinner/spinner.
 import { ScrollButtonsComponent } from '../../../shared/components/ui/scroll-buttons/scroll-buttons.component';
 import { UserPageHeaderComponent } from '../../../shared/components/ui/user-page-header/user-page-header.component';
 import { firstValueFrom } from 'rxjs';
-type UrlFilterStatus = '' | 'active' | 'inactive';
+type UrlFilterStatus = '' | 'active' | 'blocked';
 
 @Component({
   selector: 'app-my-url-list',
@@ -50,7 +50,7 @@ export class MyUrlListComponent implements OnInit, OnDestroy {
   filterOptions = [
     { label: 'All', value: '' },
     { label: 'Active', value: 'active' },
-    { label: 'Blocked', value: 'inactive' }
+    { label: 'Blocked', value: 'blocked' }
   ];
 
   // Change filter + update label

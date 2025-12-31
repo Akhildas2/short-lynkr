@@ -3,6 +3,7 @@ import * as settingsService from '../services/settings.service';
 import { AuthRequest } from "../types/auth";
 import { emitMaintenanceStatus } from '../services/maintenance.service';
 import { startMaintenanceCronJob, stopMaintenanceCronJob } from '../cron-jobs/maintenances';
+import { getSocketIO } from '../utils/socket.utils';
 
 
 export const getSettings = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -27,8 +28,8 @@ export const updateSettings = async (req: AuthRequest, res: Response, next: Next
 
         const updatedSettings = await settingsService.updateSettings(settingsData)
 
-        const io = req['io'];
-        io?.emit('settingsUpdated', updatedSettings);
+        const io = getSocketIO();
+        io.emit('settingsUpdated', updatedSettings);
         await emitMaintenanceStatus(io);
 
 
@@ -61,8 +62,8 @@ export const resetSettings = async (req: AuthRequest, res: Response, next: NextF
             result = await settingsService.resetToDefaultSettings();
         }
 
-        const io = req['io'];
-        io?.emit('settingsReset', { section: section || 'all', settings: result });
+        const io = getSocketIO();
+        io.emit('settingsReset', { section: section || 'all', settings: result });
         await emitMaintenanceStatus(io);
 
         res.status(200).json(result);

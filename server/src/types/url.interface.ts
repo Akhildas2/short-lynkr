@@ -27,7 +27,6 @@ export interface UrlDocument extends Document {
   expiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
-  isActive: boolean;
   analytics: Analytics[];
   isBlocked: boolean;
   blockedAt: Date | null;
