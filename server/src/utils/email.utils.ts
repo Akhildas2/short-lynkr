@@ -6,13 +6,17 @@ import SettingsModel from '../models/settings.model';
 // Create a transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587, // Changed from 465
+    secure: false, 
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, 
     },
     connectionTimeout: 10000,
+    tls: {
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false // Use cautiously
+    }
 });
 
 /**

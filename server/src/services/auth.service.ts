@@ -148,16 +148,14 @@ export const loginUser = async (email: string, password: string) => {
     if (!settings) throw new ApiError('Settings not found', 500);
 
     if (settings.notificationSettings.securityAlerts && user.role !== 'admin') {
-    sendEmail({
-        to: user.email,
-        subject: 'New Login Detected',
-        text: `Hi ${user.username}, login detected at ${new Date().toLocaleString()}`,
-        html: `<p>Hi ${user.username}</p><p>Login detected.</p>`
-    }).catch(err => {
-        console.error('EMAIL ERROR 👉', err);
-    });
-}
-
+        // Send a login notification
+        await sendEmail({
+            to: user.email,
+            subject: 'New Login Detected',
+            text: `Hi ${user.username}, a login to your account was just detected at ${new Date().toLocaleString()}. If this wasn't you, please secure your account immediately.`,
+            html: `<p>Hi ${user.username},</p><p>A login to your account was just detected at <b>${new Date().toLocaleString()}</b>.</p><p>If this wasn't you, please secure your account immediately.</p>`
+        });
+    }
 
     const token = generateToken(user);
     const { password: _, otp: __, otpExpiresAt: ___, ...userData } = user.toObject();
