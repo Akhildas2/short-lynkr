@@ -37,6 +37,10 @@ export const sendEmail = async (options: EmailOptions) => {
 
         console.log('Message sent: %s', info.messageId);
     } catch (error: any) {
-        throw new ApiError('Error sending email', 500)
+        console.error('EMAIL ERROR 👉', error);
+        throw new ApiError(
+            error?.message || 'Error sending email',
+            500
+        );
     }
 };
