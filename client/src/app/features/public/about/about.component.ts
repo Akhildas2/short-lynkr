@@ -116,8 +116,8 @@ export class AboutComponent {
       icon: 'fa-solid fa-sitemap',
       title: 'Security & Access',
       items: ['RBAC protection', 'Maintenance mode', 'Global theme control'],
-      iconHex: '#475569',   // slate-600
-      borderColor: '#475569'
+      iconHex: '#94A3B8',
+      borderColor: '#94A3B8'
     }
   ];
 

@@ -193,7 +193,8 @@
                                     <mat-icon>arrow_back</mat-icon>
                                 </button>
 
-                                <button mat-icon-button (click)="toggleReadStatus(selectedMessage)"
+                                <button mat-icon-button *ngIf="selectedMessage.status !== 'closed'"
+                                    (click)="toggleReadStatus(selectedMessage)"
                                     [matTooltip]="selectedMessage.isRead ? 'Mark as unread' : 'Mark as read'"
                                     class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <mat-icon class="flex justify-center"
