@@ -5,24 +5,19 @@ import SettingsModel from '../models/settings.model';
 
 // Create a transporter object using Gmail SMTP
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587, 
+    host: 'smtp-relay.brevo.com',
+    port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, 
+        user: process.env.BREVO_EMAIL,
+        pass: process.env.BREVO_API_KEY,
     },
-    connectionTimeout: 10000,
-    tls: {
-        ciphers: 'SSLv3',
-        rejectUnauthorized: false
-    }
 });
 
 /**
- * Sends an email using the configured transporter
- * @param {EmailOptions} options - Email options (to, subject, text, html)
+ * Sends an email using Brevo SMTP
  */
+
 export const sendEmail = async (options: EmailOptions) => {
     try {
         const settings = await SettingsModel.findOne({});
