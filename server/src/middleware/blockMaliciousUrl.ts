@@ -3,18 +3,29 @@ import SettingsModel from "../models/settings.model";
 import { ApiError } from "../utils/ApiError";
 import fetch from "node-fetch";
 
+/**
+ * ============================
+ * MALICIOUS URL PROTECTION MIDDLEWARE
+ * ============================
+ */
+
+/**
+ * Block malicious URLs
+ */
 export const blockMaliciousUrlMiddleware = async (
     req: Request,
     res: Response,
     next: NextFunction
 ): Promise<void> => {
     try {
+        // Fetch system security settings
         const settings = await SettingsModel.findOne();
         if (!settings) throw new ApiError("Settings not found", 500);
 
         const { securitySettings } = settings;
         const { originalUrl } = req.body;
 
+        // Skip validation if protection is disabled or URL is missing
         if (!securitySettings.blockMaliciousUrls) return next();
         if (!originalUrl) return next();
 

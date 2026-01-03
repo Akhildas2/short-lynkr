@@ -2,8 +2,14 @@ import { Response, NextFunction } from "express";
 import { AuthRequest } from "../types/auth";
 import { getMaintenanceStatus } from "../services/maintenance.service";
 
+/**
+ * ============================
+ * MAINTENANCE MODE MIDDLEWARE
+ * ============================
+ */
 export const maintenanceMiddleware = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
+        // Check current maintenance status
         const maintenanceMode = await getMaintenanceStatus();
 
         // Always allow admin routes or login

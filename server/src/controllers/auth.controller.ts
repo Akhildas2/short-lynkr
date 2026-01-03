@@ -1,9 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import * as authService from '../services/auth.service';
 
+/**
+ * ============================
+ * AUTHENTICATION CONTROLLER
+ * ============================
+ */
+
+/**
+ * Register a new user
+ */
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { username, email, password } = req.body;
+
+        // Validate request body
         if (!username || !email || !password) {
             res.status(400).json({ message: 'Username, email, and password are required.' });
             return;
@@ -16,9 +27,15 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     }
 };
 
+
+/**
+ * Login user using email and password
+ */
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email, password } = req.body;
+
+        // Validate request body
         if (!email || !password) {
             res.status(400).json({ message: 'Email and password are required.' });
             return;
@@ -32,14 +49,20 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 };
 
 
+/**
+ * Google authentication (Register / Login)
+ */
 export const googleAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { token, mode } = req.body;
+
+        // Validate request body
         if (!token || !mode) {
             res.status(400).json({ message: 'Google token and mode are required.' });
             return;
         }
 
+        // Validate auth mode
         if (mode !== 'register' && mode !== 'login') {
             res.status(400).json({ message: 'Invalid mode. Must be "register" or "login".' });
             return;
@@ -52,9 +75,15 @@ export const googleAuth = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+
+/**
+ * Verify email using OTP
+ */
 export const verifyEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email, otp } = req.body;
+
+        // Validate request body
         if (!email || !otp) {
             res.status(400).json({ message: 'Email and OTP are required.' });
             return;
@@ -67,9 +96,14 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+
+/**
+ * Resend email verification OTP
+ */
 export const resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email } = req.body;
+        // Validate request body
         if (!email) {
             res.status(400).json({ message: 'Email is required.' });
             return;
@@ -82,9 +116,14 @@ export const resendOtp = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
+/**
+ * Send forgot password OTP
+ */
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email } = req.body;
+
+        // Validate request body
         if (!email) {
             res.status(400).json({ message: 'Email is required.' });
             return;
@@ -97,9 +136,15 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     }
 };
 
+
+/**
+ * Reset password using OTP
+ */
 export const resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { email, otp, newPassword } = req.body;
+
+        // Validate request body
         if (!email || !otp || !newPassword) {
             res.status(400).json({ message: 'Email, OTP, and new password are required.' });
             return;
@@ -112,9 +157,14 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+/**
+ * Get remaining OTP validity time
+ */
 export const otpRemainingTime = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         const email = req.query.email as string;
+
+        // Validate query param
         if (!email) {
             res.status(400).json({ message: 'Email is required' });
             return;
@@ -122,7 +172,6 @@ export const otpRemainingTime = async (req: Request, res: Response, next: NextFu
 
         const result = await authService.getOtpRemainingTime(email);
         res.status(200).json(result);
-
     } catch (error: any) {
         next(error);
     }

@@ -1,17 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import validator from 'validator';
 
+/**
+ * ============================
+ * URL VALIDATION MIDDLEWARE
+ * ============================
+ */
 export const validateUrl = (
     req: Request,
     res: Response,
     next: NextFunction
 ): void => {
     const { originalUrl } = req.body;
+
+    // Check if URL is provided
     if (!originalUrl) {
         res.status(400).json({ error: 'URL is required' });
         return
     }
 
+    // Validate URL format and protocol
     if (!validator.isURL(originalUrl, {
         protocols: ['http', 'https'],
         require_protocol: true,
@@ -21,5 +29,6 @@ export const validateUrl = (
         return;
     }
 
+    // URL is valid, proceed to next middleware/controller
     next();
 };

@@ -1,3 +1,6 @@
+/**
+ * Detects the operating system/platform from a user agent string.
+ */
 export const detectPlatform = (
     userAgent: string
 ): 'Windows' | 'macOS' | 'Linux' | 'Android' | 'iOS' | 'Unknown' => {
@@ -10,5 +13,5 @@ export const detectPlatform = (
     if (/iphone|ipad|ipod/.test(ua)) return 'iOS';
     if (/linux/.test(ua)) return 'Linux';
 
-    return 'Unknown';
+    return 'Unknown';// Fallback
 };

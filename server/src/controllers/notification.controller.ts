@@ -4,23 +4,33 @@ import { AuthRequest } from "../types/auth";
 import { Types } from "mongoose";
 import { getSocketIO } from "../utils/socket.utils";
 
+/**
+ * ============================
+ * NOTIFICATION CONTROLLER
+ * ============================
+ */
 
-// Get notifications (User & Admin)
+/**
+ * Get notifications (User & Admin)
+ */
 export const getNotifications = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const userId = req.user?.id;
         const isAdmin = req.user?.role === "admin";
 
         let filter: any = {};
+
+        // Admin sees admin + global notifications
         if (isAdmin) {
             filter = {
                 $or: [{ forAdmin: true }, { userId: null, forAdmin: false }]
             };
-        } else {
+        } else {  // User sees personal + global notifications
             filter = { $or: [{ userId }, { userId: null, forAdmin: false }] };
         }
 
-        const notifications = await Notification.find(filter).sort({ createdAt: -1 });
+        const notifications = await Notification.find(filter).sort({ createdAt: -1 }).lean();
+
         res.status(200).json(notifications);
     } catch (error) {
         next(error);
@@ -28,13 +38,20 @@ export const getNotifications = async (req: AuthRequest, res: Response, next: Ne
 };
 
 
-// Mark as read
+/**
+ * Mark a single notification as read
+ */
 export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
         const notification = await Notification.findByIdAndUpdate(id, { read: true }, { new: true });
-        if (!notification) res.status(404).json({ message: "Notification not found" });
 
+        if (!notification) {
+            res.status(404).json({ message: 'Notification not found' });
+            return;
+        }
+
+        // Notify clients via Socket.IO
         const io = getSocketIO();
         io.emit("notificationUpdated", notification);
 
@@ -45,17 +62,21 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
 };
 
 
+/**
+ * Mark multiple notifications as read / unread
+ */
 export const toggleNotificationsRead = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { ids, read } = req.body; // Array of IDs + boolean
 
+        // Validate request body
         if (!ids || !Array.isArray(ids) || !ids.length) {
             res.status(400).json({ message: 'No notification IDs provided' });
             return;
         }
 
-        // Convert string IDs to ObjectId
-        const objectIds = ids.map(id => new Types.ObjectId(id));
+        // Convert string IDs to Mongo ObjectIds
+        const objectIds = ids.map((id: string) => new Types.ObjectId(id));
 
         const result = await Notification.updateMany(
             { _id: { $in: objectIds } },
@@ -73,11 +94,14 @@ export const toggleNotificationsRead = async (req: AuthRequest, res: Response, n
 };
 
 
-// Create new notification
+/**
+ * Create a new notification
+ */
 export const createNotification = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { userId, title, message, type, category, forAdmin } = req.body;
 
+        // Create notification
         const notification = await Notification.create({
             userId: userId || null,
             title,
@@ -87,6 +111,7 @@ export const createNotification = async (req: AuthRequest, res: Response, next: 
             forAdmin: forAdmin || false,
         });
 
+        // Emit socket event
         const io = getSocketIO();
         io.emit("newNotification", notification);
 
@@ -97,10 +122,13 @@ export const createNotification = async (req: AuthRequest, res: Response, next: 
 };
 
 
-// Delete notification
+/**
+ * Delete a single notification
+ */
 export const deleteNotification = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { id } = req.params;
+
         const notification = await Notification.findByIdAndDelete(id);
         if (!notification) {
             res.status(404).json({ message: "Notification not found" });
@@ -116,10 +144,15 @@ export const deleteNotification = async (req: AuthRequest, res: Response, next: 
     }
 };
 
-// Delete multiple notification
+
+/**
+ * Delete multiple notifications
+ */
 export const deleteMultipleNotifications = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
         const { ids } = req.body;
+
+        // Validate request body
         if (!ids || !Array.isArray(ids) || !ids.length) {
             res.status(400).json({ message: 'No notification IDs provided' });
             return;

@@ -3,12 +3,18 @@ import SettingsModel from "../models/settings.model";
 import { emitMaintenanceStatus, getMaintenanceStatus } from "../services/maintenance.service";
 
 let maintenanceCheckJob: ScheduledTask | null = null;
+/**
+ * ============================
+ * MAINTENANCE CRON JOB
+ * ============================
+ */
 
 /**
  * Start cron to monitor maintenance window
  */
 export const startMaintenanceCronJob = (io: any): void => {
-    if (maintenanceCheckJob) return; // already running
+    // Prevent multiple cron instances
+    if (maintenanceCheckJob) return;
 
     maintenanceCheckJob = cron.schedule("* * * * *", async () => {
         try {
@@ -16,12 +22,14 @@ export const startMaintenanceCronJob = (io: any): void => {
             if (!settings?.systemSettings) return;
 
             const { maintenanceMode, maintenanceStart, maintenanceEnd } = settings.systemSettings;
+            // Exit if maintenance configuration is incomplete
             if (!maintenanceMode || !maintenanceStart || !maintenanceEnd) return;
 
             const now = new Date();
             const start = new Date(maintenanceStart);
             const end = new Date(maintenanceEnd);
 
+            // Determine expected maintenance state
             const shouldBeActive = now >= start && now <= end;
             const currentStatus = await getMaintenanceStatus();
 
@@ -37,6 +45,7 @@ export const startMaintenanceCronJob = (io: any): void => {
                         }
                     });
                 }
+                // Notify all connected clients
                 await emitMaintenanceStatus(io);
             }
 

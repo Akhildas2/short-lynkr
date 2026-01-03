@@ -29,6 +29,7 @@ export const sendNotification = async (options: Partial<INotification>) => {
         read: false
     });
 
+    // Real time update
     const io = getSocketIO();
     if (forAdmin) {
         io.to('admins').emit('newNotification', notification);

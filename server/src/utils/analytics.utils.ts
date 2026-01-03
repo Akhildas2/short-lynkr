@@ -6,10 +6,14 @@ export function filterAnalyticsByRange(analytics: any[], from: Date, to: Date) {
     });
 }
 
+/**
+ * Normalizes raw analytics values for consistent reporting.
+ */
 function normalizeStat(key: string, val: string, fallback = 'Unknown'): string {
     if (!val) return fallback;
     val = val.trim().toLowerCase();
 
+    // Normalize devices
     if (key === 'device') {
         if (val.includes('mobile')) return 'Mobile';
         if (val.includes('tablet') || val.includes('ipad')) return 'Tablet';
@@ -18,6 +22,7 @@ function normalizeStat(key: string, val: string, fallback = 'Unknown'): string {
         return 'Other';
     }
 
+    // Normalize browsers
     if (key === 'browser') {
         if (val.includes('chrome') && !val.includes('edge') && !val.includes('chromium')) return 'Chrome';
         if (val.includes('firefox')) return 'Firefox';
@@ -28,6 +33,7 @@ function normalizeStat(key: string, val: string, fallback = 'Unknown'): string {
         return 'Other';
     }
 
+    // Normalize operating systems
     if (key === 'os') {
         if (val.includes('windows')) return 'Windows';
         if (val.includes('android')) return 'Android';
@@ -38,6 +44,7 @@ function normalizeStat(key: string, val: string, fallback = 'Unknown'): string {
         return 'Other';
     }
 
+    // Normalize referrer sources
     if (key === 'referrer') {
         if (val === '' || val === 'direct' || val === '-') return 'Direct';
         if (val.includes('google')) return 'Google';
@@ -60,6 +67,10 @@ function normalizeStat(key: string, val: string, fallback = 'Unknown'): string {
     return fallback;
 }
 
+
+/**
+ * Aggregates analytics data for a specific key and counts occurrences of each normalized value.
+ */
 export function aggregateStats<T extends Record<string, any>>(
     data: T[],
     key: keyof T,
@@ -78,12 +89,18 @@ export function aggregateStats<T extends Record<string, any>>(
     }, {});
 }
 
-//  Calculate % change ---
+
+/**
+ * Calculates the percentage change between two numbers.
+ */
 export function getPercentageChange(current: number, previous: number): number {
     if (previous === 0) return current > 0 ? 100 : 0;
     return Math.round(((current - previous) / previous) * 10000) / 100;
 }
 
+/**
+ * Returns the top N entries from an aggregated stats object.
+ */
 export function getTop(stats: Record<string, number>, limit: number) {
     return Object.entries(stats)
         .sort((a, b) => b[1] - a[1])

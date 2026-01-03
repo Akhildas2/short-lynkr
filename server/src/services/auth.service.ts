@@ -422,6 +422,7 @@ export const resetPasswordWithOtp = async (email: string, otp: string, newPasswo
         throw new ApiError('Invalid or expired OTP.', 400);
     }
 
+    // Hashpassword
     user.password = await hashPassword(newPassword);
     user.otp = null;
     user.otpExpiresAt = null;

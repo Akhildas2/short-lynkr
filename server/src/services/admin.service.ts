@@ -157,7 +157,7 @@ const AdminService = {
         url.blockedAt = isBlocked ? new Date() : null;
         await url.save();
 
-        // Notify the user (if linked)
+        // Notify the user 
         if (user) {
             await sendNotification({
                 userId: user.id,

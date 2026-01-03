@@ -1,11 +1,17 @@
 import { format, subDays, startOfDay, subHours } from 'date-fns';
 
+/** Allowed ranges for timeline aggregation */
 export type Range = '1d' | '7d' | '30d' | '90d';
 
+/** Analytics entry structure */
 export interface AnalyticsEntry {
   timestamp: Date;
 }
 
+/**
+ * Generates timeline data for analytics visualization.
+ * Supports hourly aggregation for 1 day and daily/weekly aggregation for longer ranges.
+ */
 export function generateTimelineData(entries: AnalyticsEntry[], range: string) {
   const now = new Date();
 
