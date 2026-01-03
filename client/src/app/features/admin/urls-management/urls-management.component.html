@@ -154,8 +154,8 @@
 
     <!-- No URLs in database -->
     <app-empty-state *ngIf="!isLoading() && urls().length === 0" icon="fas fa-link" title="No URLs Found"
-        description="There are no URLs yet. Add a URL to get started." actionText="Add URL" actionIcon="fas fa-plus"
-        [actionCallback]="">
+        description="No user URLs are currently available for review or management." actionText="Refresh"
+        actionIcon="fas fa-sync" [actionCallback]="reloadUrls.bind(this)">
     </app-empty-state>
 
     <!-- Search yields no results -->

@@ -43,8 +43,8 @@
 
         <!-- Empty state when no QR codes exist -->
         <app-empty-state *ngIf="!isLoading && socialQrs().length === 0" icon="fas fa-qrcode" title="No QR Codes Found"
-            description="You haven’t created any social QR codes yet. Get started by creating your first QR code."
-            actionIcon="fas fa-plus-circle" actionText="Create Your First QR" actionRoute="/qr-generator">
+           description="No user-created social QR codes are currently available for review or management."
+            actionIcon="fas fa-sync" actionText="Refresh" [actionCallback]="reload.bind(this)">
         </app-empty-state>
 
         <!-- Empty state when search yields no results -->

@@ -24,8 +24,7 @@ export const createShortUrl = async (originalUrl: string, userId?: string, custo
     expiryDays = Number(expiryDays) || 0;
     clickLimit = Number(clickLimit) || 0;
 
-    if (!settings.urlSettings.urlCustomization)
-        throw new ApiError('URL customization is disabled by admin.', 400);
+    if (!settings.urlSettings.urlCustomization) throw new ApiError('URL customization is disabled by admin.', 400);
 
     const { urlSettings, qrSettings, userSettings } = settings;
     // Check user URL limits
@@ -38,8 +37,7 @@ export const createShortUrl = async (originalUrl: string, userId?: string, custo
 
     // Prevent duplicate
     const existingUrl = await UrlModel.findOne({ userId, originalUrl });
-    if (existingUrl)
-        throw new ApiError('You already have a short URL for this original link.', 409);
+    if (existingUrl) throw new ApiError('You already have a short URL for this original link.', 409);
 
     //  Generate short ID
     let shortId: string;

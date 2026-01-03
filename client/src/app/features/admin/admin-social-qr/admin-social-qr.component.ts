@@ -34,4 +34,12 @@ export class AdminSocialQrComponent extends BaseSocialQrComponent {
     this.globalSearchService.setSearchTerm('');
   }
 
+  reload() {
+    this.isLoading = true;
+    this.effects.fetchSocialQrs();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1000);
+  }
+
 }

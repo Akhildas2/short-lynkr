@@ -6,13 +6,13 @@ export function getTokenKey(role: string): string {
 
 // active role for the current tab
 export function setActiveRole(role: string) {
-  sessionStorage.setItem('active_role', role);
+  localStorage.setItem('active_role', role);
 }
 
 export function getActiveRole(): string | null {
-  return sessionStorage.getItem('active_role');
+  return localStorage.getItem('active_role');
 }
 
 export function clearActiveRole() {
-  sessionStorage.removeItem('active_role');
+  localStorage.removeItem('active_role');
 }

@@ -184,8 +184,11 @@ export class UrlsManagementComponent implements OnInit {
     }
 
     reloadUrls() {
-        this.adminStore.setLoading();
+        this.isLoading.set(true);
         this.adminEffect.fetchAllUrls();
+        setTimeout(() => {
+            this.isLoading.set(false);
+        }, 1000);
     }
 
 }

@@ -344,6 +344,10 @@ export const googleAuthenticate = async (token: string, mode: 'register' | 'logi
 };
 
 export const verifyEmailOtp = async (email: string, otp: string) => {
+    const settings = await SettingsModel.findOne();
+    if (!settings) throw new ApiError('Settings not found', 500);
+    const { appName } = settings.systemSettings;
+
     const user = await User.findOne({ email });
     if (!user) throw new ApiError('Invalid email or OTP.', 400);
     if (user.isEmailVerified) throw new ApiError('Email is already verified.', 400);
@@ -361,6 +365,23 @@ export const verifyEmailOtp = async (email: string, otp: string) => {
     const token = generateToken(user);
     const { password: _, otp: __, otpExpiresAt: ___, ...userData } = user.toObject();
     if (!user.isActive) return { message: "Email verified successfully. Your account is pending admin approval.", isActive: false };
+    // Notify admins
+    await sendNotification({
+        title: "New User Registered",
+        message: `${user.username} has joined ${appName}.`,
+        forAdmin: true,
+        type: "info",
+        category: "user"
+    });
+
+    // Notify user
+    await sendNotification({
+        userId: user.id,
+        title: 'Welcome!',
+        message: `Welcome to ${appName}, ${user.username}!`,
+        type: 'success',
+        category: 'user'
+    });
     return { message: 'Email verified successfully.', user: userData, token, requireEmailVerification: false, isActive: true };
 };
 
