@@ -7,13 +7,15 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 
 import connectDB from "./config/mongodb";
-import urlRoutes, { redirectRouter } from './routes/url.routes';
+import urlRoutes from './routes/url.routes';
 import userRoutes from './routes/user.routes';
 import authRoutes from './routes/auth.routes';
 import socialQrRoutes from './routes/socialQr.routes';
 import adminRoutes from './routes/admin.routes';
 import contactRoutes from './routes/contact.routes';
 import notificationRoutes from './routes/notification.routes';
+import healthRoutes from './routes/health.routes';
+import redirectRouter from './routes/redirect.routes';
 
 import { errorHandler } from "./middleware/errorHandler";
 import { apiAccessMiddleware } from "./middleware/api-access";
@@ -61,7 +63,7 @@ io.on("connection", (socket) => {
             console.log(`👑 Admin joined room: admins`);
         }
 
-        if (userId) {
+        if (role === 'user') {
             socket.join(`user:${userId}`);
             console.log(`👤 User joined room: user:${userId}`);
         }
@@ -80,6 +82,7 @@ startMaintenanceStatusBroadcast(io);
 // ------------------------------------------------
 // Routes
 // ------------------------------------------------
+app.use('/api', healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/url", urlRoutes);
 app.use("/api/user", userRoutes);

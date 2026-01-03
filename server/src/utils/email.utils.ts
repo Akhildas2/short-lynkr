@@ -9,9 +9,14 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user: process.env.BREVO_EMAIL,
+        user: process.env.BREVO_USER,
         pass: process.env.BREVO_API_KEY,
     },
+});
+
+transporter.verify((err, success) => {
+    if (err) console.log('SMTP ERROR:', err);
+    else console.log('SMTP Connected ✔', success);
 });
 
 /**
@@ -27,7 +32,7 @@ export const sendEmail = async (options: EmailOptions) => {
         const appName = systemSettings.appName || 'Short-Lynkr';
 
         const info = await transporter.sendMail({
-            from: `"${appName}" <${process.env.EMAIL_USER}>`, // sender address
+            from: `"${appName}" <akhildasaki12@gmail.com>`,// sender address
             to: options.to, // list of receivers
             subject: options.subject, // Subject line
             text: options.text, // plain text body
@@ -36,7 +41,7 @@ export const sendEmail = async (options: EmailOptions) => {
 
         console.log('Message sent: %s', info.messageId);
     } catch (error: any) {
-         throw new ApiError(
+        throw new ApiError(
             error?.message || 'Error sending email',
             500
         );

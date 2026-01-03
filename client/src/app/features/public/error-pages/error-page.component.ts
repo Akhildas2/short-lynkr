@@ -1,19 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorConfig } from '../../../models/error/errorConfig.interface';
 import { SharedErrorLayoutComponent } from '../../../shared/components/layouts/shared-error-layout/shared-error-layout.component';
+import { BackendHealthService } from '../../../core/services/backend-health/backend-health.service';
 
 @Component({
   selector: 'app-error-page',
   imports: [SharedErrorLayoutComponent],
   template: `<app-shared-error-layout [errorConfig]="errorConfig"></app-shared-error-layout>`
 })
-export class ErrorPageComponent implements OnInit {
+export class ErrorPageComponent implements OnInit, OnDestroy {
+  private intervalId!: number;
   code!: number;
   message!: string;
   errorConfig!: ErrorConfig;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private health: BackendHealthService, private router: Router) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -30,8 +32,38 @@ export class ErrorPageComponent implements OnInit {
         numbers: this.getNumbersArray(this.code)
       };
     });
+
+    // Auto-recover when backend is back
+    this.startHealthCheck();
   }
 
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  // Silent backend recovery check
+  private startHealthCheck() {
+    this.intervalId = window.setInterval(async () => {
+      const isUp = await this.health.checkHealth();
+
+      if (isUp) {
+        this.health.markUp();          // backend is alive
+        clearInterval(this.intervalId);
+
+        // Prevent double navigation
+        if (this.router.url !== '/home') {
+          this.router.navigate(['/home']);
+        }
+      }
+    }, 3000);
+  }
+
+
+  // ------------------------
+  //  Helper methods
+  // ------------------------
   private getTitle(code: number): string {
     switch (code) {
       case 0: return 'Offline';

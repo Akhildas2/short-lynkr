@@ -30,7 +30,8 @@ export const getProfile = async (req: AuthRequest, res: Response, next: NextFunc
                 totalUrls,
                 totalClicks,
                 uniqueVisitors
-            }
+            },
+            isBlocked: user.isBlocked
         });
 
     } catch (error) {

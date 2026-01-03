@@ -2,38 +2,42 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { throwError, catchError, tap } from 'rxjs';
+import { BackendHealthService } from '../services/backend-health/backend-health.service';
 
-const defaultMessages: Record<number, string> = {
-    0: 'Unable to connect. Please check your internet connection.',
-    404: 'The requested resource was not found.',
-    500: 'Something went wrong on our server.',
-    502: 'Bad gateway. Please try again later.',
-    503: 'Service temporarily unavailable.',
-    504: 'Server timeout. Please try again.'
-};
-let backendDown = false;
+const SERVER_ERRORS = [0, 500, 502, 503, 504];
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
+    const health = inject(BackendHealthService);
+
+    if (req.url.includes('/api/health')) {
+        return next(req);
+    }
 
     return next(req).pipe(
-        tap(() => {
-            if (backendDown) {
-                backendDown = false;
-                router.navigate(['/home']);
-            }
-        }),
         catchError((error: any) => {
-            if (error.status >= 500 || error.status === 0) {
-                backendDown = true;
+
+            // Client/auth errors → handled by component
+            if (error.status >= 400 && error.status < 500) {
+                return throwError(() => error);
             }
 
-            // existing error logic
-            let message = !navigator.onLine || error.status === 0
-                ? defaultMessages[0]
-                : error.error?.message || defaultMessages[error.status] || 'Unexpected error occurred';
+            // Backend/network down
+            if (SERVER_ERRORS.includes(error.status)) {
+                if (!health.backendDown()) {
+                    health.markDown();
 
-            router.navigate(['/error'], { queryParams: { code: error.status ?? 0, message } });
+                    router.navigate(['/error'], {
+                        queryParams: {
+                            code: error.status ?? 0,
+                            message: !navigator.onLine
+                                ? 'You are offline.'
+                                : 'Service temporarily unavailable'
+                        }
+                    });
+
+                }
+            }
 
             return throwError(() => error);
         })

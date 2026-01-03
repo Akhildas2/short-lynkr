@@ -13,6 +13,7 @@ import { formatBytes } from '../utils/formatBytes';
 import { applyRetention } from '../utils/applyRetention.utils';
 import { sendNotification } from './sendNotifications.service';
 import SocialQrModel from '../models/socialQr.model';
+import { getSocketIO } from '../utils/socket.utils';
 
 type UserId = string | Types.ObjectId;
 type UrlId = string | Types.ObjectId;
@@ -93,7 +94,7 @@ const AdminService = {
 
         // Notify the user
         await sendNotification({
-            userId: user.id, // use _id consistently
+            userId: user.id, // use id
             title: isBlocked ? 'Account Blocked' : 'Account Unblocked',
             message: `Hello ${user.username}, your account has been ${isBlocked ? 'blocked' : 'unblocked'} by an admin.`,
             type: isBlocked ? 'warning' : 'success',
@@ -108,6 +109,14 @@ const AdminService = {
             type: 'info',
             category: 'system',
         });
+
+        if (isBlocked) {
+            const io = getSocketIO();
+            io.to(`user:${user.id}`).emit('blocked', {
+                userId: user.id,
+                reason: 'admin_block'
+            });
+        }
 
 
         return user.toObject();

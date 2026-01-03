@@ -6,6 +6,7 @@ export interface AuthUser {
     createdAt?: string;
     updatedAt?: string;
     isActive?: boolean;
+    isBlocked?: boolean;
     isEmailVerified?: boolean;
 }
 

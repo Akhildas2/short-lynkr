@@ -225,6 +225,14 @@ export class AuthEffects {
         this.authStore.setToken(token);
         try {
             const response = await firstValueFrom(this.userApiService.getProfile());
+
+            // Detect if admin blocked user
+            if (response.user.isBlocked) {
+                this.snackbar.showInfo('Your account has been blocked by admin.');
+                await this.logout();
+                return false;
+            }
+
             this.authStore.setUser(response.user);
             if (response.stats) {
                 this.authStore.setStats(response.stats);
