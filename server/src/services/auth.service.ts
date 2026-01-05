@@ -149,12 +149,14 @@ export const loginUser = async (email: string, password: string) => {
 
     if (settings.notificationSettings.securityAlerts && user.role !== 'admin') {
         // Send a login notification
-        await sendEmail({
+        sendEmail({
             to: user.email,
             subject: 'New Login Detected',
-            text: `Hi ${user.username}, a login to your account was just detected at ${new Date().toLocaleString()}. If this wasn't you, please secure your account immediately.`,
-            html: `<p>Hi ${user.username},</p><p>A login to your account was just detected at <b>${new Date().toLocaleString()}</b>.</p><p>If this wasn't you, please secure your account immediately.</p>`
-        });
+            text: `Hi ${user.username}, a login to your account was just detected at ${new Date().toLocaleString()}.`,
+            html: `<p>Hi ${user.username},</p>
+               <p>A login to your account was just detected at <b>${new Date().toLocaleString()}</b>.</p>
+               <p>If this wasn't you, please secure your account immediately.</p>`
+        }).catch(console.error);
     }
 
     const token = generateToken(user);
@@ -402,15 +404,20 @@ export const sendForgotPasswordOtp = async (email: string) => {
     if (user) {
         const otp = generateOtp();
         user.otp = otp;
-        user.otpExpiresAt = new Date(Date.now() + 5 * 60 * 1000);
+        user.otpExpiresAt = new Date(Date.now() + 2 * 60 * 1000);
         await user.save();
 
-        await sendEmail({
-            to: user.email,
-            subject: 'Password Reset Request',
-            text: `Your password reset code is: ${otp}. It will expire in 5 minutes.`,
-            html: `<p>Your password reset code is: <b>${otp}</b></p><p>It will expire in 5 minutes.</p>`,
-        });
+        try {
+            await sendEmail({
+                to: user.email,
+                subject: 'Password Reset Request',
+                text: `Your password reset code is: ${otp}. It will expire in 2 minutes.`,
+                html: `<p>Your password reset code is: <b>${otp}</b></p>
+                   <p>It will expire in 2 minutes.</p>`
+            });
+        } catch (err) {
+            console.error('Forgot password email failed', err);
+        }
     }
 
     return { message: 'If an account with that email exists, a password reset OTP has been sent.' };

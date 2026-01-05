@@ -12,6 +12,7 @@
   "author": "Akhil das p",
   "license": "ISC",
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -23,7 +24,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.1",
     "node-cron": "^4.0.7",
-    "nodemailer": "^7.0.10",
     "qrcode": "^1.5.4",
     "socket.io": "^4.8.1",
     "ua-parser-js": "^2.0.3",
