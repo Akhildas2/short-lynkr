@@ -10,6 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoaderComponent } from '../../../shared/components/ui/loader/loader.component';
 import { GoogleAuthEffects } from '../../../state/auth/googleAuth.effects';
 import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
+import { noWhitespaceValidator } from '../../../shared/utils/noWhitespaceValidator';
 
 @Component({
   selector: 'app-auth-form',
@@ -32,7 +33,7 @@ export class AuthFormComponent {
       password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(16)]]
     });
     this.registerForm = this.fb.group({
-      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(20), noWhitespaceValidator]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(16), Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`])[A-Za-z\\d!@#$%^&*()_+\\-={}\\[\\]|:;"\'<>,.?/~`]{8,}$')]]
     });

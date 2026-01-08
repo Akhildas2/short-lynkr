@@ -13,6 +13,7 @@ import { LoaderComponent } from '../../../shared/components/ui/loader/loader.com
 import { SharedModule } from '../../../shared/shared.module';
 import { AdminSettingsEffects } from '../../../state/settings/settings.effects';
 import { AdminSettings } from '../../../models/settings/adminSettings.interface';
+import { noWhitespaceValidator } from '../../../shared/utils/noWhitespaceValidator';
 
 @Component({
     selector: 'app-home',
@@ -42,7 +43,7 @@ export class HomeComponent implements OnInit {
                 Validators.pattern(/^https?:\/\/.+/)
             ]],
             customizeEnabled: [false],
-            customCode: ['', [Validators.minLength(4), Validators.maxLength(this.settings?.urlSettings?.defaultLength || 8), Validators.pattern(/^[a-zA-Z0-9_-]*$/)]],
+            customCode: ['', [Validators.minLength(4), Validators.maxLength(this.settings?.urlSettings?.defaultLength || 8), Validators.pattern(/^[a-zA-Z0-9_-]*$/), noWhitespaceValidator]],
             expiryDays: [0, [Validators.min(0), Validators.max(100)]],
             clickLimit: [0, [Validators.min(0), Validators.max(1000)]],
             tags: [[]]
@@ -71,6 +72,8 @@ export class HomeComponent implements OnInit {
         this.urlForm.get('customCode')?.setValidators([
             Validators.minLength(4),
             Validators.maxLength(urlSettings.defaultLength || 8),
+            Validators.pattern(/^[a-zA-Z0-9_-]*$/),
+            noWhitespaceValidator,
             ...(urlSettings.allowCustomSlugs ? [] : [Validators.nullValidator]) // 🔹 disable if not allowed
         ]);
 

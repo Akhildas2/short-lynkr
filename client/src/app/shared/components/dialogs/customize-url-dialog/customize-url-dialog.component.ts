@@ -1,18 +1,23 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UrlEntry } from '../../../../models/url/url.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SharedModule } from '../../../shared.module';
 import { AdminSettings } from '../../../../models/settings/adminSettings.interface';
 import { AdminSettingsEffects } from '../../../../state/settings/settings.effects';
 import { SnackbarService } from '../../../services/snackbar/snackbar.service';
+import { NoWhitespaceDirective } from '../../../utils/no-whitespace.directive';
+import { NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-customize-url-dialog',
-  imports: [SharedModule],
+  imports: [SharedModule, NoWhitespaceDirective],
   templateUrl: './customize-url-dialog.component.html',
   styleUrl: './customize-url-dialog.component.scss'
 })
 export class CustomizeUrlDialogComponent implements OnInit {
+  @ViewChild('shortId') shortIdModel?: NgModel;
+  @ViewChild('expiryDaysModel') expiryModel?: NgModel;
+  @ViewChild('clickLimit') clickLimitModel?: NgModel;
   updatedUrl: Partial<UrlEntry>;
   expiryDays: number = 0;
   tags: string[] = ['Personal', 'Work', 'Project', 'Marketing', 'important', 'Other'];
@@ -57,7 +62,6 @@ export class CustomizeUrlDialogComponent implements OnInit {
       && this.updatedUrl.clickLimit <= this.data.clicks;
   }
 
-
   save(): void {
     const result = { ...this.updatedUrl };
 
@@ -91,18 +95,17 @@ export class CustomizeUrlDialogComponent implements OnInit {
   get isFormInvalid(): boolean {
     // Short Code validation
     const shortIdInvalid = this.settings?.urlSettings?.allowCustomSlugs
-      && (!this.updatedUrl.shortId
-        || this.updatedUrl.shortId.length < 4
-        || this.updatedUrl.shortId.length > (this.settings.urlSettings.defaultLength || 8));
+      ? (this.shortIdModel?.invalid || !this.updatedUrl.shortId)
+      : false;
 
     // Click Limit validation
-    const clickInvalid = this.clickLimitInvalid;
+    const clickInvalid = this.clickLimitInvalid || this.clickLimitModel?.invalid;
 
     // Expiry Days validation
     const maxExpiry = this.settings?.urlSettings?.expirationDaysLimit || 100;
     const expiryInvalid = this.expiryDays < 0 || this.expiryDays > maxExpiry;
 
-    return shortIdInvalid || clickInvalid || expiryInvalid;
+    return !!(shortIdInvalid || clickInvalid || expiryInvalid);
   }
 
 }

@@ -30,6 +30,15 @@ export class ValidationErrorComponent {
     if (control.errors['whitespace']) {
       return 'This field cannot be empty or only spaces.';
     }
+    if (control.errors['leadingOrTrailingSpace']) {
+      return 'Remove leading or trailing spaces';
+    }
+    if (control.errors['multipleSpaces']) {
+      return 'Only one space allowed between words';
+    }
+    if (control.errors['leadingOrTrailingSpace']) {
+      return 'Remove leading or trailing spaces';
+    }
 
     return null;
   }

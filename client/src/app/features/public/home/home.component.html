@@ -5,7 +5,7 @@
   <!-- Main -->
   <main class="flex-grow flex items-center justify-center px-4 py-8 sm:py-12">
     <section class="text-center max-w-6xl mx-auto w-full">
-      <div class="mb-8 sm:mb-12">
+      <div class="mb-8">
         <h1
           class="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-[color:var(--primary-color)] to-[color:var(--accent-color)] bg-clip-text text-transparent">
           Shorten. Share. Track.
@@ -74,9 +74,9 @@
           </div>
 
           <!-- Custom Options (Only if toggle is ON) -->
-          <div *ngIf="urlForm.get('customizeEnabled')?.value" class="mt-6 space-y-4">
+          <div *ngIf="urlForm.get('customizeEnabled')?.value" class="mt-4 space-y-4">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
               <!-- Custom Short Code -->
               <mat-form-field appearance="outline" class="w-full" *ngIf="settings?.urlSettings?.allowCustomSlugs">
@@ -84,15 +84,33 @@
                 <mat-icon matPrefix>link</mat-icon>
                 <input matInput formControlName="customCode" placeholder="e.g. my-custom-link" [minlength]="4"
                   [maxlength]="settings?.urlSettings?.defaultLength || 8" />
-                <mat-error *ngIf="urlForm.get('customCode')?.hasError('minlength')">
-                  Minimum 4 characters required.
+                <mat-error *ngIf="urlForm.get('customCode')?.errors?.['whitespace']">
+                  Cannot contain only spaces
                 </mat-error>
-                <mat-error *ngIf="urlForm.get('customCode')?.hasError('maxlength')">
-                  Maximum {{settings?.urlSettings?.defaultLength || 8}} characters allowed.
+
+                <mat-error *ngIf="urlForm.get('customCode')?.errors?.['leadingOrTrailingSpace']">
+                  Remove leading or trailing spaces
                 </mat-error>
-                <mat-error *ngIf="urlForm.get('customCode')?.hasError('pattern')">
+
+                <mat-error *ngIf="urlForm.get('customCode')?.errors?.['multipleSpaces']">
+                  Only one space allowed between words
+                </mat-error>
+
+                <mat-error
+                  *ngIf="!urlForm.get('customCode')?.errors?.['whitespace'] && !urlForm.get('customCode')?.errors?.['leadingOrTrailingSpace'] && !urlForm.get('customCode')?.errors?.['multipleSpaces'] && urlForm.get('customCode')?.errors?.['pattern']">
                   Only letters, numbers, underscores (_), or hyphens (-) are allowed.
                 </mat-error>
+
+                <mat-error
+                  *ngIf="!urlForm.get('customCode')?.errors?.['whitespace'] && !urlForm.get('customCode')?.errors?.['leadingOrTrailingSpace'] && !urlForm.get('customCode')?.errors?.['multipleSpaces'] && urlForm.get('customCode')?.errors?.['minlength']">
+                  Minimum 4 characters required.
+                </mat-error>
+
+                <mat-error
+                  *ngIf="!urlForm.get('customCode')?.errors?.['whitespace'] && !urlForm.get('customCode')?.errors?.['leadingOrTrailingSpace'] && !urlForm.get('customCode')?.errors?.['multipleSpaces'] && urlForm.get('customCode')?.errors?.['maxlength']">
+                  Maximum {{ settings?.urlSettings?.defaultLength || 8 }} characters allowed.
+                </mat-error>
+
               </mat-form-field>
 
               <!-- Expiry in Days -->

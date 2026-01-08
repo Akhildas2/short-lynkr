@@ -6,11 +6,36 @@
     <mat-form-field appearance="outline" class="w-full" *ngIf="settings?.urlSettings?.allowCustomSlugs">
         <mat-label>Custom Short Code</mat-label>
         <mat-icon matPrefix>link</mat-icon>
-        <input matInput [(ngModel)]="updatedUrl.shortId" #shortId="ngModel" minlength="4"
-            [maxlength]="settings?.urlSettings?.defaultLength || 8" placeholder="e.g. my-custom-link" />
-        <mat-error *ngIf="shortId.errors?.['minlength']">Minimum 4 characters required.</mat-error>
-        <mat-error *ngIf="shortId.errors?.['maxlength']">Maximum {{settings?.urlSettings?.defaultLength || 8}}
-            characters allowed.</mat-error>
+        <input matInput [(ngModel)]="updatedUrl.shortId" #shortId="ngModel" noWhitespace minlength="4"
+            [maxlength]="settings?.urlSettings?.defaultLength || 8" placeholder="e.g. my-custom-link"
+            pattern="^[a-zA-Z0-9_-]*$" />
+        <mat-error *ngIf="shortId.errors?.['whitespace']">
+            Cannot contain only spaces
+        </mat-error>
+
+        <mat-error *ngIf="shortId.errors?.['leadingOrTrailingSpace']">
+            Remove leading or trailing spaces
+        </mat-error>
+
+        <mat-error *ngIf="shortId.errors?.['multipleSpaces']">
+            Only one space allowed between words
+        </mat-error>
+
+        <mat-error
+            *ngIf="!shortId.errors?.['whitespace'] && !shortId.errors?.['leadingOrTrailingSpace'] && !shortId.errors?.['multipleSpaces'] && !shortId.errors?.['minlength'] && shortId.errors?.['pattern']">
+            Only letters, numbers, underscores (_), or hyphens (-) are allowed.
+        </mat-error>
+
+        <mat-error
+            *ngIf="!shortId.errors?.['whitespace'] && !shortId.errors?.['leadingOrTrailingSpace'] && !shortId.errors?.['multipleSpaces'] && shortId.errors?.['minlength']">
+            Minimum 4 characters required.
+        </mat-error>
+
+        <mat-error
+            *ngIf="!shortId.errors?.['whitespace'] && !shortId.errors?.['leadingOrTrailingSpace'] && !shortId.errors?.['multipleSpaces'] && shortId.errors?.['maxlength']">
+            Maximum {{ settings?.urlSettings?.defaultLength || 8 }} characters allowed.
+        </mat-error>
+
     </mat-form-field>
 
     <!-- Expiry in Days -->
@@ -23,9 +48,7 @@
         <mat-hint>Enter 0 for no expiration, max {{settings?.urlSettings?.expirationDaysLimit || 365}}</mat-hint>
         <mat-error *ngIf="expiryDaysModel.errors?.['min']">Minimum value is 0.</mat-error>
         <mat-error *ngIf="expiryDaysModel.errors?.['max']">Maximum value is
-            {{settings?.urlSettings?.expirationDaysLimit
-            ||
-            100}}.</mat-error>
+            {{ settings?.urlSettings?.expirationDaysLimit || 100 }}.</mat-error>
     </mat-form-field>
 
     <!-- Expiry Date (read-only) -->

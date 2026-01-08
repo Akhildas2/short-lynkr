@@ -6,10 +6,11 @@ import { combineDateAndTime, getFormattedTime, getTimeString, isToday, parseTime
 import { zoomInAnimation } from '../../../utils/animations.util';
 import { FormControl, FormGroup } from '@angular/forms';
 import { colorContrastValidator } from '../../../utils/colorValidator';
+import { NoWhitespaceDirective } from '../../../utils/no-whitespace.directive';
 
 @Component({
   selector: 'app-settings-tab',
-  imports: [SharedModule],
+  imports: [SharedModule, NoWhitespaceDirective],
   templateUrl: './settings-tab.component.html',
   styleUrl: './settings-tab.component.scss',
   animations: [zoomInAnimation]

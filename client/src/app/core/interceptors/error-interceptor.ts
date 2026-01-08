@@ -23,7 +23,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             }
 
             // Backend/network down
-            if (SERVER_ERRORS.includes(error.status)) {
+            if (error.status === 0 || SERVER_ERRORS.includes(error.status)) {
                 if (!health.backendDown()) {
                     health.markDown();
 

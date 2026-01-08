@@ -14,38 +14,18 @@
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>Title</mat-label>
             <input matInput formControlName="title" required>
-            <mat-error *ngIf="notificationForm.controls['title'].hasError('required')">
-                Title is required
+            <mat-error *ngIf="getError('title')">
+                {{ getError('title') }}
             </mat-error>
-            <mat-error *ngIf="notificationForm.controls['title'].hasError('minlength')">
-                Minimum 3 characters required
-            </mat-error>
-            <mat-error *ngIf="notificationForm.controls['title'].hasError('maxlength')">
-                Maximum 30 characters allowed
-            </mat-error>
-            <mat-error *ngIf="notificationForm.controls['title'].hasError('whitespace')">
-                Title cannot be empty or whitespace
-            </mat-error>
-
         </mat-form-field>
 
         <!-- Message -->
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>Message</mat-label>
             <textarea matInput formControlName="message" rows="3" required></textarea>
-            <mat-error *ngIf="notificationForm.controls['message'].hasError('required')">
-                Message is required
+            <mat-error *ngIf="getError('message')">
+                {{ getError('message') }}
             </mat-error>
-            <mat-error *ngIf="notificationForm.controls['message'].hasError('minlength')">
-                Minimum 3 characters required
-            </mat-error>
-            <mat-error *ngIf="notificationForm.controls['message'].hasError('maxlength')">
-                Maximum 100 characters allowed
-            </mat-error>
-            <mat-error *ngIf="notificationForm.controls['message'].hasError('whitespace')">
-                Message cannot be empty or whitespace
-            </mat-error>
-
         </mat-form-field>
 
         <div class="flex flex-row gap-3">

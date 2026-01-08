@@ -36,7 +36,7 @@ export class AddNotificationDialogComponent {
   ) {
     this.notificationForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30), noWhitespaceValidator]],
-      message: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100), noWhitespaceValidator]],
+      message: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100), noWhitespaceValidator]],
       type: [NotificationType.Info, Validators.required],
       category: [NotificationCategory.User, Validators.required],
       sendTo: ['all', Validators.required],
@@ -60,4 +60,31 @@ export class AddNotificationDialogComponent {
       this.dialogRef.close(newNotification);
     }
   }
+
+  getError(controlName: string): string | null {
+    const control = this.notificationForm.get(controlName);
+    if (!control || !control.errors || !control.touched) return null;
+
+    if (control.hasError('required')) {
+      return 'This field is required';
+    }
+    if (control.hasError('whitespace')) {
+      return 'Cannot contain only spaces';
+    }
+    if (control.hasError('leadingOrTrailingSpace')) {
+      return 'Remove leading or trailing spaces';
+    }
+    if (control.hasError('multipleSpaces')) {
+      return 'Only one space allowed between words';
+    }
+    if (control.hasError('minlength')) {
+      return `Minimum ${control.errors['minlength'].requiredLength} characters required`;
+    }
+    if (control.hasError('maxlength')) {
+      return `Maximum ${control.errors['maxlength'].requiredLength} characters allowed`;
+    }
+
+    return null;
+  }
+
 }

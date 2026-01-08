@@ -268,9 +268,9 @@ export const updateUrl = async (id: string, updateData: UpdateUrlData, userId?: 
 
     // Reactivate URL if possible
     const now = new Date();
-    const notExpired = !url.expiresAt || url.expiresAt > now;
-    const underLimit = !url.clickLimit || (url.clicks ?? 0) < url.clickLimit;
-    url.isBlocked = notExpired && underLimit;
+    const isExpired = url.expiresAt ? url.expiresAt <= now : false;
+    const reachedClickLimit = url.clickLimit ? (url.clicks ?? 0) >= url.clickLimit : false;
+    url.isBlocked = isExpired || reachedClickLimit;
 
     const updatedUrl = await url.save();
 
