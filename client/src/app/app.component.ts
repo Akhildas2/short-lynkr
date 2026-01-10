@@ -11,11 +11,13 @@ import { AuthSocketService } from './core/services/socket/auth-socket.service';
 })
 export class AppComponent {
 
-  constructor(private settingsEffects: AdminSettingsEffects,private socketAuth: AuthSocketService) {
+  constructor(private settingsEffects: AdminSettingsEffects, private socketAuth: AuthSocketService) {
     this.settingsEffects.loadSettings();
 
     effect(() => {
-      document.title = this.settingsEffects.appName();
+      if (!window.matchMedia('(display-mode: standalone)').matches) {
+        document.title = this.settingsEffects.appName();
+      }
     });
   }
 

@@ -1,6 +1,9 @@
 {
-  "name": "Short Lynkr",
-  "short_name": "ShortLynkr",
+  "name": "Short-Lynkr",
+  "short_name": "Lynkr",
+  "description": "A simple URL shortener service.",
+  "theme_color": "#a8c7fa",
+  "background_color": "#ffffff",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
