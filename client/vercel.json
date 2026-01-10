@@ -1,14 +1,5 @@
 {
-  "routes": [
-    {
-      "src": "/ngsw-worker.js",
-      "headers": {
-        "Cache-Control": "no-cache"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
