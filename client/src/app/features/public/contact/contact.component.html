@@ -1,198 +1,202 @@
-<div class="min-h-screen">
+<div class="min-h-screen flex flex-col">
     <!-- Header -->
     <app-user-header></app-user-header>
 
-    <!-- Contact Us -->
-    <div class="max-w-7xl mx-auto px-8 md:px-20 py-8 lg:py-6">
-        <div class="grid items-center lg:grid-cols-2 gap-6 lg:gap-10">
+    <main class="flex-grow flex items-center justify-center">
+        <!-- Contact Us -->
+        <div class="max-w-7xl mx-auto px-8 md:px-20 py-8 lg:py-6">
+            <div class="grid items-center lg:grid-cols-2 gap-6 lg:gap-10">
 
-            <div class="divide-y divide-gray-200 dark:divide-neutral-800">
-                <div class="text-center">
-                    <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
-                        Contact Us
-                    </h1>
-                    <p class="mt-1 text-gray-600 dark:text-neutral-400">
-                        We’d love to hear from you and help with any questions you have.
-                    </p>
-                </div>
-                <!-- Icon Block -->
-                <div class="flex gap-x-7 py-6">
-                    <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
-                        <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-                    </svg>
-
-                    <div class="grow">
-                        <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
-                            About & FAQs
-                        </h3>
-
-                        <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                            Learn more about our platform and find answers to frequently asked questions.
+                <!-- LEFT CONTENT -->
+                <div class="divide-y divide-gray-200 dark:divide-neutral-800">
+                    <div class="text-center">
+                        <h1 class="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-white">
+                            Contact Us
+                        </h1>
+                        <p class="mt-1 text-gray-600 dark:text-neutral-400">
+                            We’d love to hear from you and help with any questions you have.
                         </p>
+                    </div>
+                    <!-- Icon Block -->
+                    <div class="flex gap-x-7 py-6">
+                        <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
+                            <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+                        </svg>
 
-                        <a routerLink="/about" fragment="faq" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
+                        <div class="grow">
+                            <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
+                                About & FAQs
+                            </h3>
+
+                            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
+                                Learn more about our platform and find answers to frequently asked questions.
+                            </p>
+
+                            <a routerLink="/about" fragment="faq" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
                         text-gray-600 hover:text-gray-800 dark:text-neutral-400
                         dark:hover:text-neutral-200">
-                            Visit FAQs
-                            <svg class="shrink-0 size-2.5 transition-transform duration-200 group-hover:translate-x-1"
-                                width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M0.975821 6.92249H12.7694L7.60447 1.9604c-.38108-.36612-.38108-.95971 0-1.32583.38108-.36612.99894-.36612 1.38002 0l6.65821 6.39677c.4764.45765.4764 1.19964 0 1.65729l-6.65821 6.39678c-.38108.36612-.99894.36612-1.38002 0-.38108-.36612-.38108-.95971 0-1.32583l5.16493-4.9621H0.975821Z" />
-                            </svg>
-                        </a>
+                                Visit FAQs
+                                <svg class="shrink-0 size-2.5 transition-transform duration-200 group-hover:translate-x-1"
+                                    width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M0.975821 6.92249H12.7694L7.60447 1.9604c-.38108-.36612-.38108-.95971 0-1.32583.38108-.36612.99894-.36612 1.38002 0l6.65821 6.39677c.4764.45765.4764 1.19964 0 1.65729l-6.65821 6.39678c-.38108.36612-.99894.36612-1.38002 0-.38108-.36612-.38108-.95971 0-1.32583l5.16493-4.9621H0.975821Z" />
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <!-- End Icon Block -->
+                    <!-- End Icon Block -->
 
-                <!-- Icon Block -->
-                <div class="flex gap-x-7 py-6">
-                    <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 8v4m0 4h.01" />
-                    </svg>
+                    <!-- Icon Block -->
+                    <div class="flex gap-x-7 py-6">
+                        <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 8v4m0 4h.01" />
+                        </svg>
 
-                    <div class="grow">
-                        <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
-                            Help & Support
-                        </h3>
+                        <div class="grow">
+                            <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
+                                Help & Support
+                            </h3>
 
-                        <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                            Need assistance? Our support team is here to help you.
-                        </p>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
+                                Need assistance? Our support team is here to help you.
+                            </p>
 
-                        <a routerLink="/contact" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
+                            <a routerLink="/contact" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
              text-gray-600 hover:text-gray-800 dark:text-neutral-400
              dark:hover:text-neutral-200">
-                            Contact Support
-                        </a>
+                                Contact Support
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <!-- End Icon Block -->
+                    <!-- End Icon Block -->
 
-                <!-- Icon Block -->
-                <div class="flex gap-x-7 py-6">
-                    <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                            d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z" />
-                        <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10" />
-                    </svg>
+                    <!-- Icon Block -->
+                    <div class="flex gap-x-7 py-6">
+                        <svg class="shrink-0 size-6 mt-1.5 text-gray-800 dark:text-neutral-200"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z" />
+                            <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10" />
+                        </svg>
 
-                    <div class="grow">
-                        <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
-                            Email Us
-                        </h3>
+                        <div class="grow">
+                            <h3 class="font-semibold text-gray-800 dark:text-neutral-200">
+                                Email Us
+                            </h3>
 
-                        <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                            Prefer email? Reach out to us directly at:
-                        </p>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
+                                Prefer email? Reach out to us directly at:
+                            </p>
 
-                        <a [href]="'mailto:'+ supportEmail" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
+                            <a [href]="'mailto:'+ supportEmail" class="mt-2 inline-flex items-center gap-x-2 text-sm font-medium
              text-gray-600 hover:text-gray-800 dark:text-neutral-400
              dark:hover:text-neutral-200">
-                            {{ supportEmail }}
-                        </a>
+                                {{ supportEmail }}
+                            </a>
+                        </div>
                     </div>
+                    <!-- End Icon Block -->
                 </div>
-                <!-- End Icon Block -->
-            </div>
 
-            <!-- Card -->
-            <div
-                class="flex flex-col bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-xl p-4 sm:p-6 dark:border-neutral-700">
-                <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-neutral-200">
-                    Fill in the form
-                </h2>
+                <!-- Card -->
+                <div
+                    class="flex flex-col bg-gray-50 dark:bg-gray-800 border border-gray-200 rounded-xl p-4 sm:p-6 dark:border-neutral-700">
+                    <h2 class="mb-4 text-xl font-semibold text-gray-800 dark:text-neutral-200">
+                        Fill in the form
+                    </h2>
 
-                <form class="space-y-4" [formGroup]="contactForm" (ngSubmit)="submit(formDirective)"
-                    #formDirective="ngForm">
+                    <form class="space-y-4" [formGroup]="contactForm" (ngSubmit)="submit(formDirective)"
+                        #formDirective="ngForm">
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Name  -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Name  -->
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-icon matPrefix>person</mat-icon>
+                                <mat-label>Enter Name</mat-label>
+
+                                <input matInput formControlName="name" />
+
+                                <mat-error *ngIf="getError('name')">
+                                    {{ getError('name') }}
+                                </mat-error>
+                            </mat-form-field>
+
+                            <!-- Phone -->
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-icon matPrefix>phone</mat-icon>
+                                <mat-label>Phone Number</mat-label>
+
+                                <input matInput formControlName="phoneNumber" />
+
+                                <mat-error *ngIf="getError('phoneNumber')">
+                                    {{ getError('phoneNumber') }}
+                                </mat-error>
+                            </mat-form-field>
+
+                        </div>
+
+                        <!-- Email -->
                         <mat-form-field appearance="outline" class="w-full">
-                            <mat-icon matPrefix>person</mat-icon>
-                            <mat-label>Enter Name</mat-label>
+                            <mat-icon matPrefix>email</mat-icon>
+                            <mat-label>Email</mat-label>
 
-                            <input matInput formControlName="name" />
+                            <input matInput type="email" formControlName="email" />
 
-                            <mat-error *ngIf="getError('name')">
-                                {{ getError('name') }}
+                            <mat-error *ngIf="getError('email')">
+                                {{ getError('email') }}
                             </mat-error>
                         </mat-form-field>
 
-                        <!-- Phone -->
+                        <!-- Subject -->
                         <mat-form-field appearance="outline" class="w-full">
-                            <mat-icon matPrefix>phone</mat-icon>
-                            <mat-label>Phone Number</mat-label>
+                            <mat-icon matPrefix>subject</mat-icon>
+                            <mat-label>Subject</mat-label>
 
-                            <input matInput formControlName="phoneNumber" />
+                            <input matInput formControlName="subject" placeholder="Subject" />
 
-                            <mat-error *ngIf="getError('phoneNumber')">
-                                {{ getError('phoneNumber') }}
+                            <mat-error *ngIf="getError('subject')">
+                                {{ getError('subject') }}
                             </mat-error>
                         </mat-form-field>
 
-                    </div>
+                        <!-- Details -->
+                        <mat-form-field appearance="outline" class="w-full">
+                            <mat-label>Details</mat-label>
 
-                    <!-- Email -->
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-icon matPrefix>email</mat-icon>
-                        <mat-label>Email</mat-label>
+                            <textarea matInput rows="3" formControlName="message"></textarea>
 
-                        <input matInput type="email" formControlName="email" />
+                            <mat-error *ngIf="getError('message')">
+                                {{ getError('message') }}
+                            </mat-error>
+                        </mat-form-field>
 
-                        <mat-error *ngIf="getError('email')">
-                            {{ getError('email') }}
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Subject -->
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-icon matPrefix>subject</mat-icon>
-                        <mat-label>Subject</mat-label>
-
-                        <input matInput formControlName="subject" placeholder="Subject" />
-
-                        <mat-error *ngIf="getError('subject')">
-                            {{ getError('subject') }}
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Details -->
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Details</mat-label>
-
-                        <textarea matInput rows="3" formControlName="message"></textarea>
-
-                        <mat-error *ngIf="getError('message')">
-                            {{ getError('message') }}
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Submit -->
-                    <button type="submit" [disabled]="contactForm.invalid || isloading" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg
+                        <!-- Submit -->
+                        <button type="submit" [disabled]="contactForm.invalid || isloading" class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg
          bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
 
-                        <mat-icon *ngIf="!isloading" fontIcon="send"></mat-icon>
+                            <mat-icon *ngIf="!isloading" fontIcon="send"></mat-icon>
 
-                        <mat-icon *ngIf="isloading" class="animate-spin">autorenew</mat-icon>
+                            <mat-icon *ngIf="isloading" class="animate-spin">autorenew</mat-icon>
 
-                        {{ isloading ? 'Sending...' : 'Send inquiry' }}
-                    </button>
+                            {{ isloading ? 'Sending...' : 'Send inquiry' }}
+                        </button>
 
-                </form>
+                    </form>
+
+                </div>
+                <!-- End Card -->
 
             </div>
-            <!-- End Card -->
-
         </div>
-    </div>
+    </main>
+
     <!-- End Contact Us -->
 
     <!-- Footer -->
