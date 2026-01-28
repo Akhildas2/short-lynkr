@@ -213,11 +213,25 @@
                                 [disabled]="socialQrForm.invalid || isLoading" class="px-6 py-3 rounded-full font-semibold flex items-center gap-2
                           disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-200
                             disabled:cursor-not-allowed transition-all duration-200">
-                                <mat-icon
-                                    class="text-white disabled:text-gray-400 dark:disabled:text-gray-300">qr_code_2</mat-icon>
-                                <span>Generate QR Code</span>
-                                <mat-progress-spinner *ngIf="isLoading" diameter="18" mode="indeterminate"
-                                    strokeWidth="2"></mat-progress-spinner>
+
+                                <!-- NORMAL STATE -->
+                                <ng-container *ngIf="!isLoading; else loadingState"
+                                    class="flex justify-center items-center align-middle">
+                                    <div class="flex justify-center items-center gap-2">
+                                        <mat-icon class="text-white">qr_code_2</mat-icon>
+                                        <span>Generate QR Code</span>
+                                    </div>
+                                </ng-container>
+
+                                <!-- LOADING STATE -->
+                                <ng-template #loadingState>
+                                    <div class="flex justify-center items-center gap-2">
+                                        <mat-progress-spinner diameter="18" mode="indeterminate" strokeWidth="2">
+                                        </mat-progress-spinner>
+                                        <span class="ml-2">Generating…</span>
+                                    </div>
+                                </ng-template>
+
                             </button>
 
                         </div>

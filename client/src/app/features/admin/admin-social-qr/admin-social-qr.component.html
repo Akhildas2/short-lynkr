@@ -13,7 +13,7 @@
 
             <!-- Filter Button -->
             <button [matMenuTriggerFor]="statusMenu"
-                class="flex items-center gap-1.5 shrink-0 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200font-semibold hover:bg-gray-100 dark:hover:bg-gray-700transition">
+                class="flex items-center gap-1.5 shrink-0 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-semibold hover:bg-gray-100 dark:hover:bg-gray-700transition">
 
                 <span class="max-w-[90px] truncate">
                     {{ filterStatusLabel() }}
@@ -43,7 +43,7 @@
 
         <!-- Empty state when no QR codes exist -->
         <app-empty-state *ngIf="!isLoading && socialQrs().length === 0" icon="fas fa-qrcode" title="No QR Codes Found"
-           description="No user-created social QR codes are currently available for review or management."
+            description="No user-created social QR codes are currently available for review or management."
             actionIcon="fas fa-sync" actionText="Refresh" [actionCallback]="reload.bind(this)">
         </app-empty-state>
 

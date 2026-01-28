@@ -26,9 +26,9 @@ export class AdminHeaderComponent extends BaseNotificationComponent {
   isSmallDevice = false;
 
   adminMenu = [
-    { label: 'Profile', icon: 'person', link: '/admin/settings' },
+    { label: 'Profile', icon: 'person', link: '/admin/settings', tab: 'profile' },
     { label: 'Notifications', icon: 'notifications', link: '/admin/notifications' },
-    { label: 'Settings', icon: 'settings', link: '/admin/settings' },
+    { label: 'Settings', icon: 'settings', link: '/admin/settings', tab: 'url-settings' },
   ];
 
   readonly admin = this.authStore.user;

@@ -103,8 +103,8 @@
 
         <div class="px-2 pb-2 space-y-1">
 
-          <a *ngFor="let item of adminMenu" [routerLink]="item.link"
-            [queryParams]="item.label === 'Profile' ? { tab: 'profile' } : null" class="group flex items-center gap-2 px-3 py-2 text-sm rounded-lg w-full
+          <a *ngFor="let item of adminMenu" [routerLink]="item.link" [queryParams]="item.tab ? { tab: item.tab } : null"
+            class="group flex items-center gap-2 px-3 py-2 text-sm rounded-lg w-full
             text-gray-700 dark:text-gray-300
             hover:bg-gray-200 dark:hover:bg-gray-700 transition">
             <mat-icon
